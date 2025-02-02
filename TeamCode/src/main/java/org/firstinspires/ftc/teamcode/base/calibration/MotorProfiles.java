@@ -1,35 +1,71 @@
 package org.firstinspires.ftc.teamcode.base.calibration;
 
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+import static java.lang.Math.floor;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MotorProfiles implements Validatable {
-    private MotorConfig          motorConfig;
-    private int                  powerResolution;
-    private double               dP;
-    private double               Pi;
-    private double               Pf;
-    private MotorProfileConstP[] motorProfiles;
+    private transient final MotorConfig          motorConfig;
+    private transient final Logger               logger;
+    private           final int                  powerResolution;
+    private           final double               minPower;
+    private           final double               maxPower;
+    private           final double               dP;
+    private                 int                  Pi;
+    private                 int                  Ptarget;
+    private           final MotorProfileConstP[] motorProfilesF;
+    private           final MotorProfileConstP[] motorProfilesR;
+
     public MotorProfiles(MotorConfig motorConfig_in) {
+        logger               = RobotLogger.getInstance().getConfigLogger();
         motorConfig          = motorConfig_in;
         powerResolution      = motorConfig.calibParams.powerResolution;
-        dP                   = 2.0/powerResolution;
-        motorProfiles        = new MotorProfileConstP[2*powerResolution];
-        for(int i=0; i<powerResolution; i+=2) {
-            motorProfiles[i] = new MotorProfileConstP(motorConfig);
-            motorProfiles[i] = new MotorProfileConstP(motorConfig);
+        minPower             = motorConfig.calibParams.minPower;
+        maxPower             = motorConfig.calibParams.maxPower;
+        dP                   = (maxPower-minPower)/powerResolution;
+        motorProfilesF = new MotorProfileConstP[powerResolution];
+        motorProfilesR = new MotorProfileConstP[powerResolution];
+        for(int i=0; i<powerResolution; i++) {
+            motorProfilesF[i] = new MotorProfileConstP(motorConfig);
+            motorProfilesR[i] = new MotorProfileConstP(motorConfig);
         }
     }
 
-    public void calcProfiles(double Pi_in, double Pf_in) {
+    public void calcProfiles(int Pi_in, int Ptarget_in) {
         Pi                   = Pi_in;
-        Pf                   = Pf_in;
-        for(int i=0; i<powerResolution; i++) {
-            double power     = -1.0 + i*dP;
+        Ptarget              = Ptarget_in;
+        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
+            double power     = minPower + pIdx*dP;
+            String logMsg    = "Profile=" + pIdx + " power=" + power;
+            logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
+            logMsg           = "Calculating Profile from=" + Pi + " to=" + Ptarget;
+            logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
+            motorProfilesF[pIdx].calcProfile(power, Pi,      Ptarget);
+            logMsg           = "Calculating Profile from=" + Ptarget + " to=" + Pi;
+            logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
+            motorProfilesR[pIdx].calcProfile(power, Ptarget, Pi);
         }
     }
+
+    public void writeMetrics() {
+        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
+            motorProfilesF[pIdx].writeMetrics();
+            motorProfilesR[pIdx].writeMetrics();
+        }
+    }
+
+    public void writeJSONs() {
+        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
+            motorProfilesF[pIdx].writeJSON();
+            motorProfilesR[pIdx].writeJSON();
+        }
+    }
+
     public boolean isValid() {
         return true;
     }
