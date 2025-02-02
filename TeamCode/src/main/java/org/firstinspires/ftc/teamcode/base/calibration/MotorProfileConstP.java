@@ -67,113 +67,117 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
     /**
      * Calibration Direction: FORWARD, REVERSE
      */
-    public  transient Direction   calibDirection;
+    public  transient Direction         calibDirection;
 
-    public        double          minTimeInc;
+    public            double            minTimeInc;
     /**
      * Encoder resolution of the motor itself at the shaft output (PPR)
      */
-    public        double        encoderResolution;
-    public        int           timeResolution;
-    public        double        power;
-    public        double        signedPower;
+    public            double            encoderResolution;
+    public            int               timeResolution;
+    public            double            power;
+    public            double            signedPower;
     /**
      * Starting Position
      */
-    public        int         Pi;
+    public            int               Pi;
     /**
      * Final Position
      */
-    public        int         Pf;
+    public            int               Pf;
+    /**
+     * Target Position. The motor position should never be driven past this limit
+     */
+    public            int               Ptarget;
     /**
      * Index where data stops. i.e. if we reach the Pf before we fill out
      * the entire array (before timeResolution)
      */
-    public        int         tIdxMax;
+    public            int               tIdxMax;
     /**
      * The number of periods used to compute Aavg and Vavg
      */
-    public        int         averagingPeriods;
+    public            int               averagingPeriods;
     /**
      * Time coordinate
      */
-    private       double[]    t;
+    private           double[]          t;
     /**
      * Time to extract position
      */
-    private       double[]    tPextract;
+    private           double[]          tPextract;
     /**
      * Time to extract velocity
      */
-    private       double[]    tVextract;
+    private           double[]          tVextract;
     /**
      * Time to extract current
      */
-    private       double[]    tCextract;
+    private           double[]          tCextract;
     /**
      * Cycle time
      */
-    private       double[]    tCycle;
+    private           double[]          tCycle;
     /**
      * Position coordinate
      */
-    private       int[]       P;
+    private           int[]             P;
     /**
      * Velocity coordinate
      */
-    private       double[]    V;
+    private           double[]          V;
     /**
      * Moving Average Velocity
      */
-    private       double[]    Vavg;
+    private           double[]          Vavg;
     /**
      * Acceleration coordinate
      */
-    private       double[]    A;
+    private           double[]          A;
     /**
      * Moving Average Acceleration
      */
-    private       double[]    Aavg;
+    private           double[]          Aavg;
     /**
      *
      */
-    private       double[]    C;
+    private           double[]          C;
     /**
      * Power as read from the motor
      */
-    private       double[]    motorPower;
+    private           double[]          motorPower;
     /**
      * Maximum velocity. should be close the stread state velocity
      */
-    public        double      Vmax;
+    public            double            Vmax;
     /**
      * Maximum Acceleration
      */
-    public        double      Amax;
+    public            double            Amax;
     /**
      * Maximum Deceleration
      */
-    public        double      Dmax;
+    public            double            Dmax;
     /**
      * Has the profile reached the target position Pf
      */
-    public        boolean     isTargetReached;
+    public            boolean           isTargetReached;
     /**
      * Index of steady state for Vavg
      */
-    public        Integer     ssIdxVavg;
+    public            Integer           ssIdxVavg;
     /**
      * steady state Vavg. null if it does not obtain
      */
-    public        Double      ssVavg;
+    public            Double            ssVavg;
     /**
      * Index of steady state of Aavg
      */
-    public        Integer     ssIdxAavg;
+    public            Integer           ssIdxAavg;
     /**
      * Steady state Aavg. null if it does not obtain
      */
-    public        Double      ssAavg;
+    public            Double            ssAavg;
     /**
      * Constructor requires information about the motor
      * @param motorConfig_in: The configuration of the motor being calibrated
@@ -279,12 +283,24 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
         isTargetReached       = Math.approxEquals(P[tIdxMax],Pf,5.0/Pf);
     }
 
-    public void calcProfile(double power_in, int Pi_in, int Pf_in) {
+    private void checkCalcInput() {
+        if((calibDirection==Direction.FORWARD && (Pf-Pi)<motorConfig.calibParams.minDistance) ||
+                (calibDirection==Direction.REVERSE && (Pi-Pf)<motorConfig.calibParams.minDistance)) {
+            String errorMsg = "Distance too short for MotorProfile calibration: calibDirection=" +
+                    calibDirection + " Pi=" + Pi + " Pf=" + Pf;
+            throw new CalculationException(errorMsg);
+        }
+    }
+
+    public void calcProfile(double power_in, int Pi_in, int Ptarget_in) {
         Pi                      = Pi_in;
-        Pf                      = Pf_in;
+        Ptarget                 = Ptarget_in;
+        Pf                      = Ptarget - motorConfig.calibParams.targetBuffer;
         power                   = abs(power_in);
         signedPower             = Pf > Pi? power : -power;
         calibDirection          = Pf > Pi? Direction.FORWARD : Direction.REVERSE;
+
+        checkCalcInput();
 
         ElapsedTime timer       = new ElapsedTime();
         ElapsedTime eTimer      = new ElapsedTime();
