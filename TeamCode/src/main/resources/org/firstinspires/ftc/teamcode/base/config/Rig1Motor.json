@@ -25,7 +25,10 @@
         "timeResolution": 3000,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     }
   },

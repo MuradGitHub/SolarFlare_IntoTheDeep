@@ -25,7 +25,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "RIGHT_BACK": {
@@ -48,7 +51,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "LEFT_FRONT": {
@@ -71,7 +77,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "RIGHT_FRONT": {
@@ -94,7 +103,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "EXTENDO": {
@@ -117,7 +129,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "EXTENDO_PITCH": {
@@ -140,7 +155,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     },
     "BUCKET_SLIDES": {
@@ -163,7 +181,10 @@
         "timeResolution": 100,
         "powerResolution": 100,
         "averagingTime": 0.040,
-        "endSamples": 20
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100
       }
     }
   },

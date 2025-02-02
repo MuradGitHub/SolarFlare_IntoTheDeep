@@ -39,6 +39,9 @@ public class MotorCalibConfig implements Validatable {
     public int    powerResolution;
     public double averagingTime;
     public int    endSamples;
+    public double minPower;
+    public double maxPower;
+    public int    targetBuffer;
 
     public boolean isValid() {
         return true;
@@ -54,6 +57,10 @@ public class MotorCalibConfig implements Validatable {
         sb.append("  powerResolution=").append(powerResolution).append("\n");
         sb.append("  averagingTime=")  .append(averagingTime)  .append("\n");
         sb.append("  endSamples=")     .append(endSamples)     .append("\n");
+        sb.append("  minPower=")       .append(minPower)       .append("\n");
+        sb.append("  maxPower=")       .append(maxPower)       .append("\n");
+        sb.append("  targetBuffer=")   .append(targetBuffer)   .append("\n");
+
 
 
         return sb.toString();
