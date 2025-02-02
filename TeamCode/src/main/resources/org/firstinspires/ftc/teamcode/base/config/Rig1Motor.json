@@ -28,7 +28,8 @@
         "endSamples": 20,
         "minPower": 0.1,
         "maxPower": 1.0,
-        "targetBuffer": 100
+        "targetBuffer": 100,
+        "minDistance": 200
       }
     }
   },

@@ -42,6 +42,7 @@ public class MotorCalibConfig implements Validatable {
     public double minPower;
     public double maxPower;
     public int    targetBuffer;
+    public int    minDistance;
 
     public boolean isValid() {
         return true;
@@ -60,6 +61,7 @@ public class MotorCalibConfig implements Validatable {
         sb.append("  minPower=")       .append(minPower)       .append("\n");
         sb.append("  maxPower=")       .append(maxPower)       .append("\n");
         sb.append("  targetBuffer=")   .append(targetBuffer)   .append("\n");
+        sb.append("  minDistance=")    .append(minDistance)    .append("\n");
 
 
 
