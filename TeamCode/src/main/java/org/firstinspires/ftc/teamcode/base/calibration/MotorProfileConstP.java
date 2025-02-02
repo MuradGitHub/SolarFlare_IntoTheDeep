@@ -322,8 +322,7 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
         double  VNow;
         double  CNow;
         double  motorPowerNow;
-        boolean shortOfTarget;
-        boolean endOfPower      = false;
+        boolean targetReached;
         int     endSamples      = motorConfig.calibParams.endSamples;
         timer.reset();
         eTimer2.reset();
@@ -370,7 +369,7 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
 
                 tIdx++;
             }
-            shortOfTarget        = calibDirection == Direction.FORWARD? PNow<Pf : PNow>Pf;
+            targetReached        = calibDirection == Direction.FORWARD? PNow>=Pf : PNow<=Pf;
 
             /*
             logger.logp(Level.SEVERE,
@@ -379,13 +378,12 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
                     String.format(Locale.US, format, tIdx, shortOfTarget, Pi, Pf, PNow));
             */
 
-            endOfPower           = tIdx>=timeResolution || !shortOfTarget;
-            if(endOfPower) {
+            if(targetReached) {
                 motor.setPower(0.0);
                 endSamples--;
             }
 
-        } while(endSamples>=0 || !endOfPower);
+        } while((endSamples>=0 || !targetReached) && tIdx<timeResolution);
 
         motor.setPower(0);
         /// tIdx is one position ahead of the last valid slot in the data arrays
