@@ -43,7 +43,7 @@ import static org.firstinspires.ftc.teamcode.base.calibration.Math.solveQuadrati
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.base.calibration.CalculationException;
+import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 import org.firstinspires.ftc.teamcode.base.calibration.ComplexNumberPair;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.regtest.RegTest;

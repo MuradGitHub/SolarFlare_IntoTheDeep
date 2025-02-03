@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.base.calibration.CalculationException;
+import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 
 public class DummyDcMotorEx implements DcMotorEx {
     private boolean          motorEnable;
