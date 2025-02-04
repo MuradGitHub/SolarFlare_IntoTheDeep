@@ -312,7 +312,6 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
 
         ElapsedTime timer       = new ElapsedTime();
         ElapsedTime eTimer      = new ElapsedTime();
-        ElapsedTime eTimer2     = new ElapsedTime();
         double  dt;
         double  tPrev           = 0;
         int     tIdx            = 0;
@@ -333,27 +332,24 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         boolean targetReached;
         int     endSamples      = motorConfig.calibParams.endSamples;
         timer.reset();
-        eTimer2.reset();
+        eTimer.reset();
         motor.setPower(signedPower);
         String format           = "tIdx=%1$d shortOfTarget=%2$b Pi=%3$d Pf=%4$d P=%5$d";
         do {
-            tCycleNow          += eTimer2.seconds();
-            eTimer2.reset();
+            tCycleNow          += eTimer.seconds();
+            eTimer.reset();
             tNow                = timer.seconds();
 
             /// Pull current position info
-            eTimer.reset();
             PNow                 = motor.getCurrentPosition();
             tPextractNow        += eTimer.seconds();
 
             /// Pull velocity info
             /// With no arguments getVelocity() returns Ticks Per Second
-            eTimer.reset();
             VNow                 = motor.getVelocity();
             tVextractNow        += eTimer.seconds();
 
             /// Pull current info
-            eTimer.reset();
             CNow                 = motor.getCurrent(CurrentUnit.AMPS);
             motorPowerNow        = motor.getPower();
             tCextractNow        += eTimer.seconds();
@@ -366,9 +362,9 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
                 C         [tIdx] = CNow;
                 motorPower[tIdx] = motorPowerNow;
                 tCycle    [tIdx] = tCycleNow;
-                tPextract [tIdx] = tPextractNow;
-                tVextract [tIdx] = tVextractNow;
-                tCextract [tIdx] = tCextractNow;
+                tPextract [tIdx] = tPextractNow - tCextractNow;
+                tVextract [tIdx] = tVextractNow - tPextractNow;
+                tCextract [tIdx] = tCextractNow - tVextractNow;
                 tPrev            = tNow;
                 tCycleNow        = 0;
                 tPextractNow     = 0;
