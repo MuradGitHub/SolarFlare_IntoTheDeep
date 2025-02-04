@@ -76,6 +76,14 @@ public class RobotMetricsFile {
         formatter.format(robotMetricsSpec.format, data);
     }
 
+    public void addData(MetricsDataPoint dataPoint) {
+        if(!isActive()) {
+            Logger.getGlobal().severe("RobotMetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            return;
+        }
+        formatter.format(robotMetricsSpec.format, dataPoint.getFields());
+    }
+
     public boolean isActive() {
         return formatter != null;
     }
