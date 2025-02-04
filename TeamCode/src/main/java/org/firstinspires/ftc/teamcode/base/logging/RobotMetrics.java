@@ -53,6 +53,7 @@ public class RobotMetrics {
         initializeTablesFormats();
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     private void initializeTablesFormats() {
         /// MotionProfile files
         tablesSpecs.put("MotionProfile",
@@ -101,6 +102,12 @@ public class RobotMetrics {
         if(metricsSpec == null)
             throw new MissingDataException("No RobotMetricsSpec for TableType: " + tableType);
 
+        return new RobotMetricsFile(metricsSpec, fileId);
+    }
+
+    public RobotMetricsFile getMetricsFile(MetricsDataPoint dataPoint, String fileId) {
+        RobotMetricsSpec metricsSpec = dataPoint.getMetricsSpec();
+        tablesSpecs.put(dataPoint.getTableType(), metricsSpec);
         return new RobotMetricsFile(metricsSpec, fileId);
     }
 
