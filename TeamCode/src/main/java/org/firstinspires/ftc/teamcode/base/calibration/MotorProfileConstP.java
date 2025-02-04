@@ -232,6 +232,8 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
 
         }
 
+        motor.setPower(0.0);
+
         logger.logp(Level.INFO,
                 "MotorProfileConsP",
                 "gotoStart",
