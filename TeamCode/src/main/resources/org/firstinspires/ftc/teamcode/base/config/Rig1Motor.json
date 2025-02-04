@@ -30,7 +30,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     }
   },

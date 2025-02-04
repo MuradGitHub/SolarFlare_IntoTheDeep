@@ -30,7 +30,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "RIGHT_BACK": {
@@ -58,7 +58,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "LEFT_FRONT": {
@@ -86,7 +86,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "RIGHT_FRONT": {
@@ -114,7 +114,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "EXTENDO": {
@@ -142,7 +142,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "EXTENDO_PITCH": {
@@ -170,7 +170,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     },
     "BUCKET_SLIDES": {
@@ -198,7 +198,7 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
-        "velocityTolerance": 5.0
+        "velocityTolerance": 20.0
       }
     }
   },
