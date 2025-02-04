@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.teamcode.base.logging;
 
 public interface MetricsDataPoint {
-    String   getTableType();
-    String   getFormat();
-    String[] getFieldNames();
-    Object[] getFields();
-
+    String           getTableType();
+    String           getFormat();
+    String[]         getFieldNames();
+    Object[]         getFields();
+    RobotMetricsSpec getMetricsSpec();
 }
