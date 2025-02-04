@@ -219,7 +219,9 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         motor.setPower(toStartPower);
 
         boolean offTarget   = true;
-        while(motor.isBusy() || offTarget) {
+        while(motor.isBusy() ||
+                offTarget    ||
+                abs(motor.getVelocity()) > motorConfig.calibParams.velocityTolerance) {
             offTarget = abs(Pi - motor.getCurrentPosition()) > 5;
 
             logger.logp(Level.INFO,
