@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 import static java.lang.Math.floor;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
+import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
@@ -122,8 +123,13 @@ public class MotorProfiles implements Validatable {
 
     public MotorCalibResult getCalibResult() {
         MotorCalibResult result = new MotorCalibResult(
-
+                motorConfig.motorEnum,
+                getSteadyStateDataForward(),
+                getDataForward(),
+                getSteadyStateDataReverse(),
+                getDataReverse()
         );
+        result.fit();
         return result;
     }
     public void writeMetrics() {
