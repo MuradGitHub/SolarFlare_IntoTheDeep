@@ -78,7 +78,7 @@ public class Rig1MotorCalib extends LinearOpMode {
 
 
         int    Pi    = 0;
-        int    Pf    = 10 * (int) motorConfig.motorSpec.encoderResolution;
+        int    Pf    = 5 * (int) motorConfig.motorSpec.encoderResolution;
 
         telemetry.addData("Starting Profile Calculations", "");
         telemetry.update();
