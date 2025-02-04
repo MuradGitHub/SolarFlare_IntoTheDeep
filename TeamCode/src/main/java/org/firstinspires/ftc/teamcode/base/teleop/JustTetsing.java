@@ -28,12 +28,26 @@ public class JustTetsing extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         TeleOpComponents.initializeMechanisms(hardwareMap,telemetry,new Pose2d(0,0,Math.toRadians(90)));
         waitForStart();
-        TeleOpActions.runLoop(
-                this::opModeIsActive,
-                bucketSlides.triggeredToggleAction(()->(gamepad1.a),0,1060),
-                extendo.triggeredToggleAction(()->(gamepad1.b),0,793),
-                extendoPitch.triggeredToggleAction(()->(gamepad1.x),-960,0),
-                new UpdateTelemetryAction()
-        );
+            TeleOpActions.runLoop(
+                    this::opModeIsActive,
+                    bucketSlides.triggeredToggleAction(()->(gamepad1.a),0,1055),
+                    extendo.triggeredToggleAction(()->(gamepad1.b),0,600),
+                    new TeleOpActions.PressTrigger(new Condition[]{()->(gamepad1.x)},new TeleOpAction[]{
+                            new TeleOpActions.SemiUninterruptibleConditionalAction(new Condition[]{()->(extendoPitch.target==0),()->(extendoPitch.target==-1020)},
+                                    new TeleOpAction[]{
+                                        new TeleOpSequentialAction(
+                                            new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("PID");}),
+                                            extendoPitch.setTargetAction(-1020)
+                                        ),
+                                        new TeleOpSequentialAction(
+                                                new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("MOTION_PROFILE");}),
+                                                extendoPitch.setTargetAction(0)
+                                        ),
+                                    }
+                            )
+
+                    }),
+                    new UpdateTelemetryAction()
+            );
     }
 }

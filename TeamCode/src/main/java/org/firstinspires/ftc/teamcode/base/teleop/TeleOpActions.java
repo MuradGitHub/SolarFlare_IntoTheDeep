@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.base.teleop.LambdaInterfaces.Condition;
 import org.firstinspires.ftc.teamcode.base.teleop.LambdaInterfaces.DoubleFunction;
 import org.firstinspires.ftc.teamcode.base.teleop.LambdaInterfaces.ShortFunction;
@@ -582,6 +583,7 @@ public abstract class TeleOpActions{
             TeleOpComponents.telemetry.addData("bucketSlides target",TeleOpComponents.bucketSlides.target);
             TeleOpComponents.telemetry.addData("bucketSlides pos",TeleOpComponents.bucketSlides.getCurrentPosition());
             TeleOpComponents.telemetry.addData("bucketSlides instant target",TeleOpComponents.bucketSlides.instantTargetPosition);
+            TeleOpComponents.telemetry.addData("bucketSlides volts",TeleOpComponents.bucketSlides.getCurrent(CurrentUnit.AMPS));
             TeleOpComponents.telemetry.addData("loopy",TIMER.time());
             TeleOpComponents.telemetry.update();
             TIMER.reset();
@@ -751,42 +753,29 @@ public abstract class TeleOpActions{
         }
     }
     public static void runLoop(Condition opModeIsActive, TeleOpAction...actions){
-        ArrayList<BotMotor> motionProfileMotors = new ArrayList<>();
-        for (BotMotor motor : TeleOpComponents.motors){
-            if (Objects.equals(motor.MOVEMENT_MODE, "MOTION_PROFILE")){
-                motionProfileMotors.add(motor);
+        for (BotMotor motor : TeleOpComponents.motors) {
+            if (Objects.equals(motor.MOVEMENT_MODE, "MOTION_PROFILE") || Objects.equals(motor.MOVEMENT_MODE, "PID")) {
+                motor.LOOP_TIMER.reset();
             }
-        }
-        ArrayList<BotMotor> pidMotors = new ArrayList<>();
-        for (BotMotor motor : TeleOpComponents.motors){
-            if (Objects.equals(motor.MOVEMENT_MODE, "PID")){
-                pidMotors.add(motor);
-            }
-        }
-        for (int i=0;i<motionProfileMotors.size();i++){
-            motionProfileMotors.get(i).LOOP_TIMER.reset();
         }
         while (opModeIsActive.call()) {
             for (TeleOpAction action : actions) {
                 action.repeatFromStart(packet);
             }
-            for (int i=0;i<motionProfileMotors.size();i++){
-                BotMotor motor = motionProfileMotors.get(i);
-                if (!motor.isStallResetting){
-                    motor.createPendingMotionProfiles();
-                    motor.runMotionProfileOnce();
-                }
-            }
-            for (int i=0;i<pidMotors.size();i++){
-                BotMotor motor = pidMotors.get(i);
-                if (!motor.isStallResetting){
-                    motor.runPIDOnce();
+            for (int i=0;i<motors.size();i++) {
+                BotMotor motor = motors.get(i);
+                if (!motor.isStallResetting) {
+                    if (Objects.equals(motor.MOVEMENT_MODE, "MOTION_PROFILE")) {
+                        motor.createPendingMotionProfiles();
+                        motor.runMotionProfileOnce();
+                    }
+                    else if (Objects.equals(motor.MOVEMENT_MODE, "PID")){
+                        motor.runPIDOnce();
+                    }
                 }
             }
         }
         motors.clear();
-        motionProfileMotors.clear();
-        pidMotors.clear();
         servos.clear();
         CRServos.clear();
     }

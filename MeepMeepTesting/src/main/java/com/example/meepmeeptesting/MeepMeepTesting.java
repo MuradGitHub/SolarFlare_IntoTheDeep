@@ -23,7 +23,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class MeepMeepTesting {
-    static MeepMeep meepMeep = new MeepMeep(800);
+    static MeepMeep meepMeep = new MeepMeep(500);
     static RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
             // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
             .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
@@ -188,10 +188,8 @@ public class MeepMeepTesting {
 
         Action oneSpecimenPlusThreeSpecimen1 = myBot.getDrive().actionBuilder(new Pose2d(12.4375/2,-70+15.0625/2,Math.toRadians(90)))
                 .waitSeconds(0.2)
-                .strafeToLinearHeading(new Vector2d(12.4375/2,-45), Math.toRadians(90))
-                .waitSeconds(0.001)
-                .splineToSplineHeading(new Pose2d(38,-38,Math.toRadians(45)),Math.toRadians(0))
-                .setTangent(0)
+                .strafeToLinearHeading(new Vector2d(12.4375/2,-37), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(38,-38),Math.toRadians(45))
                 .waitSeconds(0.001)
                 .splineToLinearHeading(new Pose2d(43,-41,Math.toRadians(-50)),Math.toRadians(-45))
                 .splineToSplineHeading(new Pose2d(46,-38,Math.toRadians(37)),Math.toRadians(45))
@@ -199,19 +197,15 @@ public class MeepMeepTesting {
                 .splineToSplineHeading(new Pose2d(57,-38,Math.toRadians(37)),Math.toRadians(45))
                 .splineToLinearHeading(new Pose2d(58,-41,Math.toRadians(-10)),Math.toRadians(-80))
                 .splineToSplineHeading(new Pose2d(50,-45,Math.toRadians(-110)),Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(36,-49,Math.toRadians(-90)),Math.toRadians(225))
-                .setTangent(135)
-                .splineToLinearHeading(new Pose2d(12.4375/2,-45,Math.toRadians(90)),Math.toRadians(100))
-                .splineToLinearHeading(new Pose2d(36,-49,Math.toRadians(-90)),Math.toRadians(-90))
-                .setTangent(135)
-                .splineToLinearHeading(new Pose2d(12.4375/2,-45,Math.toRadians(90)),Math.toRadians(100))
-                .splineToLinearHeading(new Pose2d(36,-49,Math.toRadians(-90)),Math.toRadians(-90))
-                .setTangent(135)
-                .splineToLinearHeading(new Pose2d(12.4375/2,-45,Math.toRadians(90)),Math.toRadians(100))
-                .splineToLinearHeading(new Pose2d(36,-49,Math.toRadians(-90)),Math.toRadians(-90))
-                .setTangent(135)
-                .splineToLinearHeading(new Pose2d(12.4375/2,-45,Math.toRadians(90)),Math.toRadians(100))
-                .splineToLinearHeading(new Pose2d(39,-56,Math.toRadians(-45)),Math.toRadians(-45))
+                .splineToSplineHeading(new Pose2d(36,-54,Math.toRadians(-90)),Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(12.4375/2,-37),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(36,-54),Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(12.4375/2,-37),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(36,-54),Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(12.4375/2,-37),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(36,-54),Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(12.4375/2,-37),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(39,-56),Math.toRadians(-45))
                 .build();
 
         myBot.runAction(new SequentialAction(

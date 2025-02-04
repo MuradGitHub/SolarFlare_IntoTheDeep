@@ -227,6 +227,8 @@ public class BackUpTeleOp extends LinearOpMode {
             if ((gamepad2.back) && !(gamepad2.a)){
                 bucketSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 extendoPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                bucketSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                extendoPitch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             pinpoint.update();
