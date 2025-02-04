@@ -134,6 +134,15 @@ public class MotorCalibResult implements MetricsWritable {
         coeff                          = fitter.fit(obs.toList());
         kAresR                         = coeff[0];
         k1R                            = coeff[1];
+
+        update();
+    }
+
+    public void update() {
+        for(MotorProfileDataPoint Pt: dataF)
+            Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
+        for(MotorProfileDataPoint Pt: dataR)
+            Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
     }
 
     public double getAccel(DcMotorSimple.Direction direction, double power, double velocity) {
@@ -159,9 +168,14 @@ public class MotorCalibResult implements MetricsWritable {
     }
 
     public void writeMetrics() {
-        RobotMetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
-
-
+        RobotMetrics     robotMetrics = RobotMetrics.getInstance();
+        RobotMetricsFile metricsFile = robotMetrics.getMetricsFile(
+                new MotorProfileDataPoint(),
+                getMetricsFileId());
+        for(MotorProfileDataPoint dataPoint: dataF)
+            metricsFile.addData(dataPoint);
+        for(MotorProfileDataPoint dataPoint: dataR)
+            metricsFile.addData(dataPoint);
 
         metricsFile.close();
     }
