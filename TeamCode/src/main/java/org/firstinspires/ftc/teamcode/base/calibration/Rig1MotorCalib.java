@@ -33,6 +33,8 @@ import static java.util.logging.Level.INFO;
 
 import java.util.logging.Logger;
 
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -84,10 +86,38 @@ public class Rig1MotorCalib extends LinearOpMode {
         telemetry.update();
         motorProfiles.calcProfiles(Pi, Pf);
 
+        telemetry.addData("Starting to Generate MotorCalibResult", "");
+        telemetry.update();
+        MotorCalibResult result = motorProfiles.getCalibResult();
+        telemetry.addData("k1F", result.k1F);
+        telemetry.addData("k2F", result.k2F);
+        telemetry.addData("k3F", result.k3F);
+        telemetry.addData("k1R", result.k1R);
+        telemetry.addData("k2R", result.k2R);
+        telemetry.addData("k3R", result.k3R);
+        telemetry.addData("FORWARD Vss(0.4)", result.getVss(Direction.FORWARD, 0.4));
+        telemetry.addData("FORWARD Vss(0.5)", result.getVss(Direction.FORWARD, 0.5));
+        telemetry.addData("FORWARD Vss(0.6)", result.getVss(Direction.FORWARD, 0.6));
+        telemetry.addData("FORWARD Vss(0.7)", result.getVss(Direction.FORWARD, 0.7));
+        telemetry.addData("FORWARD Vss(0.8)", result.getVss(Direction.FORWARD, 0.8));
+        telemetry.addData("FORWARD Vss(0.9)", result.getVss(Direction.FORWARD, 0.9));
+        telemetry.addData("FORWARD Vss(1.0)", result.getVss(Direction.FORWARD, 1.0));
+        telemetry.addData("REVERSE Vss(0.4)", result.getVss(Direction.REVERSE, 0.4));
+        telemetry.addData("REVERSE Vss(0.5)", result.getVss(Direction.REVERSE, 0.5));
+        telemetry.addData("REVERSE Vss(0.6)", result.getVss(Direction.REVERSE, 0.6));
+        telemetry.addData("REVERSE Vss(0.7)", result.getVss(Direction.REVERSE, 0.7));
+        telemetry.addData("REVERSE Vss(0.8)", result.getVss(Direction.REVERSE, 0.8));
+        telemetry.addData("REVERSE Vss(0.9)", result.getVss(Direction.REVERSE, 0.9));
+        telemetry.addData("REVERSE Vss(1.0)", result.getVss(Direction.REVERSE, 1.0));
+        telemetry.update();
+
+        result.writeMetrics();
+
+        sleep(60000);
+
         telemetry.addData("Starting to write JSONs for Profiles", "");
         telemetry.update();
         motorProfiles.writeJSONs();
-
 
         telemetry.addData("Starting to write Metrics for Profiles", "");
         telemetry.update();
