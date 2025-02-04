@@ -34,6 +34,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -52,6 +53,7 @@ import org.firstinspires.ftc.teamcode.base.config.JSONWritable;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
+import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
@@ -59,7 +61,7 @@ import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
-public class MotorProfileConstP implements JSONWritable, MetricsWritable, Validatable {
+public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWritable, Validatable {
     private transient final Logger      logger;
     private           final MotorEnum   motorEnum;
     private transient final MotorConfig motorConfig;
@@ -219,12 +221,15 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
         boolean offTarget   = true;
         while(motor.isBusy() || offTarget) {
             offTarget = abs(Pi - motor.getCurrentPosition()) > 5;
-            /*
+
             logger.logp(Level.INFO,
                     "MotorProfileConstP",
                     "TheWhileLoop",
-                    calibDirection + " P=" + motor.getCurrentPosition() + " - still offTarget");
-            */
+                    calibDirection + " power=" + motor.getPower() + " C=" +
+                            motor.getCurrent(CurrentUnit.AMPS) + " P=" +
+                            motor.getCurrentPosition() + " V=" + motor.getVelocity() +
+                            " - still offTarget");
+
         }
 
         logger.logp(Level.INFO,
@@ -232,7 +237,8 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
                 "gotoStart",
                 "Exiting: Motor: " + motorEnum + " " + calibDirection + " appliedPower=" +
                         toStartPower + " motorPower=" + motor.getPower() + " offTarget=" +
-                        offTarget + " P=" + motor.getCurrentPosition());
+                        offTarget + " P=" + motor.getCurrentPosition() + " V=" +
+                        motor.getVelocity() + " C=" + motor.getCurrent(CurrentUnit.AMPS));
     }
 
     public int getPLast() {
@@ -479,17 +485,51 @@ public class MotorProfileConstP implements JSONWritable, MetricsWritable, Valida
         return "MotorProfileConstP";
     }
 
-    public void writeMetrics() {
-        RobotMetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
+    /**
+     * The caller needs to close the metrics file
+     * @param file
+     */
+    public void writeMetrics(RobotMetricsFile file) {
         for(int tIdx=0; tIdx<=tIdxMax; tIdx++) {
-            metricsFile.addData(
+            file.addData(
                     t[tIdx], tPextract[tIdx], tVextract[tIdx], tCextract[tIdx], tCycle[tIdx],
                     P[tIdx], V[tIdx],         Vavg[tIdx],      A[tIdx],         Aavg[tIdx],
                     C[tIdx], motorPower[tIdx]
             );
         }
+    }
 
+    public void writeMetrics() {
+        RobotMetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
+        writeMetrics(metricsFile);
         metricsFile.close();
+    }
+
+    public MotorProfileDataPoint getDataAtTIdx(int tIdx) {
+        if(tIdx<0 || tIdx>=t.length)
+            throw new IndexOutOfBoundsException("MotorProfileDataPoint.getDataAtTIdx passed: " + tIdx);
+
+        return new MotorProfileDataPoint(
+                calibDirection,
+                t[tIdx],
+                P[tIdx],
+                Vavg[tIdx],
+                Aavg[tIdx],
+                motorPower[tIdx]);
+    }
+
+    public MotorProfileDataPoint getSteadyStateResult() {
+        if(!hasSteadyStateV())
+            return null;
+        return getDataAtTIdx(ssIdxVavg);
+    }
+
+    public ArrayList<MotorProfileDataPoint> getProfileData() {
+        ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
+        if(hasSteadyStateV())
+            for(int tIdx=0; tIdx<=ssIdxVavg; tIdx++)
+                data.add(getDataAtTIdx(tIdx));
+        return data;
     }
 
     @NonNull
