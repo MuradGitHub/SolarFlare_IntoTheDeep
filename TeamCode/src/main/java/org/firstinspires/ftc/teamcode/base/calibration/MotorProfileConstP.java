@@ -261,10 +261,12 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         for(int tIdx=1; tIdx<=tIdxMax; tIdx++) {
             int tIdx0         = max(tIdx-averagingPeriods, 0);
             double tNow       = t[tIdx];
-            double VNow       = V[tIdx];
-            double ANow       = (VNow-V[tIdx-1])/(tNow-t[tIdx-1]);
+
             Vavg[tIdx]        = (P[tIdx]-P[tIdx0])/(tNow-t[tIdx0]);
-            Aavg[tIdx]        = (VNow-V[tIdx0])/(tNow-t[tIdx0]);
+            double VNow       = Vavg[tIdx];
+
+            double ANow       = (VNow-Vavg[tIdx-1])/(tNow-t[tIdx-1]);
+            Aavg[tIdx]        = (VNow-Vavg[tIdx0])/(tNow-t[tIdx0]);
             A[tIdx]           = ANow;
 
             if(abs(VNow) > abs(Vmax))
