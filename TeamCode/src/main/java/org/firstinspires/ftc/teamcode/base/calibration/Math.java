@@ -33,6 +33,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
 
+import java.util.Locale;
 import java.util.function.BiPredicate;
 
 public class Math {
@@ -113,5 +114,38 @@ public class Math {
                 return idx;
 
         return null;
+    }
+
+    public static int findInsertionIndex(double target, double[] values) {
+        int low  = 0;
+        int high = values.length - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (values[mid] == target) {
+                return mid; // Target found at index 'mid'
+            } else if (values[mid] < target) {
+                low = mid + 1; // Search in the right half
+            } else {
+                high = mid - 1; // Search in the left half
+            }
+        }
+
+        return low; // Target not found, return the insertion index
+    }
+
+    public static void main(String[] args) {
+        /// findInsertionPoint
+        double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
+        String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
+        int[][]    cases   = new int[][] {
+                { 1, 0, findInsertionIndex(  1.0, values)},
+                {-4, 0, findInsertionIndex( -4.0, values)},
+                { 6, 4, findInsertionIndex(  6.0, values)},
+                {10, 5, findInsertionIndex( 10.0, values)},
+        };
+        for(int[] c: cases)
+            System.out.printf(Locale.US, format, c[0], c[1], c[2], c[1]==c[2]);
     }
 }
