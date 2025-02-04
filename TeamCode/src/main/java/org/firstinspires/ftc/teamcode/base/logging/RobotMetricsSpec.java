@@ -39,12 +39,12 @@ import java.util.Locale;
 public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     public String   tableType;
     public String   format;
-    public String[] fields;
+    public String[] fieldNames;
 
-    public RobotMetricsSpec(String tableType, String format, String[] fields) {
-        this.tableType = tableType;
-        this.format    = format;
-        this.fields    = fields.clone();
+    public RobotMetricsSpec(String tableType_in, String format_in, String[] fieldNames_in) {
+        this.tableType  = tableType_in;
+        this.format     = format_in;
+        this.fieldNames = fieldNames_in.clone();
     }
 
     public int compareTo(RobotMetricsSpec other) {
@@ -52,7 +52,7 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     }
 
     public String getHeader() {
-        return String.join(",", fields);
+        return String.join(",", fieldNames);
     }
 
     public String getFileName(String id) {
@@ -68,9 +68,9 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     public String toString() {
         var sb = new StringBuilder();
         sb.append("RobotMetricsSpec\n");
-        sb.append("  tableType=").append(tableType)              .append("\n");
-        sb.append("  format=")   .append(format)                 .append("\n");
-        sb.append("  fields")    .append(Arrays.toString(fields)).append("\n");
+        sb.append("  tableType=").append(tableType)                  .append("\n");
+        sb.append("  format=")   .append(format)                     .append("\n");
+        sb.append("  fields")    .append(Arrays.toString(fieldNames)).append("\n");
 
         return sb.toString();
     }
