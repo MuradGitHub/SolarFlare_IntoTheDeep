@@ -51,6 +51,8 @@ public class MotorProfileDataPoint implements MetricsDataPoint {
     public        double    Aavg;
     public        double    Apred;
 
+    public MotorProfileDataPoint() {}
+
     public MotorProfileDataPoint(DcMotorSimple.Direction direction_in,
                                  double                  t_in,
                                  int                     P_in,
