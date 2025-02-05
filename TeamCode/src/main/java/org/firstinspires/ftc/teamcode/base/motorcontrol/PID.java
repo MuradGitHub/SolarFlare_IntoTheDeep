@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
-import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
-import org.firstinspires.ftc.teamcode.base.config.RobotState;
-
 public class PID {
-    HardwareConfig hw;
-    RobotState state;
     public double error;
     public int encoderPosition;
     public double derivative;
@@ -22,19 +17,15 @@ public class PID {
     public double loopTime;
     ElapsedTime timer = new ElapsedTime();
     boolean isFirstIteration = true;
-    public PID(){
-        hw = HardwareConfig.getInstance();
-        state = RobotState.getInstance();
-    }
-    public double getPIDOutput(MotorEnum motorEnum, double reference, double kP, double kI, double kD) {
+    public double getPIDOutput(DcMotor motor, double reference, double kP, double kI, double kD) {
         if (isFirstIteration){
             timer.reset();
             isFirstIteration = false;
         }
 
-        encoderPosition = hw.getMotorConfig(motorEnum).motor.getCurrentPosition();
+        encoderPosition = motor.getCurrentPosition();
 
-        error = state.getMotorTarget(motorEnum) - encoderPosition;
+        error = reference - encoderPosition;
 
         derivative = (error - lastError) / timer.seconds();
 

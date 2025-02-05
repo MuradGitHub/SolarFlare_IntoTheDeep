@@ -184,6 +184,65 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(new Vector2d(-24.2,-6), Math.toRadians(0))
 
                 .build();
+        double robotLength = 15.364;
+        double robotWidth  = 14.375;
+
+        Action onePlusThreeSpecimen1 = myBot.getDrive().actionBuilder(new Pose2d(-(robotWidth / 2), -70 + (robotLength / 2), 90))
+                // Go to scoring zone first time
+                .strafeToLinearHeading(new Vector2d(8,-46), Math.toRadians(90))
+                .build();
+        Action onePlusThreeSpecimen2 = myBot.getDrive().actionBuilder(new Pose2d(8, -46, Math.toRadians(90)))
+                // Go to sample 1 sample zone
+                .strafeToLinearHeading(new Vector2d(30.7,-45.1), Math.toRadians(50))
+                .build();
+        Action onePlusThreeSpecimen3 = myBot.getDrive().actionBuilder(new Pose2d(30.7, -45.1, Math.toRadians(50)))
+                // Rotate towards observation zone 1st time
+                .turnTo(Math.toRadians(-45))
+                .build();
+        Action onePlusThreeSpecimen4 = myBot.getDrive().actionBuilder(new Pose2d(30.7, -45.1, Math.toRadians(-45)))
+                // Rotate to sample 2 in sample zone
+                .strafeToLinearHeading(new Vector2d(40,-41), Math.toRadians(40))
+                .build();
+        Action onePlusThreeSpecimen5 = myBot.getDrive().actionBuilder(new Pose2d(40, -41, Math.toRadians(40)))
+                // Rotate towards observation zone 2nd time
+                .turnTo(Math.toRadians(-70))
+                .build();
+        Action onePlusThreeSpecimen6 = myBot.getDrive().actionBuilder(new Pose2d(40, -41, Math.toRadians(-70)))
+                // Rotate towards sample 3 in sample zone
+                .strafeToLinearHeading(new Vector2d(51,-41), Math.toRadians(40))
+                .build();
+        Action onePlusThreeSpecimen7 = myBot.getDrive().actionBuilder(new Pose2d(51, -41, Math.toRadians(40)))
+                // Rotate towards observation zone 3rd time
+                .turnTo(Math.toRadians(-100))
+                .build();
+        Action onePlusThreeSpecimen8 = myBot.getDrive().actionBuilder(new Pose2d(51, -41, Math.toRadians(-100)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
+                .build();
+        Action onePlusThreeSpecimen9 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score second specimen
+                .strafeToLinearHeading(new Vector2d(4,-46), Math.toRadians(90))
+                .build();
+        Action onePlusThreeSpecimen10 = myBot.getDrive().actionBuilder(new Pose2d(4, -46, Math.toRadians(90)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
+                .build();
+        Action onePlusThreeSpecimen11 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score third specimen
+                .strafeToLinearHeading(new Vector2d(0,-46), Math.toRadians(90))
+                .build();
+        Action onePlusThreeSpecimen12 = myBot.getDrive().actionBuilder(new Pose2d(0, -46, Math.toRadians(90)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
+                .build();
+        Action onePlusThreeSpecimen13 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score fourth specimen
+                .strafeToLinearHeading(new Vector2d(-4,-46), Math.toRadians(90))
+                .build();
+        Action onePlusThreeSpecimen14 = myBot.getDrive().actionBuilder(new Pose2d(-4, -46, Math.toRadians(90)))
+                // Park
+                .strafeToLinearHeading(new Vector2d(34,-62), Math.toRadians(90))
+                .build();
 
 
         Action oneSpecimenPlusThreeSpecimen1 = myBot.getDrive().actionBuilder(new Pose2d(12.4375/2,-70+15.0625/2,Math.toRadians(90)))
@@ -209,7 +268,20 @@ public class MeepMeepTesting {
                 .build();
 
         myBot.runAction(new SequentialAction(
-                oneSpecimenPlusThreeSpecimen1
+                onePlusThreeSpecimen1,
+                onePlusThreeSpecimen2,
+                onePlusThreeSpecimen3,
+                onePlusThreeSpecimen4,
+                onePlusThreeSpecimen5,
+                onePlusThreeSpecimen6,
+                onePlusThreeSpecimen7,
+                onePlusThreeSpecimen8,
+                onePlusThreeSpecimen9,
+                onePlusThreeSpecimen10,
+                onePlusThreeSpecimen11,
+                onePlusThreeSpecimen12,
+                onePlusThreeSpecimen13,
+                onePlusThreeSpecimen14
         ));
     }
 }
