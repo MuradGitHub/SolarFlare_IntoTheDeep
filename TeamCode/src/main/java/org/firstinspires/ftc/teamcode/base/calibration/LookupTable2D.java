@@ -29,55 +29,323 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
+import static java.lang.Math.min;
+import static java.lang.Math.max;
+import static java.lang.Math.sqrt;
+
+import java.util.Arrays;
+import java.util.Locale;
+
+import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
+import static org.firstinspires.ftc.teamcode.base.calibration.Math.findInsertionIndex;
+
+import androidx.annotation.NonNull;
+
+
 public class LookupTable2D {
-    private double[][] data;
-    private double[] xValues;
-    private double[] yValues;
+    private final int        xResolution;
+    private final int        yResolution;
+    private final int        xIdxMax;
+    private final int        yIdxMax;
+    private       double     xMin;
+    private       double     xMax;
+    private       double     yMin;
+    private       double     yMax;
+    private       double[][] rawData = null;
+    private       double[][] data    = null;
+    private       double[][] weights = null;
+    private       double[]   xValues = null;
+    private       double[]   yValues = null;
 
     // Constructor to initialize the table with data, x, and y values
-    public LookupTable2D(double[][] data, double[] xValues, double[] yValues) {
-        this.data = data;
-        this.xValues = xValues;
-        this.yValues = yValues;
+    public LookupTable2D(double[][] data_in, double[] xValues_in, double[] yValues_in) {
+        data         = data_in;
+        rawData      = data_in;
+        xValues      = xValues_in;
+        yValues      = yValues_in;
+
+        xResolution  = xValues.length;
+        yResolution  = yValues.length;
+
+        xIdxMax      = xResolution-1;
+        yIdxMax      = yResolution-1;
+
+        weights      = new double[xResolution][yResolution];
+        for(double[] r: weights)
+            Arrays.fill(r, 1.0);
+
+        xMin         = Double.POSITIVE_INFINITY;
+        xMax         = Double.NEGATIVE_INFINITY;
+        for(double x: xValues) {
+            if (xMin > x)
+                xMin = x;
+            if (xMax < x)
+                xMax = x;
+        }
+
+        yMin         = Double.POSITIVE_INFINITY;
+        yMax         = Double.NEGATIVE_INFINITY;
+        for(double y: yValues) {
+            if (yMin > y)
+                yMin = y;
+            if (yMax < y)
+                yMax = y;
+        }
+    }
+
+    public LookupTable2D(int xResolution_in, double xMin_in, double xMax_in,
+                         int yResolution_in, double yMin_in, double yMax_in) {
+        xResolution = xResolution_in;
+        yResolution = yResolution_in;
+        xIdxMax     = xResolution-1;
+        yIdxMax     = yResolution-1;
+        xMin        = xMin_in;
+        xMax        = xMax_in;
+        yMin        = yMin_in;
+        yMax        = yMax_in;
+
+        initArrays();
+    }
+
+    private void initArrays() {
+        if(xValues == null) {
+            xValues = new double[xResolution];
+            double dx = (xMax-xMin) / xIdxMax;
+            for(int xIdx=0; xIdx<xResolution; xIdx++)
+                xValues[xIdx] = xMin + xIdx*dx;
+        }
+
+        if(yValues == null) {
+            yValues = new double[yResolution];
+            double dy = (yMax-yMin) / yIdxMax;
+            for(int yIdx=0; yIdx<xResolution; yIdx++)
+                yValues[yIdx] = yMin + yIdx*dy;
+        }
+
+        if(data == null) {
+            data    = new double[xResolution][yResolution];
+            for(double[] r: data)
+                Arrays.fill(r, 0.0);
+        }
+
+        if(rawData == null) {
+            rawData = new double[xResolution][yResolution];
+            for (double[] r: rawData)
+                Arrays.fill(r, 0.0);
+        }
+
+        if(weights == null) {
+            weights  = new double[xResolution][yResolution];
+            for(double[] r: weights)
+                Arrays.fill(r, 0.0);
+        }
+    }
+
+    public void update() {
+        for (int xIdx = 0; xIdx < xResolution; xIdx++)
+            for (int yIdx = 0; yIdx < yResolution; yIdx++) {
+                double weight = weights[xIdx][yIdx];
+                data[xIdx][yIdx] = weight != 0.0 ? rawData[xIdx][yIdx] / weight : 0.0;
+            }
+    }
+
+    public void addDataPoint(double x, double y, double z) {
+        int xIdx1              = min(findInsertionIndex(x, xValues), xIdxMax);
+        int yIdx1              = min(findInsertionIndex(y, yValues), yIdxMax);
+        int xIdx2              = min(xIdx1+1, xIdxMax);
+        int yIdx2              = min(yIdx1+1, yIdxMax);
+
+        // System.out.printf(Locale.US, "addDataPoint x= %1$.3f y= %2$.3f z= %3$.3f%n",x,y,z);
+        // System.out.printf(Locale.US, "addDataPoint square: xIdx1= %1$d yIdx1= %2$d xIdx2= %3$d yIdx2= %4$d%n",xIdx1,yIdx1,xIdx2,yIdx2);
+
+        double x1              = xValues[xIdx1];
+        double x2              = xValues[xIdx2];
+        double y1              = yValues[yIdx1];
+        double y2              = yValues[yIdx2];
+
+        // System.out.printf(Locale.US,"addDataPoint x1= %1$.3f x2= %2$.3f y1= %3$.3f y2= %4$.3f%n",x1,x2,y1,y2);
+
+        double w11             = getWeight11(x, y, x1, y1, x2, y2);
+        double w12             = getWeight12(x, y, x1, y1, x2, y2);
+        double w21             = getWeight21(x, y, x1, y1, x2, y2);
+        double w22             = getWeight22(x, y, x1, y1, x2, y2);
+
+        // System.out.printf(Locale.US,"addDataPoint w11 =%1$.3f w12 =%2$.3f w21 =%3$.3f w22 =%4$.3f%n%n",w11,w12,w21,w22);
+
+        rawData[xIdx1][yIdx1] += z * w11;
+        rawData[xIdx1][yIdx2] += z * w12;
+        rawData[xIdx2][yIdx1] += z * w21;
+        rawData[xIdx2][yIdx2] += z * w22;
+
+        weights[xIdx1][yIdx1] += w11;
+        weights[xIdx1][yIdx2] += w12;
+        weights[xIdx2][yIdx1] += w21;
+        weights[xIdx2][yIdx2] += w22;
     }
 
     // Method to perform bilinear interpolation
     public double interpolate(double x, double y) {
-        // Find the indices of the surrounding data points
-        int xIndex = findIndex(x, xValues);
-        int yIndex = findIndex(y, yValues);
 
-        // Check for out-of-bounds values
-        if (xIndex < 0 || xIndex >= xValues.length - 1 || yIndex < 0 || yIndex >= yValues.length - 1) {
-            throw new IllegalArgumentException("Interpolation point out of bounds.");
-        }
+        // System.out.printf(Locale.US, "%ninterpolate%nx=%1$.3f y=%2$.3f%n",x,y);
+
+        // Find the indices of the surrounding data points
+        int xIdx1 = min(max(findInsertionIndex(x, xValues), 0), xIdxMax);
+        int yIdx1 = min(max(findInsertionIndex(y, yValues), 0), yIdxMax);
+        int xIdx2 = min(xIdx1+1, xIdxMax);
+        int yIdx2 = min(yIdx1+1, yIdxMax);
+
+        // System.out.printf(Locale.US, "xIdx1= %1$d xIdx2= %2$d yIdx1= %3$d yIdx2= %4$d%n",xIdx1,xIdx2,yIdx1,yIdx2);
 
         // Perform bilinear interpolation
-        double x1 = xValues[xIndex];
-        double x2 = xValues[xIndex + 1];
-        double y1 = yValues[yIndex];
-        double y2 = yValues[yIndex + 1];
+        double x1  = xValues[xIdx1];
+        double x2  = xValues[xIdx2];
+        double y1  = yValues[yIdx1];
+        double y2  = yValues[yIdx2];
 
-        double q11 = data[xIndex][yIndex];
-        double q12 = data[xIndex][yIndex + 1];
-        double q21 = data[xIndex + 1][yIndex];
-        double q22 = data[xIndex + 1][yIndex + 1];
+        // System.out.printf(Locale.US, "x1= %1$.3f x2= %2$.3f y1= %3$.3f y2= %4$.3f%n",x1,x2,y1,y2);
 
-        double result = q11 * (x2 - x) * (y2 - y) / ((x2 - x1) * (y2 - y1)) +
-                q21 * (x - x1) * (y2 - y) / ((x2 - x1) * (y2 - y1)) +
-                q12 * (x2 - x) * (y - y1) / ((x2 - x1) * (y2 - y1)) +
-                q22 * (x - x1) * (y - y1) / ((x2 - x1) * (y2 - y1));
+        double q11 = data[xIdx1][yIdx1];
+        double q12 = data[xIdx1][yIdx2];
+        double q21 = data[xIdx2][yIdx1];
+        double q22 = data[xIdx2][yIdx2];
 
-        return result;
+        // System.out.printf(Locale.US, "q11= %1$.3f q21= %2$.3f q12= %3$.3f q22= %4$.3f%n",q11,q21,q12,q22);
+
+        double w11 = getWeight11(x, y, x1, y1, x2, y2);
+        double w21 = getWeight21(x, y, x1, y1, x2, y2);
+        double w12 = getWeight12(x, y, x1, y1, x2, y2);
+        double w22 = getWeight22(x, y, x1, y1, x2, y2);
+
+        // System.out.printf(Locale.US, "w11= %1$.3f w21= %2$.3f w12= %3$.3f w22= %4$.3f%n",w11,w21,w12,w22);
+
+        return q11 * w11 + q21 * w21 + q12 * w12 + q22 * w22;
+
+        /*
+        return  q11 * getWeight11(x, y, x1, y1, x2, y2) +
+                q21 * getWeight21(x, y, x1, y1, x2, y2) +
+                q12 * getWeight12(x, y, x1, y1, x2, y2) +
+                q22 * getWeight22(x, y, x1, y1, x2, y2);
+         */
     }
 
-    // Helper method to find the index of a value in an array
-    private int findIndex(double value, double[] array) {
-        for (int i = 0; i < array.length - 1; i++) {
-            if (value >= array[i] && value < array[i + 1]) {
-                return i;
+    public double getWeight11(double x, double y, double x1, double y1, double x2, double y2) {
+        x     = min(max(x,x1),x2);
+        y     = min(max(y,y1),y2);
+        if(x1 == x2 || y1 == y2) {
+            if (x1 != x2)
+                /// y-side of the square is collapsed. i.e. y1 == y2. Uses x-side for weight
+                return (x2 - x) / (x2 - x1);
+            else if(y1 != y2)
+                /// x-side of the square has collapsed but not the y-side. Use y-size for weight
+                return (y2 - y) / (y2 - y1);
+            /// both the x-side and the y-side of the inference square have collapsed. Point11,
+            /// which is actually coincidental to all 4 square points, gets all the weight
+            return 1.0;
+        } else {
+            return (x2 - x) * (y2 - y) / ((x2 - x1) * (y2 - y1));
+        }
+    }
+
+    public double getWeight21(double x, double y, double x1, double y1, double x2, double y2) {
+        x     = min(max(x,x1),x2);
+        y     = min(max(y,y1),y2);
+        if(x1 == x2 || y1 == y2) {
+            if (x1 != x2)
+                return (x - x1) / (x2 - x1);
+            else if(y1 != y2)
+                /// The x-side of the inference square collapsed. The point21, which is now
+                /// equal to point11, should have zero weight.
+                return 0.0; // (y2 - y) / (y2 - y1);
+            return 0.0;
+        } else {
+            return (x - x1) * (y2 - y) / ((x2 - x1) * (y2 - y1));
+        }
+    }
+
+    public double getWeight12(double x, double y, double x1, double y1, double x2, double y2) {
+        x     = min(max(x,x1),x2);
+        y     = min(max(y,y1),y2);
+        if(x1 == x2 || y1 == y2) {
+            if (x1 != x2)
+                /// y-side collapsed. There should be no weight assigned to points in the second
+                /// segment of the inference square
+                return 0.0; // (x2 - x) / (x2 - x1);
+            else if(y1 != y2)
+                return (y - y1) / (y2 - y1);
+            return 0.0;
+        } else {
+            return (x2 - x) * (y - y1) / ((x2 - x1) * (y2 - y1));
+        }
+    }
+
+    public double getWeight22(double x, double y, double x1, double y1, double x2, double y2) {
+        x     = min(max(x,x1),x2);
+        y     = min(max(y,y1),y2);
+        if(x1 == x2 || y1 == y2) {
+            if (x1 != x2)
+                /// y-side collapsed. There should be no weight assigned to the second
+                /// segment of the inference square
+                return 0.0; // (x - x1) / (x2 - x1);
+            else if(y1 != y2)
+                return (y - y1) / (y2 - y1);
+            return 0.0;
+        } else {
+            return (x - x1) * (y - y1) / ((x2 - x1) * (y2 - y1));
+        }
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("LookupTable2D\n");
+        sb.append("  xResolution=").append(xResolution)             .append("\n");
+        sb.append("  yResolution=").append(yResolution)             .append("\n");
+        sb.append("  xIdxMax=")    .append(xIdxMax)                 .append("\n");
+        sb.append("  yIdxMax=")    .append(yIdxMax)                 .append("\n");
+        sb.append("  xMin=")       .append(xMin)                    .append("\n");
+        sb.append("  xMax=")       .append(xMax)                    .append("\n");
+        sb.append("  yMin=")       .append(yMin)                    .append("\n");
+        sb.append("  yMax=")       .append(yMax)                    .append("\n");
+        sb.append("  xValues=")    .append(Arrays.toString(xValues)).append("\n");
+        sb.append("  yValues=")    .append(Arrays.toString(yValues)).append("\n");
+
+        sb.append("  rawData=\n");
+        for(double[] r: rawData)
+            sb.append("  ").append(Arrays.toString(r)).append("\n");
+        sb.append("  data=\n");
+        for(double[] r: data)
+            sb.append("  ").append(Arrays.toString(r)).append("\n");
+        sb.append("  weights=\n");
+        for(double[] r: weights)
+            sb.append("  ").append(Arrays.toString(r)).append("\n");
+
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        LookupTable2D lut = new LookupTable2D(5, 0, 4, 5, 0, 4);
+        for(int xIdx=0; xIdx<5; xIdx++) {
+            for(int yIdx=0; yIdx<5; yIdx++) {
+                double x = xIdx;
+                double y = yIdx;
+                lut.addDataPoint(x, y, x+y);
             }
         }
-        return -1;
+
+        lut.update();
+
+        System.out.println(lut);
+
+        for(int x=-2; x<8; x+=2)
+            for(int y=-3; y<9; y+=3) {
+                double xTrim = min(max(x, lut.xMin), lut.xMax);
+                double yTrim = min(max(y, lut.yMin), lut.yMax);
+                double r = xTrim + yTrim;
+                double rInter = lut.interpolate(x, y);
+                System.out.printf(Locale.US,
+                        "x=%1$3d y=%2$3d expected=%3$5.3f returned=%4$5.3f match: %5$b%n",
+                        x,y,r,rInter,approxEquals(r,rInter));
+            }
     }
 }
