@@ -31,10 +31,11 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
-import static java.lang.Math.sqrt;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.PriorityQueue;
 
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.findInsertionIndex;
@@ -56,6 +57,80 @@ public class LookupTable2D {
     private       double[][] weights = null;
     private       double[]   xValues = null;
     private       double[]   yValues = null;
+
+    public static class EmptyPoint implements Comparable<EmptyPoint> {
+        public int xIdx;
+        public int yIdx;
+        public int emptyValences = 0;
+        public EmptyPoint(int xIdx_in, int yIdx_in) {
+            xIdx = xIdx_in;
+            yIdx = yIdx_in;
+        }
+
+        @Override
+        public int compareTo(EmptyPoint other) {
+            return Integer.compare(emptyValences, other.emptyValences);
+        }
+    }
+
+    public static class Point {
+        int xIdx;
+        int yIdx;
+        public Point(int xIdx_in, int yIdx_in) {
+            xIdx = xIdx_in;
+            yIdx = yIdx_in;
+        }
+        @NonNull
+        @Override
+        public String toString() {
+            return String.format(Locale.US, "Point(%1$d, %2$d)", xIdx, yIdx);
+        }
+    }
+
+    public static class NeighborIter {
+        int     xIdx;
+        int     yIdx;
+        int     xIdxMax;
+        int     yIdxMax;
+        Point[] neighbors  = new Point[8];
+        int     currentIdx = 0;
+        public NeighborIter(int xIdx_in, int yIx_in, int xIdxMax_in, int yIdxMax_in) {
+            xIdx        = xIdx_in;
+            yIdx        = yIx_in;
+            xIdxMax     = xIdxMax_in;
+            yIdxMax     = yIdxMax_in;
+            for(int xItr=max(xIdx-1, 0); xItr<=min(xIdx+1, xIdxMax); xItr++) {
+                for(int yItr=max(yIdx-1, 0); yItr<=min(yIdx+1, yIdxMax); yItr++) {
+                    if(xItr==xIdx && yItr==yIdx)
+                        continue;
+                    neighbors[currentIdx++] = new Point(xItr, yItr);
+                }
+            }
+            currentIdx = 0;
+        }
+        public boolean hasMorePoints() {
+            return (currentIdx < neighbors.length) && neighbors[currentIdx] != null;
+        }
+
+        public Point getNextPoint() {
+            return neighbors[currentIdx++];
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("NeighborIter\n")                                   .append("\n");
+            sb.append("  xIdx=")       .append(xIdx)                      .append("\n");
+            sb.append("  yIdx=")       .append(yIdx)                      .append("\n");
+            sb.append("  xIdxMax=")    .append(xIdxMax)                   .append("\n");
+            sb.append("  yIdxMax=")    .append(yIdxMax)                   .append("\n");
+            sb.append("  neighbors=")  .append(Arrays.toString(neighbors)).append("\n");
+            sb.append("  currentIdx=") .append(currentIdx)                .append("\n");
+
+            return sb.toString();
+        }
+    }
 
     // Constructor to initialize the table with data, x, and y values
     public LookupTable2D(double[][] data_in, double[] xValues_in, double[] yValues_in) {
@@ -141,7 +216,42 @@ public class LookupTable2D {
         }
     }
 
+    private void fillEmptyCells() {
+        PriorityQueue<EmptyPoint> ePoints = new PriorityQueue<>();
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            for(int yIdx=0; yIdx<yResolution; yIdx++) {
+                if(weights[xIdx][yIdx] == 0.0) {
+                    EmptyPoint ePoint = new EmptyPoint(xIdx, yIdx);
+                    NeighborIter itr = new NeighborIter(xIdx, yIdx, xIdxMax, yIdxMax);
+                    System.out.println("neighbor itr\n" + itr.toString());
+                    while(itr.hasMorePoints()) {
+                        Point nPoint = itr.getNextPoint();
+                        if(weights[nPoint.xIdx][nPoint.yIdx] == 0)
+                            ePoint.emptyValences++;
+                    }
+                    ePoints.add(ePoint);
+                }
+            }
+        }
+        for(EmptyPoint ePoint: ePoints) {
+            NeighborIter itr = new NeighborIter(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
+            double z        = 0;
+            double weight   = 0;
+            while(itr.hasMorePoints()) {
+                Point point = itr.getNextPoint();
+                if(weights[point.xIdx][point.yIdx] == 0)
+                    continue;
+                z          += rawData[point.xIdx][point.yIdx];
+                weight     += weights[point.xIdx][point.yIdx];
+            }
+            rawData[ePoint.xIdx][ePoint.yIdx] = z;
+            weights[ePoint.xIdx][ePoint.yIdx] = weight;
+        }
+    }
+
     public void update() {
+        fillEmptyCells();
+
         for (int xIdx = 0; xIdx < xResolution; xIdx++)
             for (int yIdx = 0; yIdx < yResolution; yIdx++) {
                 double weight = weights[xIdx][yIdx];
@@ -183,7 +293,12 @@ public class LookupTable2D {
         weights[xIdx2][yIdx2] += w22;
     }
 
-    // Method to perform bilinear interpolation
+    /**
+     * Method to perform bilinear interpolation. get z using interpolatation on theLUT
+     * @param x: x value of the point to interpolate
+     * @param y: y value of the point to interpolate
+     * @return interpolated z value
+     */
     public double interpolate(double x, double y) {
 
         // System.out.printf(Locale.US, "%ninterpolate%nx=%1$.3f y=%2$.3f%n",x,y);
@@ -327,9 +442,14 @@ public class LookupTable2D {
         LookupTable2D lut = new LookupTable2D(5, 0, 4, 5, 0, 4);
         for(int xIdx=0; xIdx<5; xIdx++) {
             for(int yIdx=0; yIdx<5; yIdx++) {
-                double x = xIdx;
-                double y = yIdx;
-                lut.addDataPoint(x, y, x+y);
+                /// skip certain data points to assess the robustness of the LUT
+                if(     (xIdx==0 && yIdx==1) || (xIdx==0 && yIdx==2) ||
+                        (xIdx==1 && yIdx==1) || (xIdx==1 && yIdx==2) ||
+                        (xIdx==2 && yIdx==1) || (xIdx==2 && yIdx==2) ||
+                        (xIdx==3 && yIdx==1) || (xIdx==3 && yIdx==2)
+                )
+                    continue;
+                lut.addDataPoint(xIdx, yIdx, xIdx+yIdx);
             }
         }
 
@@ -337,8 +457,8 @@ public class LookupTable2D {
 
         System.out.println(lut);
 
-        for(int x=-2; x<8; x+=2)
-            for(int y=-3; y<9; y+=3) {
+        for(int x=-2; x<8; x+=1)
+            for(int y=-3; y<9; y+=1) {
                 double xTrim = min(max(x, lut.xMin), lut.xMax);
                 double yTrim = min(max(y, lut.yMin), lut.yMax);
                 double r = xTrim + yTrim;
