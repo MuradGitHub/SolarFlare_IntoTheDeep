@@ -54,6 +54,7 @@ public abstract class  TeleOpComponents {
     public static BotMotor ryanNemesis;
 
     public static class BotMotor extends DcMotorImplEx {
+        public ZeroPowerBehavior zeroPowerBehavior;
         boolean isPowered = true;
         boolean forceStartVelocityZero = false;
         double errorTol;
@@ -422,6 +423,7 @@ public abstract class  TeleOpComponents {
             setMode(RunMode.STOP_AND_RESET_ENCODER);
             setMode(runMode);
             setDirection(direction);
+            this.zeroPowerBehavior=zeroPowerBehaviour;
             setZeroPowerBehavior(zeroPowerBehaviour);
             if (Objects.equals(movementMode, "MOTION_PROFILE")){
                 MOVEMENT_TIMER = new ElapsedTime();
@@ -585,6 +587,12 @@ public abstract class  TeleOpComponents {
             super.setMotorDisable();
             isPowered=false;
             setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+        }
+        @Override
+        public void setMotorEnable(){
+            super.setMotorEnable();
+            isPowered=true;
+            setZeroPowerBehavior(zeroPowerBehavior);
         }
         @Override
         public void setPower(double power){
