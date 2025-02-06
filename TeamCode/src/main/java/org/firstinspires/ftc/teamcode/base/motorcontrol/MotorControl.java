@@ -76,7 +76,7 @@ public class MotorControl {
 
         double instantTargetPosition = profile.runProfile(timer.seconds());
 
-        motorPower = pid.getPIDOutput(motorEnum, instantTargetPosition, kP, kI, kD);
+        // motorPower = pid.getPIDOutput(motor, instantTargetPosition, kP, kI, kD);
 
         motorConfig.motor.setPower(motorPower);
 
@@ -124,7 +124,7 @@ public class MotorControl {
     // Run this method in a loop
     public void runPIDMotorControl(Telemetry telemetry){
 
-        motorPower = pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), kP, kI, kD);
+         // motorPower = pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), kP, kI, kD);
         hw.getMotorConfig(motorEnum).motor.setPower(motorPower);
 
         telemetry.addData("current position", pid.encoderPosition);

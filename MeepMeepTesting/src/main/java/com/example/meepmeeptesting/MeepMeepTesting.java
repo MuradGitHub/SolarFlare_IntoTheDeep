@@ -103,52 +103,65 @@ public class MeepMeepTesting {
                 .build();
 
 
+        double robotLength = 15.364;
+        double robotWidth  = 14.375;
 
 
-
-
-
-
-
-
-        Action fiveSampleAuto1= myBot.getDrive().actionBuilder(new Pose2d(-42,-62.5,Math.toRadians(270)))
-                // Score sample preload
-                .strafeToLinearHeading(new Vector2d(-54,-54), Math.toRadians(225))
+        Action fourSpecimenPathing1 = myBot.getDrive().actionBuilder(new Pose2d(-(robotWidth / 2), -70 + (robotLength / 2), 90))
+                // Go to scoring zone first time
+                .strafeToLinearHeading(new Vector2d(8,-46), Math.toRadians(90))
                 .build();
-        Action fiveSampleAuto2= myBot.getDrive().actionBuilder(new Pose2d(-54,-54, Math.toRadians(225)))
-                // Go to sample zone 1
-                .strafeToLinearHeading(new Vector2d(-55,-52.5), Math.toRadians(270))
+        Action fourSpecimenPathing2 = myBot.getDrive().actionBuilder(new Pose2d(8, -46, Math.toRadians(90)))
+                // Go to sample 1 sample zone
+                .strafeToLinearHeading(new Vector2d(30.7,-45.1), Math.toRadians(50))
                 .build();
-        Action fiveSampleAuto3 = myBot.getDrive().actionBuilder(new Pose2d(-55,-52.5, Math.toRadians(270)))
-                // Score bucket
-                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(225))
+        Action fourSpecimenPathing3 = myBot.getDrive().actionBuilder(new Pose2d(30.7, -45.1, Math.toRadians(50)))
+                // Rotate towards observation zone 1st time
+                .turnTo(Math.toRadians(-45))
                 .build();
-        Action fiveSampleAuto4 = myBot.getDrive().actionBuilder(new Pose2d(-55,-55, Math.toRadians(225)))
-                // Sample zone 2
-                .strafeToLinearHeading(new Vector2d(-63,-52), Math.toRadians(273))
+        Action fourSpecimenPathing4 = myBot.getDrive().actionBuilder(new Pose2d(30.7, -45.1, Math.toRadians(-45)))
+                // Rotate to sample 2 in sample zone
+                .strafeToLinearHeading(new Vector2d(40,-41), Math.toRadians(40))
                 .build();
-        Action fiveSampleAuto5 = myBot.getDrive().actionBuilder(new Pose2d(-63,-52, Math.toRadians(273)))
-                // Score bucket
-                .strafeToLinearHeading(new Vector2d(-54,-54), Math.toRadians(225))
+        Action fourSpecimenPathing5 = myBot.getDrive().actionBuilder(new Pose2d(40, -41, Math.toRadians(40)))
+                // Rotate towards observation zone 2nd time
+                .turnTo(Math.toRadians(-70))
                 .build();
-        Action fiveSampleAuto6 = myBot.getDrive().actionBuilder(new Pose2d(-54,-54, Math.toRadians(225)))
-                // sample zone 3
-                .strafeToLinearHeading(new Vector2d(-67,-52), Math.toRadians(285))
+        Action fourSpecimenPathing6 = myBot.getDrive().actionBuilder(new Pose2d(40, -41, Math.toRadians(-70)))
+                // Rotate towards sample 3 in sample zone
+                .strafeToLinearHeading(new Vector2d(51,-41), Math.toRadians(40))
                 .build();
-        Action fiveSampleAuto7 = myBot.getDrive().actionBuilder(new Pose2d(-67,-52, Math.toRadians(285)))
-                // turn and score bucket
-                .strafeToLinearHeading(new Vector2d(-54,-54), Math.toRadians(225))
+        Action fourSpecimenPathing7 = myBot.getDrive().actionBuilder(new Pose2d(51, -41, Math.toRadians(40)))
+                // Rotate towards observation zone 3rd time
+                .turnTo(Math.toRadians(-100))
                 .build();
-        Action fiveSampleAuto8 = myBot.getDrive().actionBuilder(new Pose2d(-54,-54, Math.toRadians(225)))
-                .strafeToLinearHeading(new Vector2d(0,-52), Math.toRadians(180))
+        Action fourSpecimenPathing8 = myBot.getDrive().actionBuilder(new Pose2d(51, -41, Math.toRadians(-100)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
                 .build();
-        Action fiveSampleAuto9 = myBot.getDrive().actionBuilder(new Pose2d(0,-52, Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(225))
+        Action fourSpecimenPathing9 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score second specimen
+                .strafeToLinearHeading(new Vector2d(4,-46), Math.toRadians(90))
                 .build();
-        Action fiveSampleAuto10 = myBot.getDrive().actionBuilder(new Pose2d(-55,-55, Math.toRadians(225)))
-                // park
-                .strafeToLinearHeading(new Vector2d(-44,-6), Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(-24.2,-6), Math.toRadians(0))
+        Action fourSpecimenPathing10 = myBot.getDrive().actionBuilder(new Pose2d(4, -46, Math.toRadians(90)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
+                .build();
+        Action fourSpecimenPathing11 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score third specimen
+                .strafeToLinearHeading(new Vector2d(0,-46), Math.toRadians(90))
+                .build();
+        Action fourSpecimenPathing12 = myBot.getDrive().actionBuilder(new Pose2d(0, -46, Math.toRadians(90)))
+                // Go to pickup zone
+                .strafeToLinearHeading(new Vector2d(34,-54), Math.toRadians(-90))
+                .build();
+        Action fourSpecimenPathing13 = myBot.getDrive().actionBuilder(new Pose2d(34, -54, Math.toRadians(-90)))
+                // Score fourth specimen
+                .strafeToLinearHeading(new Vector2d(-4,-46), Math.toRadians(90))
+                .build();
+        Action fourSpecimenPathing14 = myBot.getDrive().actionBuilder(new Pose2d(-4, -46, Math.toRadians(90)))
+                // Park
+                .strafeToLinearHeading(new Vector2d(34,-62), Math.toRadians(90))
                 .build();
         Action oneSpecimenPlusThreeBucket1 = myBot.getDrive().actionBuilder(new Pose2d(-42,-62.5,Math.toRadians(270)))
                 // Score preload
@@ -182,10 +195,8 @@ public class MeepMeepTesting {
                 // park
                 .strafeToLinearHeading(new Vector2d(-44,-6), Math.toRadians(0))
                 .strafeToLinearHeading(new Vector2d(-24.2,-6), Math.toRadians(0))
-
                 .build();
-        double robotLength = 15.364;
-        double robotWidth  = 14.375;
+        
 
         Action onePlusThreeSpecimen1 = myBot.getDrive().actionBuilder(new Pose2d(-(robotWidth / 2), -70 + (robotLength / 2), 90))
                 // Go to scoring zone first time

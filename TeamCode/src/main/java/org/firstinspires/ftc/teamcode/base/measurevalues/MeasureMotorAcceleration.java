@@ -78,7 +78,7 @@ public class MeasureMotorAcceleration extends LinearOpMode {
 
         currentAcceleration = currentSpeed - lastSpeed;
 
-        hw.getMotorConfig(motorEnum).motor.setPower(pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD));
+        // hw.getMotorConfig(motorEnum).motor.setPower(pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD));
         DcMotorEx dcMotorEx = (DcMotorEx) (hw.getMotorConfig(motorEnum).motor);
         currentSpeed = dcMotorEx.getVelocity();
 
