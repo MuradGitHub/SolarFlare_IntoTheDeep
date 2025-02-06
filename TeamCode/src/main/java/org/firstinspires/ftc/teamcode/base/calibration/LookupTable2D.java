@@ -71,6 +71,15 @@ public class LookupTable2D {
         public int compareTo(EmptyPoint other) {
             return Integer.compare(emptyValences, other.emptyValences);
         }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return String.format(Locale.US,
+                    "EmptyPoint(xIdx=%1$d yIdx=%2$d, emptyValences=%3$d)",
+                    xIdx, yIdx, emptyValences);
+
+        }
     }
 
     public static class Point {
@@ -244,6 +253,7 @@ public class LookupTable2D {
                 z          += rawData[point.xIdx][point.yIdx];
                 weight     += weights[point.xIdx][point.yIdx];
             }
+            System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
             rawData[ePoint.xIdx][ePoint.yIdx] = z;
             weights[ePoint.xIdx][ePoint.yIdx] = weight;
         }
