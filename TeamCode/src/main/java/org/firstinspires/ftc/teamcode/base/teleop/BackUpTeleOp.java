@@ -526,7 +526,10 @@ public class BackUpTeleOp extends LinearOpMode {
 
 
             else if (gamepad1.right_trigger>0) {
-                innerClawPitchPosition += 1;
+                clawFingerPosition += 1;
+            }
+            else if (gamepad1.left_trigger>0) {
+                clawFingerPosition -= 1;
             }
 
             // BucketTransfer / default pos 85 degrees

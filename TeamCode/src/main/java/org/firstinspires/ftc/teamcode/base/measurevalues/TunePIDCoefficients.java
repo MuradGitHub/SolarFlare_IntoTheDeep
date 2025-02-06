@@ -55,7 +55,7 @@ public class TunePIDCoefficients extends LinearOpMode {
                 state.setMotorTarget(testingMotor, hw.getMotorConfig(testingMotor).maxTarget);
             }
 
-            hw.getMotorConfig(testingMotor).motor.setPower(pid.getPIDOutput(testingMotor, state.getMotorTarget(testingMotor), kP, kI, kD));
+            // hw.getMotorConfig(testingMotor).motor.setPower(pid.getPIDOutput(testingMotor, state.getMotorTarget(testingMotor), kP, kI, kD));
 
             dashboardTelemetry.addData("target",state.getMotorTarget(testingMotor));
             dashboardTelemetry.addData("current pos",hw.getMotorConfig(testingMotor).motor.getCurrentPosition());

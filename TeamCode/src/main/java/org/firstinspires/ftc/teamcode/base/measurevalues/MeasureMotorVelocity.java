@@ -74,7 +74,7 @@ public class MeasureMotorVelocity extends LinearOpMode {
                 greatestSpeed = currentSpeed;
             }
 
-            hw.getMotorConfig(motorEnum).motor.setPower(pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD));
+           //  hw.getMotorConfig(motorEnum).motor.setPower(pid.getPIDOutput(motorEnum, state.getMotorTarget(motorEnum), hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD));
             telemetry.addData("greatest speed", greatestSpeed);
             telemetry.addData("position", currentPosition);
             telemetry.update();
