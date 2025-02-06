@@ -33,7 +33,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.max;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.PriorityQueue;
 
@@ -59,9 +58,9 @@ public class LookupTable2D {
     private       double[]   yValues = null;
 
     public static class EmptyPoint implements Comparable<EmptyPoint> {
-        public int xIdx;
-        public int yIdx;
-        public int emptyValences = 0;
+        public int    xIdx;
+        public int    yIdx;
+        public double emptyValencesRatio = 0;
         public EmptyPoint(int xIdx_in, int yIdx_in) {
             xIdx = xIdx_in;
             yIdx = yIdx_in;
@@ -69,15 +68,15 @@ public class LookupTable2D {
 
         @Override
         public int compareTo(EmptyPoint other) {
-            return Integer.compare(emptyValences, other.emptyValences);
+            return Double.compare(emptyValencesRatio, other.emptyValencesRatio);
         }
 
         @NonNull
         @Override
         public String toString() {
             return String.format(Locale.US,
-                    "EmptyPoint(xIdx=%1$d yIdx=%2$d, emptyValences=%3$d)",
-                    xIdx, yIdx, emptyValences);
+                    "EmptyPoint(xIdx=%1$d yIdx=%2$d, emptyValencesRatio=%3$.3f)",
+                    xIdx, yIdx, emptyValencesRatio);
 
         }
     }
@@ -226,34 +225,41 @@ public class LookupTable2D {
     }
 
     private void fillEmptyCells() {
-        PriorityQueue<EmptyPoint> ePoints = new PriorityQueue<>();
+        PriorityQueue<EmptyPoint> ePoints          = new PriorityQueue<>();
         for(int xIdx=0; xIdx<xResolution; xIdx++) {
             for(int yIdx=0; yIdx<yResolution; yIdx++) {
                 if(weights[xIdx][yIdx] == 0.0) {
-                    EmptyPoint ePoint = new EmptyPoint(xIdx, yIdx);
-                    NeighborIter itr = new NeighborIter(xIdx, yIdx, xIdxMax, yIdxMax);
-                    System.out.println("neighbor itr\n" + itr.toString());
+                    EmptyPoint   ePoint            = new EmptyPoint(xIdx, yIdx);
+                    NeighborIter itr               = new NeighborIter(xIdx, yIdx, xIdxMax, yIdxMax);
+                    int          numberOfNeighbors = 0;
+                    // System.out.println("neighbor itr\n" + itr);
                     while(itr.hasMorePoints()) {
-                        Point nPoint = itr.getNextPoint();
+                        numberOfNeighbors++;
+                        Point nPoint               = itr.getNextPoint();
                         if(weights[nPoint.xIdx][nPoint.yIdx] == 0)
-                            ePoint.emptyValences++;
+                            ePoint.emptyValencesRatio++;
                     }
+                    ePoint.emptyValencesRatio /= numberOfNeighbors;
                     ePoints.add(ePoint);
                 }
             }
         }
         for(EmptyPoint ePoint: ePoints) {
-            NeighborIter itr = new NeighborIter(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
-            double z        = 0;
-            double weight   = 0;
+            NeighborIter itr         = new NeighborIter(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
+            double z                 = 0;
+            double weight            = 0;
+            int    numberOfNeighbors = 0;
             while(itr.hasMorePoints()) {
                 Point point = itr.getNextPoint();
                 if(weights[point.xIdx][point.yIdx] == 0)
                     continue;
-                z          += rawData[point.xIdx][point.yIdx];
-                weight     += weights[point.xIdx][point.yIdx];
+                numberOfNeighbors++;
+                z                   += rawData[point.xIdx][point.yIdx];
+                weight              += weights[point.xIdx][point.yIdx];
             }
-            System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
+            z                       /= numberOfNeighbors;
+            weight                  /= numberOfNeighbors;
+            // System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
             rawData[ePoint.xIdx][ePoint.yIdx] = z;
             weights[ePoint.xIdx][ePoint.yIdx] = weight;
         }
@@ -467,15 +473,23 @@ public class LookupTable2D {
 
         System.out.println(lut);
 
+        String knownCase;
         for(int x=-2; x<8; x+=1)
             for(int y=-3; y<9; y+=1) {
                 double xTrim = min(max(x, lut.xMin), lut.xMax);
                 double yTrim = min(max(y, lut.yMin), lut.yMax);
                 double r = xTrim + yTrim;
                 double rInter = lut.interpolate(x, y);
+                if(     (x==-2 && (y==1 || y==2)) ||
+                        (x==-1 && (y==1 || y==2)) ||
+                        (x== 0 && (y==1 || y==2))
+                )
+                    knownCase = "Known Case";
+                else
+                    knownCase = "";
                 System.out.printf(Locale.US,
-                        "x=%1$3d y=%2$3d expected=%3$5.3f returned=%4$5.3f match: %5$b%n",
-                        x,y,r,rInter,approxEquals(r,rInter));
+                        "x=%1$3d y=%2$3d expected=%3$5.3f returned=%4$5.3f match: %5$5b %6$s%n",
+                        x,y,r,rInter,approxEquals(r,rInter, 0.10), knownCase);
             }
     }
 }
