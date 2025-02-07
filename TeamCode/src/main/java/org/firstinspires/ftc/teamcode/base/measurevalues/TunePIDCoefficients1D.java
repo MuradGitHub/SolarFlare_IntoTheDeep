@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.base.calibration.EmpiricalFunction;
+import org.firstinspires.ftc.teamcode.base.calibration.LookupTable1D;
 import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
@@ -73,7 +73,7 @@ public class TunePIDCoefficients1D extends LinearOpMode {
         ElapsedTime convTimer        = new ElapsedTime();
         convTimer.reset();
 
-        EmpiricalFunction atten = new EmpiricalFunction();
+        LookupTable1D atten = new LookupTable1D();
         atten.addDataPoint(a_x1, a_y1)
                 .addDataPoint(a_x2, a_y2)
                 .addDataPoint(a_x3, a_y3)
