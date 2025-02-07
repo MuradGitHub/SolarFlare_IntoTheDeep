@@ -29,8 +29,6 @@
  */
 package org.firstinspires.ftc.teamcode.base.utils;
 
-import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.repeatAndJoin;
-
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -42,8 +40,8 @@ public class ArrayUtils {
         double[] all = new double[numberOfElements];
         int allIdx = 0;
         for(double[] a: arrays)
-            for(int idx=0; idx<a.length; idx++)
-                all[allIdx++] = a[idx];
+            for(double e: a)
+                all[allIdx++] = e;
 
         return all;
     }
