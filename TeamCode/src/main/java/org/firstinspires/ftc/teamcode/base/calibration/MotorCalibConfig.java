@@ -44,6 +44,7 @@ public class MotorCalibConfig implements Validatable {
     public int    targetBuffer;
     public int    minDistance;
     public double velocityTolerance;
+    public int    velocityResolution;
 
     public boolean isValid() {
         return true;
@@ -54,17 +55,17 @@ public class MotorCalibConfig implements Validatable {
     public String toString() {
         var sb = new StringBuilder();
         sb.append("MotorCalibConfig\n");
-        sb.append("  minTimeInc=")       .append(minTimeInc)       .append("\n");
-        sb.append("  timeResolution=")   .append(timeResolution)   .append("\n");
-        sb.append("  powerResolution=")  .append(powerResolution)  .append("\n");
-        sb.append("  averagingTime=")    .append(averagingTime)    .append("\n");
-        sb.append("  endSamples=")       .append(endSamples)       .append("\n");
-        sb.append("  minPower=")         .append(minPower)         .append("\n");
-        sb.append("  maxPower=")         .append(maxPower)         .append("\n");
-        sb.append("  targetBuffer=")     .append(targetBuffer)     .append("\n");
-        sb.append("  minDistance=")      .append(minDistance)      .append("\n");
-        sb.append("  velocityTolerance=").append(velocityTolerance).append("\n");
-
+        sb.append("  minTimeInc=")        .append(minTimeInc)        .append("\n");
+        sb.append("  timeResolution=")    .append(timeResolution)    .append("\n");
+        sb.append("  powerResolution=")   .append(powerResolution)   .append("\n");
+        sb.append("  averagingTime=")     .append(averagingTime)     .append("\n");
+        sb.append("  endSamples=")        .append(endSamples)        .append("\n");
+        sb.append("  minPower=")          .append(minPower)          .append("\n");
+        sb.append("  maxPower=")          .append(maxPower)          .append("\n");
+        sb.append("  targetBuffer=")      .append(targetBuffer)      .append("\n");
+        sb.append("  minDistance=")       .append(minDistance)       .append("\n");
+        sb.append("  velocityTolerance=") .append(velocityTolerance) .append("\n");
+        sb.append("  velocityResolution=").append(velocityResolution).append("\n");
 
         return sb.toString();
     }
