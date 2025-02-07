@@ -34,10 +34,10 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-public class EmpiricalFunction implements Function<Double, Double> {
+public class LookupTable1D implements Function<Double, Double> {
     private final ArrayList<NumberPair> f = new ArrayList<>();
 
-    public EmpiricalFunction addDataPoint(double x, double y) {
+    public LookupTable1D addDataPoint(double x, double y) {
         f.add(new NumberPair(x, y));
         f.sort((a, b) -> Double.compare(a.n1, b.n1));
         return this;
@@ -68,7 +68,7 @@ public class EmpiricalFunction implements Function<Double, Double> {
     }
 
     public static void main(String[] args) {
-        EmpiricalFunction f = new EmpiricalFunction();
+        LookupTable1D f = new LookupTable1D();
         f.addDataPoint(10.0, 1.0);
         f.addDataPoint( 9.0, 0.9);
         f.addDataPoint( 8.0, 0.8);
@@ -88,7 +88,7 @@ public class EmpiricalFunction implements Function<Double, Double> {
         System.out.println("f(2)="  + f.apply(2.0));
         System.out.println("f(1)="  + f.apply(1.0));
 
-        EmpiricalFunction r = new EmpiricalFunction();
+        LookupTable1D r = new LookupTable1D();
         r.addDataPoint(10.0, -1.0);
         r.addDataPoint( 9.0, -0.9);
         r.addDataPoint( 8.0, -0.8);
