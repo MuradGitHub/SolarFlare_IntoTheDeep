@@ -45,8 +45,8 @@ public class MotorProfiles implements Validatable {
     private transient final Logger               logger;
     private           final int                  powerResolution;
     public            final double               minPower;
-    public           final double               maxPower;
-    private          final double               dP;
+    public            final double               maxPower;
+    private           final double               dP;
     public                  int                  Pi;
     public                  int                  Ptarget;
     public            final MotorProfileConstP[] motorProfilesF;
@@ -123,13 +123,13 @@ public class MotorProfiles implements Validatable {
 
     public MotorCalibResult getCalibResult() {
         MotorCalibResult result = new MotorCalibResult(
-                motorConfig.motorEnum,
+                motorConfig,
                 getSteadyStateDataForward(),
                 getDataForward(),
                 getSteadyStateDataReverse(),
                 getDataReverse()
         );
-        result.fit();
+        result.fitFunctions();
         return result;
     }
     public void writeMetrics() {

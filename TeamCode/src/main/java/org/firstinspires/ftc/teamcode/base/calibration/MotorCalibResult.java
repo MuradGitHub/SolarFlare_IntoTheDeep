@@ -36,19 +36,33 @@ import java.util.Locale;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
+
+import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 
+import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeUp;
+import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeDown;
+
+
 public class MotorCalibResult implements MetricsWritable {
     public MotorEnum                        motorEnum;
+    public int                              powerResolution;
+    public int                              velocityResolution;
     public ArrayList<MotorProfileDataPoint> ssDataF = new ArrayList<>();
     public ArrayList<MotorProfileDataPoint> ssDataR = new ArrayList<>();
     public ArrayList<MotorProfileDataPoint> dataF   = new ArrayList<>();
     public ArrayList<MotorProfileDataPoint> dataR   = new ArrayList<>();
-    public EmpiricalFunction                VssF    = new EmpiricalFunction();
-    public EmpiricalFunction                VssR    = new EmpiricalFunction();
+    public LookupTable1D                    VssF    = new LookupTable1D();
+    public LookupTable1D                    VssR    = new LookupTable1D();
+    public LookupTable2D                    PVAF;
+    public LookupTable2D                    PVAR;
+    public double                           VssMaxF = Double.NEGATIVE_INFINITY;
+    public double                           VssMinF = Double.POSITIVE_INFINITY;
+    public double                           VssMaxR = Double.NEGATIVE_INFINITY;
+    public double                           VssMinR = Double.POSITIVE_INFINITY;
     public double                           k1F;
     public double                           k2F;
     public double                           k3F;
@@ -61,19 +75,21 @@ public class MotorCalibResult implements MetricsWritable {
     /**
      * Constructor
      *
-     * @param motorEnum_in motor enum
-     * @param ssDataF_in   steady state data for forward profiles
-     * @param dataF_in     timed data up to steady state for forward profiles
-     * @param ssDataR_in   steady state data for reverse profiles
-     * @param dataR_in     timed data up to steady state for reverse profiles
+     * @param motorConfig_in motor config
+     * @param ssDataF_in     steady state data for forward profiles
+     * @param dataF_in       timed data up to steady state for forward profiles
+     * @param ssDataR_in     steady state data for reverse profiles
+     * @param dataR_in       timed data up to steady state for reverse profiles
      */
-    public MotorCalibResult(MotorEnum motorEnum_in,
+    public MotorCalibResult(MotorConfig                      motorConfig_in,
                             ArrayList<MotorProfileDataPoint> ssDataF_in,
                             ArrayList<MotorProfileDataPoint> dataF_in,
                             ArrayList<MotorProfileDataPoint> ssDataR_in,
                             ArrayList<MotorProfileDataPoint> dataR_in
                             ) {
-        motorEnum             = motorEnum_in;
+        motorEnum             = motorConfig_in.motorEnum;
+        powerResolution       = motorConfig_in.calibParams.powerResolution;
+        velocityResolution    = motorConfig_in.calibParams.velocityResolution;
         ssDataF               = ssDataF_in;
         dataF                 = dataF_in;
         ssDataR               = ssDataR_in;
@@ -86,7 +102,7 @@ public class MotorCalibResult implements MetricsWritable {
      *        power = k2*v + k3
      *      - Then, k1 is the fit to the equaltion a = k1*(power - k2*v - k3)
      */
-    public void fit() {
+    public void fitFunctions() {
         WeightedObservedPoints obs     = new WeightedObservedPoints();
         PolynomialCurveFitter  fitter  = PolynomialCurveFitter.create(1);
         double[]               coeff;
@@ -115,6 +131,10 @@ public class MotorCalibResult implements MetricsWritable {
         /// Forward data
         obs.clear();
         for(var dataPoint: dataF) {
+            if(dataPoint.Vavg < VssMinF)
+                VssMinF                = dataPoint.Vavg;
+            if(dataPoint.Vavg > VssMaxF)
+                VssMaxF                = dataPoint.Vavg;
             /// x = (power - k2*v - k3)
             double x = dataPoint.power - k2F * dataPoint.Vavg - k3F;
             obs.add(x, dataPoint.Aavg);
@@ -127,6 +147,10 @@ public class MotorCalibResult implements MetricsWritable {
         /// Reverse data
         obs.clear();
         for(var dataPoint: dataR) {
+            if(dataPoint.Vavg < VssMinR)
+                VssMinR                = dataPoint.Vavg;
+            if(dataPoint.Vavg > VssMaxR)
+                VssMaxR                = dataPoint.Vavg;
             /// x = (power - k2*v - k3)
             double x = dataPoint.power - k2R * dataPoint.Vavg - k3R;
             obs.add(x, dataPoint.Aavg);
@@ -135,14 +159,32 @@ public class MotorCalibResult implements MetricsWritable {
         kAresR                         = coeff[0];
         k1R                            = coeff[1];
 
+        /// Fit the LUTs
+        PVAF                           = new LookupTable2D(
+                powerResolution, 0.0, 1.0,
+                velocityResolution, regularizeDown(VssMinF,2), regularizeUp(VssMaxF,2));
+
+        PVAR                           = new LookupTable2D(
+                powerResolution, 0.0, 1.0,
+                velocityResolution, regularizeDown(VssMinR,2), regularizeUp(VssMaxR,2));
+
+        for(var dataPoint: dataF)
+            PVAF.addDataPoint(dataPoint.power, dataPoint.Vavg, dataPoint.Aavg);
+
+        for(var dataPoint: dataF)
+            PVAR.addDataPoint(dataPoint.power, dataPoint.Vavg, dataPoint.Aavg);
+
         update();
     }
 
     public void update() {
         for(MotorProfileDataPoint Pt: dataF)
-            Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
+            // Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
+            Pt.Apred = PVAF.interpolate(Pt.power, Pt.Vavg);
+
         for(MotorProfileDataPoint Pt: dataR)
-            Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
+            // Pt.Apred = getAccel(Pt.direction, Pt.power, Pt.Vavg);
+            Pt.Apred = PVAR.interpolate(Pt.power, Pt.Vavg);
     }
 
     public double getAccel(DcMotorSimple.Direction direction, double power, double velocity) {
