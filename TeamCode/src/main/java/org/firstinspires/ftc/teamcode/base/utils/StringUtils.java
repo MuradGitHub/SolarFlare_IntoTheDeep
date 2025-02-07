@@ -60,6 +60,15 @@ public class StringUtils {
         return String.join(separator, fieldsS);
     }
 
+    public static String join(double[]     fields,
+                              String  format,
+                              String  separator) {
+        Double[] fieldsD = new Double[fields.length];
+        for(int idx=0; idx<fieldsD.length; idx++)
+            fieldsD[idx] = fields[idx];
+        return join(fieldsD, format, separator) ;
+    }
+
     public static void main(String[] args) {
         String     format      = "repeatAndJoin(%1$-5s, \"%2$s\", %3$s) = %4$-15s matched:%5$b%n";
         String[][] casesString = new String[][] {
@@ -81,8 +90,8 @@ public class StringUtils {
 
         format                 = "join(%1$-12s, \"%2$s\", \"%3$s\") = %4$-20s matched:%5$b%n";
         casesString            = new String[][] {
-                {"[1.5,2.5]",  "%1$.0f",",", join(new Double[]{1.5,2.5}, "%1$.1f", ","),"1.5,2.5"},
-                {"[3.5,2.106]","%1$.2f",",", join(new Double[]{3.5,2.1}, "%1$.2f", ","),"3.50,2.10"}
+                {"[1.5,2.5]",  "%1$.0f",",", join(new double[]{1.5,2.5}, "%1$.1f", ","),"1.5,2.5"},
+                {"[3.5,2.106]","%1$.2f",",", join(new double[]{3.5,2.1}, "%1$.2f", ","),"3.50,2.10"}
         };
         for(String[] c: casesString) {
             System.out.printf(Locale.US, format, c[0],c[1],c[2],c[3],c[3].equals(c[4]));
