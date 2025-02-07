@@ -30,8 +30,12 @@
 package org.firstinspires.ftc.teamcode.base.calibration;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
+import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
+import static java.lang.Math.pow;
+
 
 import java.util.Locale;
 import java.util.function.BiPredicate;
@@ -135,17 +139,39 @@ public class Math {
         return low; // Target not found, return the insertion index
     }
 
+    public static double regularizeDown(double n, int order) {
+        return floor(n / pow(10,order)) * pow(10,order);
+    }
+
+    public static double regularizeUp(double n, int order) {
+        return ceil(n / pow(10,order)) * pow(10,order);
+    }
+
     public static void main(String[] args) {
         /// findInsertionPoint
         double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
         String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
-        int[][]    cases   = new int[][] {
+        int[][]    casesI   = new int[][] {
                 { 1, 0, findInsertionIndex(  1.0, values)},
                 {-4, 0, findInsertionIndex( -4.0, values)},
                 { 6, 4, findInsertionIndex(  6.0, values)},
                 {10, 5, findInsertionIndex( 10.0, values)},
         };
-        for(int[] c: cases)
+        for(int[] c: casesI)
             System.out.printf(Locale.US, format, c[0], c[1], c[2], c[1]==c[2]);
+
+        /// regularizeDown
+        format              = "Regularize n=%1$.2f order=%2$.0f result=%3$.3f match=%4$b%n";
+        double[][] casesD   = new double[][] {
+                {1247.3, 1, regularizeDown(1247.3, 1), 1240},
+                {1247.3, 2, regularizeDown(1247.3, 2), 1200},
+                {1247.3, 3, regularizeDown(1247.3, 3), 1000},
+                {1247.3, 1, regularizeUp  (1247.3, 1), 1250},
+                {1247.3, 2, regularizeUp  (1247.3, 2), 1300},
+                {1247.3, 3, regularizeUp  (1247.3, 3), 2000}
+        };
+        for(var c: casesD) {
+            System.out.printf(Locale.US, format, c[0], c[1], c[2], c[2]==c[3]);
+        }
     }
 }
