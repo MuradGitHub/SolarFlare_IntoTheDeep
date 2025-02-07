@@ -42,7 +42,7 @@ public class RobotMetricsFileSpec extends RobotMetricsSpec implements MetricsWri
         fileId        = fileId_in;
     }
 
-    public RobotMetricsFileSpec(String tableType_in, 
+    public RobotMetricsFileSpec(String tableType_in,
                                 String format_in,
                                 String header_in,
                                 String fileId_in) {
