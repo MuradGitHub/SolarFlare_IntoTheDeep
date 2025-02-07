@@ -50,6 +50,16 @@ public class StringUtils {
         return String.join(separator, repeats);
     }
 
+
+    public static <T> String join(T[]     fields,
+                                  String  format,
+                                  String  separator) {
+        String[] fieldsS = new String[fields.length];
+        for(int idx=0; idx<fieldsS.length; idx++)
+            fieldsS[idx] = String.format(Locale.US, format, fields[idx]);
+        return String.join(separator, fieldsS);
+    }
+
     public static void main(String[] args) {
         String     format      = "repeatAndJoin(%1$-5s, \"%2$s\", %3$s) = %4$-15s matched:%5$b%n";
         String[][] casesString = new String[][] {
@@ -64,6 +74,15 @@ public class StringUtils {
         casesString            = new String[][] {
                 {"%?$s",    ",","3", repeatAndJoinFormat("%?$s",    ",",3),"%1$s,%2$s,%3$s"},
                 {"ABC=%?$s",",","2", repeatAndJoinFormat("ABC=%?$s",",",2),"ABC=%1$s,ABC=%2$s"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US, format, c[0],c[1],c[2],c[3],c[3].equals(c[4]));
+        }
+
+        format                 = "join(%1$-12s, \"%2$s\", \"%3$s\") = %4$-20s matched:%5$b%n";
+        casesString            = new String[][] {
+                {"[1.5,2.5]",  "%1$.0f",",", join(new Double[]{1.5,2.5}, "%1$.1f", ","),"1.5,2.5"},
+                {"[3.5,2.106]","%1$.2f",",", join(new Double[]{3.5,2.1}, "%1$.2f", ","),"3.50,2.10"}
         };
         for(String[] c: casesString) {
             System.out.printf(Locale.US, format, c[0],c[1],c[2],c[3],c[3].equals(c[4]));
