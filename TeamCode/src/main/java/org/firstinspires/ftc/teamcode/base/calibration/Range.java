@@ -31,40 +31,82 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 
 import androidx.annotation.NonNull;
 
+import java.lang.Math;
 import java.util.Locale;
 
 public class Range {
     public double min;
     public double max;
 
-    public Range(double min_in, double max_in) {
-        min = min_in;
-        max = max_in;
-    }
-
     public Range() {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
     }
 
-    public void update(double x) {
+    public Range(double min_in, double max_in) {
+        min = min_in;
+        max = max_in;
+    }
+
+    public Range(double[] a) {
+        super();
+        for(double n: a) {
+            update(n);
+        }
+    }
+
+    public Range update(double x) {
         if(x<min)
             min = x;
         if(x>max)
             max = x;
+
+        return this;
+    }
+
+    public double getSpan() {
+        return max - min;
+    }
+
+    public double constrain(double x) {
+        return Math.min(Math.max(x,min),max);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return String.format(Locale.US, "Range(min=%1$.5f, max=%2$.5f)", min, max);
+        return String.format(Locale.US, "Range(%1$.5f, %2$.5f)", min, max);
     }
 
     public static void main(String[] args) {
-        Range range = new Range(10,20);
-        System.out.println(range);
-        range.update(30);
-        range.update(-20);
-        System.out.println(range);
+        // getSpan()
+        String     format      = "%1$-12s.getSpan() = %2$-6s match:%3$b%n";
+        String[][] casesString = new String[][] {
+                {"Range(1,10)", Double.toString(new Range( 1,10).getSpan()),"9.0"},
+                {"Range(-1,10)",Double.toString(new Range(-1,10).getSpan()),"11.0"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US,format,c[0],c[1],c[1].equals(c[2]));
+        }
+
+        // update()
+        format                 = "%1$-16s.update() = %2$-30s match:%3$b%n";
+        casesString            = new String[][] {
+                {"Range(1,10)", new Range(1 ,10).update(20).toString(), "Range(1.00000, 20.00000)"},
+                {"Range(-1,10)",new Range(-1,10).update(-50).toString(),"Range(-50.00000, 10.00000)"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US,format,c[0],c[1],c[1].equals(c[2]));
+        }
+
+        // constrain()
+        format                 = "%1$-16s.constrain(%2$-3s) = %3$-4s match:%4$b%n";
+        casesString            = new String[][] {
+                {"Range(1,10)","20", Double.toString(new Range(1,10).constrain(20)), "10.0"},
+                {"Range(1,10)","-50",Double.toString(new Range(1,10).constrain(-50)),"1.0"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US,format,c[0],c[1],c[2],c[2].equals(c[3]));
+        }
     }
 }
