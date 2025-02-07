@@ -37,9 +37,21 @@ public class Range {
     public double min;
     public double max;
 
-    public Range(double min, double max) {
-        this.min = min;
-        this.max = max;
+    public Range(double min_in, double max_in) {
+        min = min_in;
+        max = max_in;
+    }
+
+    public Range() {
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
+    }
+
+    public void update(double x) {
+        if(x<min)
+            min = x;
+        if(x>max)
+            max = x;
     }
 
     @NonNull
@@ -50,6 +62,9 @@ public class Range {
 
     public static void main(String[] args) {
         Range range = new Range(10,20);
+        System.out.println(range);
+        range.update(30);
+        range.update(-20);
         System.out.println(range);
     }
 }
