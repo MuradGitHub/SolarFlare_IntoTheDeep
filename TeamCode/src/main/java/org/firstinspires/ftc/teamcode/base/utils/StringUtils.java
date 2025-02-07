@@ -41,11 +41,29 @@ public class StringUtils {
         return String.join(separator, repeats);
     }
 
+    public static String repeatAndJoinFormat(String str,
+                                             String separator,
+                                             int    numberOfRepeats) {
+        String[] repeats = new String[numberOfRepeats];
+        for(int idx=0; idx<numberOfRepeats; idx++)
+            repeats[idx] = str.replace("?$", Integer.toString(idx+1) + "$");
+        return String.join(separator, repeats);
+    }
+
     public static void main(String[] args) {
         String     format      = "repeatAndJoin(%1$-5s, \"%2$s\", %3$s) = %4$-15s matched:%5$b%n";
         String[][] casesString = new String[][] {
                 {"A",  ",","4", repeatAndJoin("A",  ",",4),"A,A,A,A"},
                 {"ABC",",","3", repeatAndJoin("ABC",",",3),"ABC,ABC,ABC"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US, format, c[0],c[1],c[2],c[3],c[3].equals(c[4]));
+        }
+
+        format                 = "repeatAndJoinFormat(%1$-10s, \"%2$s\", %3$s) = %4$-20s matched:%5$b%n";
+        casesString            = new String[][] {
+                {"%?$s",    ",","3", repeatAndJoinFormat("%?$s",    ",",3),"%1$s,%2$s,%3$s"},
+                {"ABC=%?$s",",","2", repeatAndJoinFormat("ABC=%?$s",",",2),"ABC=%1$s,ABC=%2$s"}
         };
         for(String[] c: casesString) {
             System.out.printf(Locale.US, format, c[0],c[1],c[2],c[3],c[3].equals(c[4]));
