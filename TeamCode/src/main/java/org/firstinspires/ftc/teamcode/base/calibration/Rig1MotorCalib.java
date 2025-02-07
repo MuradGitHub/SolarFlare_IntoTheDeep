@@ -78,17 +78,21 @@ public class Rig1MotorCalib extends LinearOpMode {
 
         telemetry.addData("Done with initialization", "");
 
-
         int    Pi    = 0;
         int    Pf    = 5 * (int) motorConfig.motorSpec.encoderResolution;
 
         telemetry.addData("Starting Profile Calculations", "");
+        telemetry.addData("Pi", Pi);
+        telemetry.addData("Pf", Pf);
         telemetry.update();
         motorProfiles.calcProfiles(Pi, Pf);
 
         telemetry.addData("Starting to Generate MotorCalibResult", "");
         telemetry.update();
+
         MotorCalibResult result = motorProfiles.getCalibResult();
+
+        telemetry.addData("Finished calibration", "");
         telemetry.addData("k1F", result.k1F);
         telemetry.addData("k2F", result.k2F);
         telemetry.addData("k3F", result.k3F);
@@ -109,22 +113,26 @@ public class Rig1MotorCalib extends LinearOpMode {
         telemetry.addData("REVERSE Vss(0.8)", result.getVss(Direction.REVERSE, 0.8));
         telemetry.addData("REVERSE Vss(0.9)", result.getVss(Direction.REVERSE, 0.9));
         telemetry.addData("REVERSE Vss(1.0)", result.getVss(Direction.REVERSE, 1.0));
+        telemetry.addData("Starting to write metrics for the calibration result", "");
         telemetry.update();
 
         result.writeMetrics();
 
         sleep(60000);
 
+        telemetry.addData("Finished writing metrics for the calibration result", "");
         telemetry.addData("Starting to write JSONs for Profiles", "");
         telemetry.update();
         motorProfiles.writeJSONs();
 
+        telemetry.addData("Finished writing JSONs for Profiles", "");
         telemetry.addData("Starting to write Metrics for Profiles", "");
         telemetry.update();
         motorProfiles.writeMetrics();
 
-        telemetry.addData("Pi",                  Pi);
-        telemetry.addData("Pf",                  Pf);
+        telemetry.addData("Completed writing metrics for profiles", "");
+        telemetry.addData("Waitin for start", "");
+        telemetry.update();
 
         waitForStart();
 
