@@ -39,9 +39,9 @@ import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsSpec;
 
 public class MotorProfileDataPoint implements MetricsDataPoint {
     private static final String    tableType  = "MotorProfileData";
-    private static final String    format     = "%1$s,%2$.3f,%3$d,%4$.3f,%5$.3f,%6$.3f,%7$.3f%n";
+    private static final String    format     = "%1$s,%2$.3f,%3$d,%4$.3f,%5$.3f,%6$.3f,%7$.3f,%8$.3f%n";
     private static final String[]  fieldNames = new String[] {
-            "Direction", "Time", "Position", "Power", "Vavg", "Aavg", "Apred"
+            "Direction","Time", "Position", "Power", "Vavg", "Aavg", "ApredFun", "ApreLut"
     };
     public        Direction direction;
     public        double    t;
@@ -49,7 +49,8 @@ public class MotorProfileDataPoint implements MetricsDataPoint {
     public        double    power;
     public        double    Vavg;
     public        double    Aavg;
-    public        double    Apred;
+    public        double    ApredFun;
+    public        double    ApredLut;
 
     public MotorProfileDataPoint() {}
 
@@ -81,7 +82,7 @@ public class MotorProfileDataPoint implements MetricsDataPoint {
     }
 
     public Object[] getFields() {
-        return new Object[] {direction, t, P, power, Vavg, Aavg, Apred};
+        return new Object[] {direction, t, P, power, Vavg, Aavg, ApredFun, ApredLut};
     }
 
     public RobotMetricsSpec getMetricsSpec() {
