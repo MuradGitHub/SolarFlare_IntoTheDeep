@@ -54,8 +54,8 @@ public class LookupTable2D {
     private       double[][] rawData = null;
     private       double[][] data    = null;
     private       double[][] weights = null;
-    private       double[]   xValues = null;
-    private       double[]   yValues = null;
+    public        double[]   xValues = null;
+    public        double[]   yValues = null;
 
     public static class EmptyPoint implements Comparable<EmptyPoint> {
         public int    xIdx;
