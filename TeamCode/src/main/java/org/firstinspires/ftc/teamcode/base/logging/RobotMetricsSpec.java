@@ -40,19 +40,32 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     public String   tableType;
     public String   format;
     public String[] fieldNames;
+    public String   header;
 
     public RobotMetricsSpec(String tableType_in, String format_in, String[] fieldNames_in) {
-        this.tableType  = tableType_in;
-        this.format     = format_in;
-        this.fieldNames = fieldNames_in.clone();
+        tableType  = tableType_in;
+        format     = format_in;
+        fieldNames = fieldNames_in.clone();
+        header     = String.join(",", fieldNames);
+    }
+
+    public RobotMetricsSpec(String tableType_in, String format_in, String header_in) {
+        tableType  = tableType_in;
+        format     = format_in;
+        header     = header_in;
+        fieldNames = header.split(",");
     }
 
     public int compareTo(RobotMetricsSpec other) {
         return tableType.compareTo(other.tableType);
     }
 
+    public String getMetricsTableType() {
+        return tableType;
+    }
+
     public String getHeader() {
-        return String.join(",", fieldNames);
+        return header;
     }
 
     public String getFileName(String id) {
@@ -71,6 +84,7 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
         sb.append("  tableType=").append(tableType)                  .append("\n");
         sb.append("  format=")   .append(format)                     .append("\n");
         sb.append("  fields")    .append(Arrays.toString(fieldNames)).append("\n");
+        sb.append("  header")    .append(getHeader())                .append("\n");
 
         return sb.toString();
     }
