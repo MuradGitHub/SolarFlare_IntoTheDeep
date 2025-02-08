@@ -105,9 +105,9 @@ public class RobotMetrics {
         return new RobotMetricsFile(metricsSpec, fileId);
     }
 
-    public RobotMetricsFile getMetricsFile(RobotMetricsSpec metricsSpec, String fileId) {
+    public RobotMetricsFile getMetricsFile(RobotMetricsFileSpec metricsSpec) {
         tablesSpecs.put(metricsSpec.getMetricsTableType(), metricsSpec);
-        return new RobotMetricsFile(metricsSpec, fileId);
+        return new RobotMetricsFile(metricsSpec, metricsSpec.getMetricsFileId());
     }
 
     public RobotMetricsFile getMetricsFile(MetricsWritable obj) {
