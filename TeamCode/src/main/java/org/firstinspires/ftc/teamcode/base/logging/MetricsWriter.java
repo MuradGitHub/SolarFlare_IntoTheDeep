@@ -36,16 +36,36 @@ public abstract class MetricsWriter {
     public TreeMap<String,RobotMetricsFileSpec> metricsSpecs = new TreeMap<>();
 
     protected abstract void initMetricsSpecs();
+    public abstract void writeMetrics();
 
     public void addMetricsSpec(String tableType, String format, String header) {
         addMetricsSpec(tableType, format, header, getMetricsFileId());
     }
 
-    public void addMetricsSpec(String tableType, String format, String header, String fileId) {
+    public void addMetricsSpec(String tableType,
+                               String format,
+                               String header,
+                               String fileId) {
         setMetricsFileId(fileId);
         RobotMetricsFileSpec metricsSpec = new RobotMetricsFileSpec(
                 tableType,
                 format,
+                header,
+                fileId
+        );
+        metricsSpecs.put(metricsSpec.tableType, metricsSpec);
+    }
+
+    public void addMetricsSpec(String tableType,
+                               String itemFormat,
+                               int    numberOfFields,
+                               String header,
+                               String fileId) {
+        setMetricsFileId(fileId);
+        RobotMetricsFileSpec metricsSpec = new RobotMetricsFileSpec(
+                tableType,
+                itemFormat,
+                numberOfFields,
                 header,
                 fileId
         );
