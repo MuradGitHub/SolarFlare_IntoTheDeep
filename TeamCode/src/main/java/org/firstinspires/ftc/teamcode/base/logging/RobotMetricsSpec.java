@@ -29,6 +29,8 @@
  */
 package org.firstinspires.ftc.teamcode.base.logging;
 
+import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.repeatAndJoinFormat;
+
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.config.Application;
@@ -38,22 +40,56 @@ import java.util.Locale;
 
 public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     public String   tableType;
+    public int      numberOfFields;
+    public String   itemFormat;
     public String   format;
     public String[] fieldNames;
     public String   header;
 
-    public RobotMetricsSpec(String tableType_in, String format_in, String[] fieldNames_in) {
-        tableType  = tableType_in;
-        format     = format_in;
-        fieldNames = fieldNames_in.clone();
-        header     = String.join(",", fieldNames);
+    public RobotMetricsSpec(String   tableType_in,
+                            String   format_in,
+                            String[] fieldNames_in) {
+        tableType      = tableType_in;
+        numberOfFields = fieldNames_in.length;
+        itemFormat     = format_in.split(",")[0];
+        format         = format_in;
+        fieldNames     = fieldNames_in.clone();
+        header         = String.join(",", fieldNames);
     }
 
-    public RobotMetricsSpec(String tableType_in, String format_in, String header_in) {
-        tableType  = tableType_in;
-        format     = format_in;
-        header     = header_in;
-        fieldNames = header.split(",");
+    public RobotMetricsSpec(String   tableType_in,
+                            String   itemFormat_in,
+                            int      numberOfFields_in,
+                            String[] fieldNames_in) {
+        tableType      = tableType_in;
+        numberOfFields = numberOfFields_in;
+        itemFormat     = itemFormat_in;
+        format         = repeatAndJoinFormat(itemFormat,",",numberOfFields);
+        fieldNames     = fieldNames_in.clone();
+        header         = String.join(",", fieldNames);
+    }
+
+    public RobotMetricsSpec(String tableType_in,
+                            String format_in,
+                            String header_in) {
+        tableType      = tableType_in;
+        itemFormat     = format_in.split(",")[0];
+        format         = format_in;
+        header         = header_in;
+        fieldNames     = header.split(",");
+        numberOfFields = fieldNames.length;
+    }
+
+    public RobotMetricsSpec(String tableType_in,
+                            String itemFormat_in,
+                            int    numberOfFields_in,
+                            String header_in) {
+        tableType      = tableType_in;
+        numberOfFields = numberOfFields_in;
+        itemFormat     = itemFormat_in;
+        format         = repeatAndJoinFormat(itemFormat,",",numberOfFields);
+        header         = header_in;
+        fieldNames     = header.split(",");
     }
 
     public int compareTo(RobotMetricsSpec other) {
