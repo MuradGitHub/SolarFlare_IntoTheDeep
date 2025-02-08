@@ -42,12 +42,60 @@ public class RobotMetricsFileSpec extends RobotMetricsSpec implements MetricsWri
         fileId        = fileId_in;
     }
 
+    public RobotMetricsFileSpec(String   tableType_in,
+                                String   itemFormat_in,
+                                int      numberOfFields_in,
+                                String[] fieldNames_in,
+                                String   fileId_in) {
+        super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
+        fileId        = fileId_in;
+    }
+
+    public RobotMetricsFileSpec(String   tableType_in,
+                                String   format_in,
+                                String[] fieldNames_in) {
+        super(tableType_in, format_in, fieldNames_in);
+        fileId        = null;
+    }
+
+    public RobotMetricsFileSpec(String   tableType_in,
+                                String   itemFormat_in,
+                                int      numberOfFields_in,
+                                String[] fieldNames_in) {
+        super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
+        fileId        = null;
+    }
+
     public RobotMetricsFileSpec(String tableType_in,
                                 String format_in,
                                 String header_in,
                                 String fileId_in) {
         super(tableType_in, format_in, header_in);
         fileId        = fileId_in;
+    }
+
+    public RobotMetricsFileSpec(String tableType_in,
+                                String itemFormat_in,
+                                int    numberOfFields_in,
+                                String header_in,
+                                String fileId_in) {
+        super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
+        fileId        = fileId_in;
+    }
+
+    public RobotMetricsFileSpec(String tableType_in,
+                                String format_in,
+                                String header_in) {
+        super(tableType_in, format_in, header_in);
+        fileId        = null;
+    }
+
+    public RobotMetricsFileSpec(String tableType_in,
+                                String itemFormat_in,
+                                int    numberOfFields_in,
+                                String header_in) {
+        super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
+        fileId        = null;
     }
 
     public String getMetricsFileId() {
@@ -59,7 +107,7 @@ public class RobotMetricsFileSpec extends RobotMetricsSpec implements MetricsWri
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
-        sb.append("RobotMetericsFileSpec\n");
+        sb.append("RobotMetricsFileSpec\n");
         sb.append("  fileId=").append(fileId).append("\n");
 
         return sb.toString();
