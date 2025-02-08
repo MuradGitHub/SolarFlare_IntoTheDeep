@@ -489,7 +489,7 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
 
     /**
      * The caller needs to close the metrics file
-     * @param file
+     * @param file: the RobotMetricsFile to write metrics to
      */
     public void writeMetrics(RobotMetricsFile file) {
         for(int tIdx=0; tIdx<=tIdxMax; tIdx++) {
