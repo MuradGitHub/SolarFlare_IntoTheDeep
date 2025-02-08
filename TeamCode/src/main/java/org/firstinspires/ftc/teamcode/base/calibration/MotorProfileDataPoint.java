@@ -73,7 +73,16 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         Aavg      = Aavg_in;
     }
 
+    public static RobotMetricsFileSpec getMetricsSpec(String fileId) {
+        return MetricsDataPoint.getMetricsSpec(fileId);
+    }
+
     public Object[] getFields() {
         return new Object[] {direction, t, P, power, Vavg, Aavg, ApredFun, ApredLut};
+    }
+
+    public static void main(String[] args) {
+        RobotMetricsFileSpec ms = MotorProfileDataPoint.getMetricsSpec("This File");
+        System.out.println(ms);
     }
 }
