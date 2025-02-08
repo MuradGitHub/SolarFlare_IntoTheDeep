@@ -29,10 +29,26 @@
  */
 package org.firstinspires.ftc.teamcode.base.logging;
 
-public interface MetricsDataPoint {
-    String           getTableType();
-    String           getFormat();
-    String[]         getFieldNames();
-    Object[]         getFields();
-    RobotMetricsSpec getMetricsSpec();
+public abstract class MetricsDataPoint {
+    public static String   tableType  = null;
+    public static String   format     = null;
+    public static String[] fieldNames = null;
+
+    public static String   getTableType() {
+        return tableType;
+    }
+
+    public static String   getFormat() {
+        return format;
+    }
+
+    public static String[] getFieldNames() {
+        return fieldNames;
+    }
+
+    public abstract Object[] getFields();
+
+    public static RobotMetricsFileSpec getMetricsSpec(String metricsFileId) {
+        return new RobotMetricsFileSpec(tableType, format, fieldNames, metricsFileId);
+    }
 }
