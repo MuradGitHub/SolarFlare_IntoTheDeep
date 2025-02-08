@@ -38,19 +38,22 @@ import java.util.PriorityQueue;
 
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.findInsertionIndex;
+import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.join;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
+import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
+import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 
-public class LookupTable2D {
+
+public class LookupTable2D extends MetricsWriter {
     private final int        xResolution;
     private final int        yResolution;
     private final int        xIdxMax;
     private final int        yIdxMax;
-    private       double     xMin;
-    private       double     xMax;
-    private       double     yMin;
-    private       double     yMax;
+    public        Range      xRange;
+    public        Range      yRange;
     private       double[][] rawData = null;
     private       double[][] data    = null;
     private       double[][] weights = null;
@@ -95,14 +98,14 @@ public class LookupTable2D {
         }
     }
 
-    public static class NeighborIter {
+    public static class NeighborIterator {
         int     xIdx;
         int     yIdx;
         int     xIdxMax;
         int     yIdxMax;
         Point[] neighbors  = new Point[8];
         int     currentIdx = 0;
-        public NeighborIter(int xIdx_in, int yIx_in, int xIdxMax_in, int yIdxMax_in) {
+        public NeighborIterator(int xIdx_in, int yIx_in, int xIdxMax_in, int yIdxMax_in) {
             xIdx        = xIdx_in;
             yIdx        = yIx_in;
             xIdxMax     = xIdxMax_in;
@@ -128,7 +131,7 @@ public class LookupTable2D {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append("NeighborIter\n")                                   .append("\n");
+            sb.append("NeighborIterator\n")                                   .append("\n");
             sb.append("  xIdx=")       .append(xIdx)                      .append("\n");
             sb.append("  yIdx=")       .append(yIdx)                      .append("\n");
             sb.append("  xIdxMax=")    .append(xIdxMax)                   .append("\n");
@@ -157,23 +160,8 @@ public class LookupTable2D {
         for(double[] r: weights)
             Arrays.fill(r, 1.0);
 
-        xMin         = Double.POSITIVE_INFINITY;
-        xMax         = Double.NEGATIVE_INFINITY;
-        for(double x: xValues) {
-            if (xMin > x)
-                xMin = x;
-            if (xMax < x)
-                xMax = x;
-        }
-
-        yMin         = Double.POSITIVE_INFINITY;
-        yMax         = Double.NEGATIVE_INFINITY;
-        for(double y: yValues) {
-            if (yMin > y)
-                yMin = y;
-            if (yMax < y)
-                yMax = y;
-        }
+        xRange       = new Range(xValues);
+        yRange       = new Range(yValues);
     }
 
     public LookupTable2D(int xResolution_in, double xMin_in, double xMax_in,
@@ -182,27 +170,26 @@ public class LookupTable2D {
         yResolution = yResolution_in;
         xIdxMax     = xResolution-1;
         yIdxMax     = yResolution-1;
-        xMin        = xMin_in;
-        xMax        = xMax_in;
-        yMin        = yMin_in;
-        yMax        = yMax_in;
+        xRange      = new Range(xMin_in, xMax_in);
+        yRange      = new Range(yMin_in, yMax_in);
 
         initArrays();
+        initMetricsSpecs();
     }
 
     private void initArrays() {
         if(xValues == null) {
             xValues = new double[xResolution];
-            double dx = (xMax-xMin) / xIdxMax;
+            double dx = xRange.getSpan() / xIdxMax;
             for(int xIdx=0; xIdx<xResolution; xIdx++)
-                xValues[xIdx] = xMin + xIdx*dx;
+                xValues[xIdx] = xRange.min + xIdx*dx;
         }
 
         if(yValues == null) {
             yValues = new double[yResolution];
-            double dy = (yMax-yMin) / yIdxMax;
+            double dy = yRange.getSpan() / yIdxMax;
             for(int yIdx=0; yIdx<xResolution; yIdx++)
-                yValues[yIdx] = yMin + yIdx*dy;
+                yValues[yIdx] = yRange.min + yIdx*dy;
         }
 
         if(data == null) {
@@ -224,13 +211,54 @@ public class LookupTable2D {
         }
     }
 
+    protected void initMetricsSpecs() {
+        // Header labeled columns. the elements of each row. These are velocities
+        //   first column is the power labels
+        String header      = "," + join(yValues, "%1$.4f", ",");
+        // String format   = repeatAndJoinFormat("%?$.3f",",",yResolution+1);
+        String itemFormat  = "%1$.3f";
+
+        // Weights - prefilled
+        addMetricsSpec(
+                "MotorCalibResult-Weights-Prefill",
+                itemFormat,
+                yResolution+1,
+                header,
+                getMetricsFileId());
+        // Weights - prefilled
+        addMetricsSpec(
+                "MotorCalibResult-Weights",
+                itemFormat,
+                yResolution+1,
+                header,
+                getMetricsFileId());
+        // rawData - prefilled
+        addMetricsSpec("MotorCalibResult-RawData-Prefill",
+                itemFormat,
+                yResolution+1,
+                header,
+                getMetricsFileId());
+        // rawData
+        addMetricsSpec("MotorCalibResult-RawData",
+                itemFormat,
+                yResolution+1,
+                header,
+                getMetricsFileId());
+        // data
+        addMetricsSpec("MotorCalibResult-Data",
+                itemFormat,
+                yResolution+1,
+                header,
+                getMetricsFileId());
+    }
+
     private void fillEmptyCells() {
         PriorityQueue<EmptyPoint> ePoints          = new PriorityQueue<>();
         for(int xIdx=0; xIdx<xResolution; xIdx++) {
             for(int yIdx=0; yIdx<yResolution; yIdx++) {
                 if(weights[xIdx][yIdx] == 0.0) {
                     EmptyPoint   ePoint            = new EmptyPoint(xIdx, yIdx);
-                    NeighborIter itr               = new NeighborIter(xIdx, yIdx, xIdxMax, yIdxMax);
+                    NeighborIterator itr               = new NeighborIterator(xIdx, yIdx, xIdxMax, yIdxMax);
                     int          numberOfNeighbors = 0;
                     // System.out.println("neighbor itr\n" + itr);
                     while(itr.hasMorePoints()) {
@@ -245,7 +273,7 @@ public class LookupTable2D {
             }
         }
         for(EmptyPoint ePoint: ePoints) {
-            NeighborIter itr         = new NeighborIter(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
+            NeighborIterator itr         = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
             double z                 = 0;
             double weight            = 0;
             int    numberOfNeighbors = 0;
@@ -425,6 +453,33 @@ public class LookupTable2D {
         }
     }
 
+    public void writeMetricsPrefill() {
+        RobotMetrics robotMetrics = RobotMetrics.getInstance();
+
+        // Weights - Prefill
+        RobotMetricsFile fileWeightsPrefill = robotMetrics
+                .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights-Prefill"));
+        for(double[] r: weights)
+            fileWeightsPrefill.addData(r);
+
+        RobotMetricsFile fileRawDataPrefill = robotMetrics
+                .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData-Prefill"));
+        for(double[] r: rawData)
+            fileRawDataPrefill.addData(r);
+    }
+    public void writeMetrics() {
+        RobotMetrics robotMetrics = RobotMetrics.getInstance();
+
+        RobotMetricsFile fileWeights = robotMetrics
+                .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights"));
+
+        RobotMetricsFile fileRawData = robotMetrics
+                .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData"));
+
+        RobotMetricsFile fileData = robotMetrics
+                .getMetricsFile(getMetricsSpec("MotorCalibResult-Data"));
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -434,10 +489,8 @@ public class LookupTable2D {
         sb.append("  yResolution=").append(yResolution)             .append("\n");
         sb.append("  xIdxMax=")    .append(xIdxMax)                 .append("\n");
         sb.append("  yIdxMax=")    .append(yIdxMax)                 .append("\n");
-        sb.append("  xMin=")       .append(xMin)                    .append("\n");
-        sb.append("  xMax=")       .append(xMax)                    .append("\n");
-        sb.append("  yMin=")       .append(yMin)                    .append("\n");
-        sb.append("  yMax=")       .append(yMax)                    .append("\n");
+        sb.append("  xRange=")     .append(xRange)                  .append("\n");
+        sb.append("  yRange=")     .append(yRange)                  .append("\n");
         sb.append("  xValues=")    .append(Arrays.toString(xValues)).append("\n");
         sb.append("  yValues=")    .append(Arrays.toString(yValues)).append("\n");
 
@@ -474,22 +527,23 @@ public class LookupTable2D {
         System.out.println(lut);
 
         String knownCase;
-        for(int x=-2; x<8; x+=1)
-            for(int y=-3; y<9; y+=1) {
-                double xTrim = min(max(x, lut.xMin), lut.xMax);
-                double yTrim = min(max(y, lut.yMin), lut.yMax);
-                double r = xTrim + yTrim;
+        for(int x=-2; x<8; x+=1) {
+            double xTrim = lut.xRange.constrain(x);
+            for (int y = -3; y < 9; y += 1) {
+                double yTrim = lut.yRange.constrain(y);
+                double r     = xTrim + yTrim;
                 double rInter = lut.interpolate(x, y);
-                if(     (x==-2 && (y==1 || y==2)) ||
-                        (x==-1 && (y==1 || y==2)) ||
-                        (x== 0 && (y==1 || y==2))
+                if ((x == -2 && (y == 1 || y == 2)) ||
+                        (x == -1 && (y == 1 || y == 2)) ||
+                        (x == 0 && (y == 1 || y == 2))
                 )
                     knownCase = "Known Case";
                 else
                     knownCase = "";
                 System.out.printf(Locale.US,
                         "x=%1$3d y=%2$3d expected=%3$5.3f returned=%4$5.3f match: %5$5b %6$s%n",
-                        x,y,r,rInter,approxEquals(r,rInter, 0.10), knownCase);
+                        x, y, r, rInter, approxEquals(r, rInter, 0.10), knownCase);
             }
+        }
     }
 }
