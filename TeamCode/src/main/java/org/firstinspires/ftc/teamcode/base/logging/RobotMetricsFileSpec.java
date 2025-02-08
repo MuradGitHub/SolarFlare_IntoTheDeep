@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode.base.logging;
 
 import androidx.annotation.NonNull;
 
-public class RobotMetricsFileSpec extends RobotMetricsSpec implements MetricsWritable {
+public class RobotMetricsFileSpec extends RobotMetricsSpec {
     public String fileId;
 
     public RobotMetricsFileSpec(String   tableType_in,
