@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.clawPi
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.clawWrist;
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.extendo;
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.extendoPitch;
+import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.hang;
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.innerClawPitch;
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.BotMotor;
 import static org.firstinspires.ftc.teamcode.base.teleop.TeleOpComponents.leftBack;
@@ -39,6 +40,13 @@ public class OnlyDrivetrainTeleOp extends LinearOpMode {
         waitForStart();
         TeleOpActions.runLoop(
                 this::opModeIsActive,
+                new PressTrigger(new Condition[]{()->(gamepad1.dpad_down)}, new TeleOpAction[]{
+                        new TeleOpParallelAction(
+                                hang.setPowerAction(()->{if (hang.getPower()!=0) return 0; else return 1;}),
+                                extendoPitch.setTargetAction(-700)
+                        )
+                }),
+                new PressTrigger(new Condition[]{()->(gamepad1.dpad_up)}, new TeleOpAction[]{hang.setPowerAction(()->{if (hang.getPower()!=0) return 0; else return -1;})}),
                 new RobotCentricMecanumAction(new BotMotor[]{leftFront,leftBack,rightFront,rightBack},()->(gamepad1.left_stick_x),()->(gamepad1.left_stick_y),()->(gamepad1.right_stick_x),()->(gamepad1.left_trigger>0.2))
         );
     }

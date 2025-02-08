@@ -585,6 +585,8 @@ public abstract class TeleOpActions{
             TeleOpComponents.telemetry.addData("bucketSlides instant target",TeleOpComponents.bucketSlides.instantTargetPosition);
             TeleOpComponents.telemetry.addData("bucketSlides volts",TeleOpComponents.bucketSlides.getCurrent(CurrentUnit.AMPS));
             TeleOpComponents.telemetry.addData("loopy",TIMER.time());
+            TeleOpComponents.telemetry.addData("hangLeft power",TeleOpComponents.hang.getPower());
+            TeleOpComponents.telemetry.addData("hangRight power",TeleOpComponents.hangRight.getPower());
             TeleOpComponents.telemetry.update();
             TIMER.reset();
             return false;

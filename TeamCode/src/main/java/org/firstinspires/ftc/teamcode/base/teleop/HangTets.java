@@ -40,11 +40,7 @@ public class HangTets extends LinearOpMode {
         waitForStart();
         TeleOpActions.runLoop(
                 this::opModeIsActive,
-                new PressTrigger(new Condition[]{()->(gamepad1.dpad_up)}, new TeleOpAction[]{hang.setPowerAction(()->{if (hang.getPower()!=0) return 0; else return -0.2;})}),
-                new PressTrigger(new Condition[]{()->(gamepad1.dpad_down)}, new TeleOpAction[]{hang.setPowerAction(()->{if (hang.getPower()!=0) return 0; else return 0.2;})}),
-                new PressTrigger(new Condition[]{()->(gamepad1.dpad_left)}, new TeleOpAction[]{hangRight.setPowerAction(()->{if (hangRight.getPower()!=0) return 0; else return -0.2;})}),
-                new PressTrigger(new Condition[]{()->(gamepad1.dpad_right)}, new TeleOpAction[]{hangRight.setPowerAction(()->{if (hangRight.getPower()!=0) return 0; else return 0.2;})}),
-                new RobotCentricMecanumAction(new BotMotor[]{leftFront,leftBack,rightFront,rightBack},()->(gamepad1.left_stick_x),()->(gamepad1.left_stick_y),()->(gamepad1.right_stick_x),()->(gamepad1.left_trigger>0.2))
+                new UpdateTelemetryAction()
         );
     }
 }

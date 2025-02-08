@@ -421,7 +421,6 @@ public abstract class  TeleOpComponents {
             this.RUN_MODE = runMode;
             this.MOVEMENT_MODE=movementMode;
 
-            //setMode(RunMode.STOP_AND_RESET_ENCODER);
             setMode(runMode);
             setDirection(direction);
             this.zeroPowerBehavior=zeroPowerBehaviour;
@@ -975,7 +974,7 @@ public abstract class  TeleOpComponents {
         //initialize mechanism variables here
         extendo = new BotMotor(
                 "extendo",
-                0.014,0,0.00032, 10,
+                0.014,0,0.00032, 50,
                 new String[]{},new double[]{},
                 600,0,
                 400000,5500,
@@ -986,7 +985,7 @@ public abstract class  TeleOpComponents {
         );
         extendoPitch = new BotMotor(
                 "extendoPitch",
-                0.01,0,0.0003, 15,
+                0.01,0,0.0003, 50,
                 new String[]{"transferPosition","pickUpPosition","specimenGrabPosition","specimenDepositPosition"},
                 new double[]{0,-1030,-960,0},
                 0,-1020,
@@ -998,7 +997,7 @@ public abstract class  TeleOpComponents {
         );
         bucketSlides = new BotMotor(
                 "bucketSlides",
-                0.015,0.006,0.00055, 12,
+                0.015,0.007,0.00055, 50,
                 new String[]{"depositPosition","transferPosition","lowDepositPosition"},new double[]{1065,0,575},
                 Double.POSITIVE_INFINITY,0,
                 325000,4750,

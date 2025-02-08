@@ -23,7 +23,7 @@ public class SkippyWippyUwU extends LinearOpMode {
             clawPitchLeft.setPosition((double) 68/270);
             clawPitchRight.setPosition((double) 68/270);
             innerClawPitch.setPosition((double) 20/270);
-            bucket.setPosition((double) 158/270);
+            bucket.setPosition((double) 36/270);
         }
     }
 }

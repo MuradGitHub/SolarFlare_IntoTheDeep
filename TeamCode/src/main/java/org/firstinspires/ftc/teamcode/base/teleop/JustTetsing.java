@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import org.firstinspires.ftc.teamcode.base.teleop.TeleOpActions.UpdateTelemetryAction;
@@ -28,11 +29,18 @@ public class JustTetsing extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         TeleOpComponents.initializeMechanisms(hardwareMap,telemetry,new Pose2d(0,0,Math.toRadians(90)));
         waitForStart();
-        extendoPitch.setMotorDisable();
-        extendo.setMotorDisable();
+        bucketSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendoPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bucketSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendoPitch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bucketSlides.setMotorDisable();
             TeleOpActions.runLoop(
                     this::opModeIsActive,
-                    bucketSlides.triggeredToggleAction(()->(gamepad1.a),0,1065),
+                    //bucketSlides.triggeredToggleAction(()->(gamepad1.a),0,1065),
+                    extendo.triggeredToggleAction(()->(gamepad1.a),0,600),
+                    extendoPitch.triggeredToggleAction(()->(gamepad1.a),0,-1020),
                     new UpdateTelemetryAction()
             );
     }
