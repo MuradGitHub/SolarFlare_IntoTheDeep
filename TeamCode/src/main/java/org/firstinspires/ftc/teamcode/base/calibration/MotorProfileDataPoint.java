@@ -34,15 +34,20 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.base.logging.MetricsDataPoint;
+import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFileSpec;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsSpec;
 
 
-public class MotorProfileDataPoint implements MetricsDataPoint {
-    private static final String    tableType  = "MotorProfileData";
-    private static final String    format     = "%1$s,%2$.3f,%3$d,%4$.3f,%5$.3f,%6$.3f,%7$.3f,%8$.3f%n";
-    private static final String[]  fieldNames = new String[] {
-            "Direction","Time", "Position", "Power", "Vavg", "Aavg", "ApredFun", "ApreLut"
-    };
+public class MotorProfileDataPoint extends MetricsDataPoint {
+
+    static {
+        MetricsDataPoint.tableType  = "MotorProfileData";
+        MetricsDataPoint.format     = "%1$s,%2$.3f,%3$d,%4$.3f,%5$.3f,%6$.3f,%7$.3f,%8$.3f%n";
+        MetricsDataPoint.fieldNames = new String[] {
+                "Direction", "Time", "Position", "Power", "Vavg", "Aavg", "ApredFun", "ApredLut"
+        };
+    }
+
     public        Direction direction;
     public        double    t;
     public        int       P;
@@ -68,24 +73,7 @@ public class MotorProfileDataPoint implements MetricsDataPoint {
         Aavg      = Aavg_in;
     }
 
-    public String getTableType() {
-        return tableType;
-    }
-
-    public String getFormat()
-    {
-        return format;
-    }
-
-    public String[] getFieldNames() {
-        return fieldNames;
-    }
-
     public Object[] getFields() {
         return new Object[] {direction, t, P, power, Vavg, Aavg, ApredFun, ApredLut};
-    }
-
-    public RobotMetricsSpec getMetricsSpec() {
-        return new RobotMetricsSpec(getTableType(), getFormat(), getFieldNames());
     }
 }
