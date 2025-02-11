@@ -45,6 +45,7 @@ public class NoDrivetrainTeleOp extends LinearOpMode {
         extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendoPitch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendo.MAX_POSITION=400;
+        bucketSlides.MAX_POSITION=400;
         clawFingers.setPosition(clawFingers.getPos("openPosition"));
         clawWrist.setPosition(clawWrist.getPos("normalPosition"));
         clawPitch.setPosition(clawPitch.getPos("transferPosition"));
@@ -172,7 +173,7 @@ public class NoDrivetrainTeleOp extends LinearOpMode {
                 clawFingers.triggeredToggleAction(()->(gamepad2.left_bumper||gamepad2.right_bumper),clawFingers.getPos("openPosition"),clawFingers.getPos("closedPosition")),
                 new PressTrigger(new Condition[]{()->(gamepad2.back)},new TeleOpAction[]{extendoPitch.stallResetAction(-1020)}),
                 new PressTrigger(new Condition[]{()->(gamepad1.back)},new TeleOpAction[]{new TeleOpActions.ShortAction(()->{bucketSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);bucketSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);bucketSlides.offset=1065;})}),
-                bucketSlides.triggeredDynamicAction(()->(gamepad1.dpad_up),()->(gamepad1.dpad_down),15),
+                bucketSlides.triggeredDynamicAction(()->(gamepad1.dpad_left),()->(gamepad1.dpad_right),15),
                 clawWrist.triggeredDynamicAction(()->(gamepad2.right_trigger>0),()->(gamepad2.left_trigger>0),6),
                 bucket.triggeredToggleAction(()->(gamepad2.a),bucket.getPos("transferPosition"),bucket.getPos("depositPosition")),
                 new ConditionalAction(
