@@ -56,14 +56,16 @@ public class MotorCalibResult extends MetricsWriter {
     public ArrayList<MotorProfileDataPoint>     ssDataR;
     public ArrayList<MotorProfileDataPoint>     dataF;
     public ArrayList<MotorProfileDataPoint>     dataR;
-    public LookupTable1D                        VssF         = new LookupTable1D();
-    public LookupTable1D                        VssR         = new LookupTable1D();
+    public LookupTable1D                        VssF            = new LookupTable1D();
+    public LookupTable1D                        VssR            = new LookupTable1D();
     public LookupTable2D                        PVALutF;
     public LookupTable2D                        PVALutR;
-    public Range                                VssRangeF    = new Range();
-    public Range                                VssRangeR    = new Range();
+    public Range                                VssRangeF       = new Range();
+    public Range                                VssRangeR       = new Range();
     public MotorPVAFunction                     PVAFunctionF;
     public MotorPVAFunction                     PVAFunctionR;
+    public boolean                              writeMetrics    = false;
+    public boolean                              writeMetricsLUT = false;
 
     /**
      * Constructor
@@ -78,7 +80,9 @@ public class MotorCalibResult extends MetricsWriter {
                             ArrayList<MotorProfileDataPoint> ssDataF_in,
                             ArrayList<MotorProfileDataPoint> dataF_in,
                             ArrayList<MotorProfileDataPoint> ssDataR_in,
-                            ArrayList<MotorProfileDataPoint> dataR_in
+                            ArrayList<MotorProfileDataPoint> dataR_in,
+                            boolean                          writeMetrics_in,
+                            boolean                          writeMetricsLUT_in
                             ) {
         motorEnum             = motorConfig_in.motorEnum;
         powerResolution       = motorConfig_in.calibParams.powerResolution;
@@ -87,8 +91,12 @@ public class MotorCalibResult extends MetricsWriter {
         dataF                 = dataF_in;
         ssDataR               = ssDataR_in;
         dataR                 = dataR_in;
+        writeMetrics          = writeMetrics_in;
+        writeMetricsLUT       = writeMetricsLUT_in;
 
         initMetricsSpecs();
+        fitFunctions();
+        calcPredictions();
     }
 
     public void initMetricsSpecs() {
@@ -172,21 +180,23 @@ public class MotorCalibResult extends MetricsWriter {
 
         PVALutR.setMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
 
+        /// add points to the LUTs
         for(var dataPoint: dataF)
             PVALutF.addDataPoint(dataPoint.power, dataPoint.Vavg, dataPoint.Aavg);
-
-        PVALutF.writeMetricsPrefill();
+        if(writeMetricsLUT)
+            PVALutF.writeMetricsPrefill();
         PVALutF.update();
 
-        for(var dataPoint: dataF)
+        for(var dataPoint: dataR)
             PVALutR.addDataPoint(dataPoint.power, dataPoint.Vavg, dataPoint.Aavg);
-        PVALutR.writeMetricsPrefill();
+        if(writeMetricsLUT)
+            PVALutR.writeMetricsPrefill();
         PVALutR.update();
 
-        update();
+        calcPredictions();
     }
 
-    public void update() {
+    public void calcPredictions() {
         for(MotorProfileDataPoint Pt: dataF) {
             Pt.ApredFun = getAccelByFunction(Pt.direction, Pt.power, Pt.Vavg);
             Pt.ApredLut = getAccelByLut(Pt.direction, Pt.power, Pt.Vavg);
@@ -219,9 +229,15 @@ public class MotorCalibResult extends MetricsWriter {
             return VssR.apply(power);
     }
 
+    public void setWriteMetricsLUT(boolean writeMetricsLUT_in) {
+        writeMetricsLUT = writeMetricsLUT_in;
+    }
+
     public void writeMetrics() {
-        PVALutF.writeMetrics();
-        PVALutR.writeMetrics();
+        if(writeMetricsLUT) {
+            PVALutF.writeMetrics();
+            PVALutR.writeMetrics();
+        }
 
         MetricsFile metricsFile = RobotMetrics
                 .getInstance()
@@ -239,8 +255,15 @@ public class MotorCalibResult extends MetricsWriter {
     public static void main(String[] args) {
         RobotConfig robotConfig = RobotConfig.createInstance("Rig1Motor");
         MotorConfig motorConfig = robotConfig.motors.get(MotorEnum.TESTING_MOTOR);
-        MotorCalibResult result = new MotorCalibResult(motorConfig,null,null, null, null);;
-        System.out.println(result.getMetricsSpec("MotorProfileData"));
+        MotorCalibResult result = new MotorCalibResult(
+                motorConfig,
+                null,
+                null,
+                null,
+                null,
+                false,
+                false);
 
+        System.out.println(result.getMetricsSpec("MotorProfileData"));
     }
 }

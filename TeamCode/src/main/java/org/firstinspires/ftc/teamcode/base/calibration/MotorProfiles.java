@@ -121,17 +121,19 @@ public class MotorProfiles implements Validatable {
         return data;
     }
 
-    public MotorCalibResult getCalibResult() {
+    public MotorCalibResult getCalibResult(boolean writeMetrics, boolean writeMetricsLUT) {
         MotorCalibResult result = new MotorCalibResult(
                 motorConfig,
                 getSteadyStateDataForward(),
                 getDataForward(),
                 getSteadyStateDataReverse(),
-                getDataReverse()
+                getDataReverse(),
+                writeMetrics,
+                writeMetricsLUT
         );
-        result.fitFunctions();
         return result;
     }
+
     public void writeMetrics() {
         for(int pIdx=0; pIdx<powerResolution; pIdx++) {
             motorProfilesF[pIdx].writeMetrics();
