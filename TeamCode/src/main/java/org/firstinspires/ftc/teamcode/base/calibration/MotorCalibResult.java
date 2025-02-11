@@ -162,7 +162,7 @@ public class MotorCalibResult extends MetricsWriter {
                 regularizeDown(VssRangeF.min,2),
                 regularizeUp(VssRangeF.max,2));
 
-        PVALutF.setMetricsFileId(motorEnum.name());
+        PVALutF.setMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
         PVALutR = new LookupTable2D(
                 powerResolution, 0.0, 1.0,
@@ -170,7 +170,7 @@ public class MotorCalibResult extends MetricsWriter {
                 regularizeDown(VssRangeR.min,2),
                 regularizeUp(VssRangeR.max,2));
 
-        PVALutR.setMetricsFileId(motorEnum.name());
+        PVALutR.setMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
 
         for(var dataPoint: dataF)
             PVALutF.addDataPoint(dataPoint.power, dataPoint.Vavg, dataPoint.Aavg);

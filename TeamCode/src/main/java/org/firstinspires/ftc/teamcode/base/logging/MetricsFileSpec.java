@@ -102,6 +102,10 @@ public class MetricsFileSpec extends MetricsSpec {
         return fileId;
     }
 
+    public void setMetricsFileId(String fileId_in) {
+        fileId = fileId_in;
+    }
+
     @NonNull
     @Override
     public String toString() {

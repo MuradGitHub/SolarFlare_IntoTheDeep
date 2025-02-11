@@ -86,5 +86,8 @@ public abstract class MetricsWriter {
 
     public void setMetricsFileId(String metricsFileId_in) {
         metricsFileId = metricsFileId_in;
+        for(var metricsSpec: metricsSpecs.values()) {
+            metricsSpec.setMetricsFileId(metricsFileId);
+        }
     }
 }

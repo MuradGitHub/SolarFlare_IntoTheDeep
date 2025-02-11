@@ -46,7 +46,6 @@ import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 
-
 public class LookupTable2D extends MetricsWriter {
     private final int        xResolution;
     private final int        yResolution;
@@ -220,32 +219,32 @@ public class LookupTable2D extends MetricsWriter {
 
         // Weights - prefilled
         addMetricsSpec(
-                "MotorCalibResult-Weights-Prefill",
+                "LookupTable2D-Weights-Prefill",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // Weights - prefilled
         addMetricsSpec(
-                "MotorCalibResult-Weights",
+                "LookupTable2D-Weights",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // rawData - prefilled
-        addMetricsSpec("MotorCalibResult-RawData-Prefill",
+        addMetricsSpec("LookupTable2D-RawData-Prefill",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // rawData
-        addMetricsSpec("MotorCalibResult-RawData",
+        addMetricsSpec("LookupTable2D-RawData",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // data
-        addMetricsSpec("MotorCalibResult-Data",
+        addMetricsSpec("LookupTable2D-Data",
                 itemFormat,
                 yResolution+1,
                 header,
@@ -467,6 +466,7 @@ public class LookupTable2D extends MetricsWriter {
         for(double[] r: rawData)
             fileRawDataPrefill.addData(r);
     }
+
     public void writeMetrics() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
