@@ -457,27 +457,39 @@ public class LookupTable2D extends MetricsWriter {
 
         // Weights - Prefill
         MetricsFile fileWeightsPrefill = robotMetrics
-                .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights-Prefill"));
+                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights-Prefill"));
         for(double[] r: weights)
             fileWeightsPrefill.addData(r);
+        fileWeightsPrefill.close();
 
         MetricsFile fileRawDataPrefill = robotMetrics
-                .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData-Prefill"));
+                .getMetricsFile(getMetricsSpec("LookupTable2D-RawData-Prefill"));
         for(double[] r: rawData)
             fileRawDataPrefill.addData(r);
+        fileRawDataPrefill.close();
     }
 
     public void writeMetrics() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
         MetricsFile fileWeights = robotMetrics
-                .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights"));
+                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights"));
+        for(double[] r: weights)
+            fileWeights.addData(r);
+        fileWeights.close();
+
 
         MetricsFile fileRawData = robotMetrics
-                .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData"));
+                .getMetricsFile(getMetricsSpec("LookupTable2D-RawData"));
+        for(double[] r: rawData)
+            fileRawData.addData(r);
+        fileRawData.close();
 
         MetricsFile fileData = robotMetrics
-                .getMetricsFile(getMetricsSpec("MotorCalibResult-Data"));
+                .getMetricsFile(getMetricsSpec("LookupTable2D-Data"));
+        for(double[] r: data)
+            fileData.addData(r);
+        fileData.close();
     }
 
     @NonNull
