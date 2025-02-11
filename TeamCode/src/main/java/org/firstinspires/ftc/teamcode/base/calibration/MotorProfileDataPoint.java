@@ -34,8 +34,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.base.logging.MetricsDataPoint;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFileSpec;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsSpec;
+import org.firstinspires.ftc.teamcode.base.logging.MetricsFileSpec;
 
 
 public class MotorProfileDataPoint extends MetricsDataPoint {
@@ -73,7 +72,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         Aavg      = Aavg_in;
     }
 
-    public static RobotMetricsFileSpec getMetricsSpec(String fileId) {
+    public static MetricsFileSpec getMetricsSpec(String fileId) {
         return MetricsDataPoint.getMetricsSpec(fileId);
     }
 
@@ -82,7 +81,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
 
     public static void main(String[] args) {
-        RobotMetricsFileSpec ms = MotorProfileDataPoint.getMetricsSpec("This File");
+        MetricsFileSpec ms = MotorProfileDataPoint.getMetricsSpec("This File");
         System.out.println(ms);
     }
 }

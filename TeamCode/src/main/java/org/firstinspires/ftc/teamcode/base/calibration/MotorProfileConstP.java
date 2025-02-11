@@ -54,10 +54,10 @@ import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.error.CalculationException;
+import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
@@ -489,9 +489,9 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
 
     /**
      * The caller needs to close the metrics file
-     * @param file: the RobotMetricsFile to write metrics to
+     * @param file: the MetricsFile to write metrics to
      */
-    public void writeMetrics(RobotMetricsFile file) {
+    public void writeMetrics(MetricsFile file) {
         for(int tIdx=0; tIdx<=tIdxMax; tIdx++) {
             file.addData(
                     t[tIdx], tPextract[tIdx], tVextract[tIdx], tCextract[tIdx], tCycle[tIdx],
@@ -502,7 +502,7 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
     }
 
     public void writeMetrics() {
-        RobotMetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
+        MetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
         writeMetrics(metricsFile);
         metricsFile.close();
     }

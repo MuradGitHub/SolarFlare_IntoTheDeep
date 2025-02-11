@@ -31,69 +31,69 @@ package org.firstinspires.ftc.teamcode.base.logging;
 
 import androidx.annotation.NonNull;
 
-public class RobotMetricsFileSpec extends RobotMetricsSpec {
+public class MetricsFileSpec extends MetricsSpec {
     public String fileId;
 
-    public RobotMetricsFileSpec(String   tableType_in,
-                                String   format_in,
-                                String[] fieldNames_in,
-                                String   fileId_in) {
+    public MetricsFileSpec(String   tableType_in,
+                           String   format_in,
+                           String[] fieldNames_in,
+                           String   fileId_in) {
         super(tableType_in, format_in, fieldNames_in);
         fileId        = fileId_in;
     }
 
-    public RobotMetricsFileSpec(String   tableType_in,
-                                String   itemFormat_in,
-                                int      numberOfFields_in,
-                                String[] fieldNames_in,
-                                String   fileId_in) {
+    public MetricsFileSpec(String   tableType_in,
+                           String   itemFormat_in,
+                           int      numberOfFields_in,
+                           String[] fieldNames_in,
+                           String   fileId_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
         fileId        = fileId_in;
     }
 
-    public RobotMetricsFileSpec(String   tableType_in,
-                                String   format_in,
-                                String[] fieldNames_in) {
+    public MetricsFileSpec(String   tableType_in,
+                           String   format_in,
+                           String[] fieldNames_in) {
         super(tableType_in, format_in, fieldNames_in);
         fileId        = null;
     }
 
-    public RobotMetricsFileSpec(String   tableType_in,
-                                String   itemFormat_in,
-                                int      numberOfFields_in,
-                                String[] fieldNames_in) {
+    public MetricsFileSpec(String   tableType_in,
+                           String   itemFormat_in,
+                           int      numberOfFields_in,
+                           String[] fieldNames_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
         fileId        = null;
     }
 
-    public RobotMetricsFileSpec(String tableType_in,
-                                String format_in,
-                                String header_in,
-                                String fileId_in) {
+    public MetricsFileSpec(String tableType_in,
+                           String format_in,
+                           String header_in,
+                           String fileId_in) {
         super(tableType_in, format_in, header_in);
         fileId        = fileId_in;
     }
 
-    public RobotMetricsFileSpec(String tableType_in,
-                                String itemFormat_in,
-                                int    numberOfFields_in,
-                                String header_in,
-                                String fileId_in) {
+    public MetricsFileSpec(String tableType_in,
+                           String itemFormat_in,
+                           int    numberOfFields_in,
+                           String header_in,
+                           String fileId_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
         fileId        = fileId_in;
     }
 
-    public RobotMetricsFileSpec(String tableType_in,
-                                String format_in,
-                                String header_in) {
+    public MetricsFileSpec(String tableType_in,
+                           String format_in,
+                           String header_in) {
         super(tableType_in, format_in, header_in);
         fileId        = null;
     }
 
-    public RobotMetricsFileSpec(String tableType_in,
-                                String itemFormat_in,
-                                int    numberOfFields_in,
-                                String header_in) {
+    public MetricsFileSpec(String tableType_in,
+                           String itemFormat_in,
+                           int    numberOfFields_in,
+                           String header_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
         fileId        = null;
     }
@@ -107,7 +107,7 @@ public class RobotMetricsFileSpec extends RobotMetricsSpec {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
-        sb.append("RobotMetricsFileSpec\n");
+        sb.append("MetricsFileSpec\n");
         sb.append("  fileId=").append(fileId).append("\n");
 
         return sb.toString();

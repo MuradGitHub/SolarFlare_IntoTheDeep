@@ -33,7 +33,7 @@ import java.util.TreeMap;
 
 public abstract class MetricsWriter {
     public String                               metricsFileId;
-    public TreeMap<String,RobotMetricsFileSpec> metricsSpecs = new TreeMap<>();
+    public TreeMap<String, MetricsFileSpec> metricsSpecs = new TreeMap<>();
 
     protected abstract void initMetricsSpecs();
     public abstract void writeMetrics();
@@ -47,7 +47,7 @@ public abstract class MetricsWriter {
                                String header,
                                String fileId) {
         setMetricsFileId(fileId);
-        RobotMetricsFileSpec metricsSpec = new RobotMetricsFileSpec(
+        MetricsFileSpec metricsSpec = new MetricsFileSpec(
                 tableType,
                 format,
                 header,
@@ -62,7 +62,7 @@ public abstract class MetricsWriter {
                                String header,
                                String fileId) {
         setMetricsFileId(fileId);
-        RobotMetricsFileSpec metricsSpec = new RobotMetricsFileSpec(
+        MetricsFileSpec metricsSpec = new MetricsFileSpec(
                 tableType,
                 itemFormat,
                 numberOfFields,
@@ -72,11 +72,11 @@ public abstract class MetricsWriter {
         metricsSpecs.put(metricsSpec.tableType, metricsSpec);
     }
 
-    public void addMetricsSpec(RobotMetricsFileSpec metricsSpec) {
+    public void addMetricsSpec(MetricsFileSpec metricsSpec) {
         metricsSpecs.put(metricsSpec.tableType, metricsSpec);
     }
 
-    public RobotMetricsFileSpec getMetricsSpec(String tableType) {
+    public MetricsFileSpec getMetricsSpec(String tableType) {
         return metricsSpecs.get(tableType);
     }
 

@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.base.config.MissingDataException;
 public class RobotMetrics {
     private static RobotMetrics instance;
 
-    private final SortedMap<String, RobotMetricsSpec> tablesSpecs = new TreeMap<>();
+    private final SortedMap<String, MetricsSpec> tablesSpecs = new TreeMap<>();
 
     public static RobotMetrics getInstance() {
         if(instance == null)
@@ -57,7 +57,7 @@ public class RobotMetrics {
     private void initializeTablesFormats() {
         /// MotionProfile files
         tablesSpecs.put("MotionProfile",
-                new RobotMetricsSpec(
+                new MetricsSpec(
                         "MotionProfile",
                         "%1$d,%2$d,%3$d,%4$.5f,%5$.5f,%6$.5f%n",
                 new String[] {"iteration",
@@ -68,7 +68,7 @@ public class RobotMetrics {
                         "motorVelocity"}));
         /// MotorProfileConstP
         tablesSpecs.put("MotorProfileConstP",
-                new RobotMetricsSpec(
+                new MetricsSpec(
                         "MotorProfileConstP",
                         "%1$.5f,%2$.5f,%3$.5f,%4$.5f,%5$.5f,%6$d,%7$.5f,%8$.5f,%9$.5f,%10$.5f,%11$.5f,%12$.5f%n",
                         new String[] {
@@ -86,7 +86,7 @@ public class RobotMetrics {
                                 "Power"}));
 
         tablesSpecs.put("MotionControl",
-                new RobotMetricsSpec(
+                new MetricsSpec(
                         "MotorControl",
                 "%1$d,%2$d,%3$.5f,%4$.5f,%5$.5f,%6$.5f%n",
                 new String[] {"iteration",
@@ -97,20 +97,20 @@ public class RobotMetrics {
                         "motorVelocity"}));
     }
 
-    public RobotMetricsFile getMetricsFile(String tableType, String fileId) {
-        RobotMetricsSpec metricsSpec = tablesSpecs.get(tableType);
+    public MetricsFile getMetricsFile(String tableType, String fileId) {
+        MetricsSpec metricsSpec = tablesSpecs.get(tableType);
         if(metricsSpec == null)
-            throw new MissingDataException("No RobotMetricsSpec for TableType: " + tableType);
+            throw new MissingDataException("No MetricsSpec for TableType: " + tableType);
 
-        return new RobotMetricsFile(metricsSpec, fileId);
+        return new MetricsFile(metricsSpec, fileId);
     }
 
-    public RobotMetricsFile getMetricsFile(RobotMetricsFileSpec metricsSpec) {
+    public MetricsFile getMetricsFile(MetricsFileSpec metricsSpec) {
         tablesSpecs.put(metricsSpec.getMetricsTableType(), metricsSpec);
-        return new RobotMetricsFile(metricsSpec, metricsSpec.getMetricsFileId());
+        return new MetricsFile(metricsSpec, metricsSpec.getMetricsFileId());
     }
 
-    public RobotMetricsFile getMetricsFile(MetricsWritable obj) {
+    public MetricsFile getMetricsFile(MetricsWritable obj) {
         return getMetricsFile(obj.getMetricsTableType(), obj.getMetricsFileId());
     }
 }

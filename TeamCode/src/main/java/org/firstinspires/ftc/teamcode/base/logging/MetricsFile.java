@@ -36,13 +36,13 @@ import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RobotMetricsFile {
-    private final RobotMetricsSpec robotMetricsSpec;
+public class MetricsFile {
+    private final MetricsSpec robotMetricsSpec;
     private       Formatter        formatter;
     private final String           fileId;
     private final String           fullFileName;
 
-    public RobotMetricsFile(RobotMetricsSpec robotMetricsSpec_in, String fileId_in) {
+    public MetricsFile(MetricsSpec robotMetricsSpec_in, String fileId_in) {
         robotMetricsSpec = robotMetricsSpec_in;
         fileId           = fileId_in;
         fullFileName     = robotMetricsSpec.getFullFileName(fileId);
@@ -58,7 +58,7 @@ public class RobotMetricsFile {
         } catch (IOException e) {
             Logger.getGlobal().logp(
                     Level.SEVERE,
-                    "RobotMetricsFile",
+                    "MetricsFile",
                     "open",
                     "Failed to open file:" + fullFileName,
                     e);
@@ -70,7 +70,7 @@ public class RobotMetricsFile {
 
     public void addData(Object... data) {
         if(!isActive()) {
-            Logger.getGlobal().severe("RobotMetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
             return;
         }
         formatter.format(robotMetricsSpec.format, data);
@@ -78,7 +78,7 @@ public class RobotMetricsFile {
 
     public void addData(double[] data) {
         if(!isActive()) {
-            Logger.getGlobal().severe("RobotMetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
             return;
         }
 
@@ -89,7 +89,7 @@ public class RobotMetricsFile {
 
     public void addData(MetricsDataPoint dataPoint) {
         if(!isActive()) {
-            Logger.getGlobal().severe("RobotMetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
             return;
         }
         formatter.format(robotMetricsSpec.format, dataPoint.getFields());
@@ -111,7 +111,7 @@ public class RobotMetricsFile {
     @Override
     public String toString() {
         var sb = new StringBuilder();
-        sb.append("RobotMetricsFile\n");
+        sb.append("MetricsFile\n");
         sb.append("  robotMetricsSpec=\n").append(robotMetricsSpec);
         sb.append("  formatter=")         .append(formatter)   .append("\n");
         sb.append("  fileId=")            .append(fileId)      .append("\n");

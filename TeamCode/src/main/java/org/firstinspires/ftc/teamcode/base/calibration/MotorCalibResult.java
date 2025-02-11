@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
+import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeUp;
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeDown;
@@ -223,7 +223,7 @@ public class MotorCalibResult extends MetricsWriter {
         PVALutF.writeMetrics();
         PVALutR.writeMetrics();
 
-        RobotMetricsFile metricsFile = RobotMetrics
+        MetricsFile metricsFile = RobotMetrics
                 .getInstance()
                 .getMetricsFile(getMetricsSpec("MotorProfileData"));
 

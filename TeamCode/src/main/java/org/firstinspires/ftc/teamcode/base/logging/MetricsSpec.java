@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.base.config.Application;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
+public class MetricsSpec implements Comparable<MetricsSpec> {
     public String   tableType;
     public int      numberOfFields;
     public String   itemFormat;
@@ -46,9 +46,9 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     public String[] fieldNames;
     public String   header;
 
-    public RobotMetricsSpec(String   tableType_in,
-                            String   format_in,
-                            String[] fieldNames_in) {
+    public MetricsSpec(String   tableType_in,
+                       String   format_in,
+                       String[] fieldNames_in) {
         tableType      = tableType_in;
         numberOfFields = fieldNames_in.length;
         itemFormat     = format_in.split(",")[0];
@@ -57,10 +57,10 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
         header         = String.join(",", fieldNames);
     }
 
-    public RobotMetricsSpec(String   tableType_in,
-                            String   itemFormat_in,
-                            int      numberOfFields_in,
-                            String[] fieldNames_in) {
+    public MetricsSpec(String   tableType_in,
+                       String   itemFormat_in,
+                       int      numberOfFields_in,
+                       String[] fieldNames_in) {
         tableType      = tableType_in;
         numberOfFields = numberOfFields_in;
         itemFormat     = itemFormat_in;
@@ -69,9 +69,9 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
         header         = String.join(",", fieldNames);
     }
 
-    public RobotMetricsSpec(String tableType_in,
-                            String format_in,
-                            String header_in) {
+    public MetricsSpec(String tableType_in,
+                       String format_in,
+                       String header_in) {
         tableType      = tableType_in;
         itemFormat     = format_in.split(",")[0];
         format         = format_in;
@@ -80,10 +80,10 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
         numberOfFields = fieldNames.length;
     }
 
-    public RobotMetricsSpec(String tableType_in,
-                            String itemFormat_in,
-                            int    numberOfFields_in,
-                            String header_in) {
+    public MetricsSpec(String tableType_in,
+                       String itemFormat_in,
+                       int    numberOfFields_in,
+                       String header_in) {
         tableType      = tableType_in;
         numberOfFields = numberOfFields_in;
         itemFormat     = itemFormat_in;
@@ -92,7 +92,7 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
         fieldNames     = header.split(",");
     }
 
-    public int compareTo(RobotMetricsSpec other) {
+    public int compareTo(MetricsSpec other) {
         return tableType.compareTo(other.tableType);
     }
 
@@ -116,7 +116,7 @@ public class RobotMetricsSpec implements Comparable<RobotMetricsSpec> {
     @Override
     public String toString() {
         var sb = new StringBuilder();
-        sb.append("RobotMetricsSpec\n");
+        sb.append("MetricsSpec\n");
         sb.append("  tableType=").append(tableType)                  .append("\n");
         sb.append("  format=")   .append(format)                     .append("\n");
         sb.append("  fields")    .append(Arrays.toString(fieldNames)).append("\n");

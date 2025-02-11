@@ -42,9 +42,9 @@ import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.join;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 
 
 public class LookupTable2D extends MetricsWriter {
@@ -457,12 +457,12 @@ public class LookupTable2D extends MetricsWriter {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
         // Weights - Prefill
-        RobotMetricsFile fileWeightsPrefill = robotMetrics
+        MetricsFile fileWeightsPrefill = robotMetrics
                 .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights-Prefill"));
         for(double[] r: weights)
             fileWeightsPrefill.addData(r);
 
-        RobotMetricsFile fileRawDataPrefill = robotMetrics
+        MetricsFile fileRawDataPrefill = robotMetrics
                 .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData-Prefill"));
         for(double[] r: rawData)
             fileRawDataPrefill.addData(r);
@@ -470,13 +470,13 @@ public class LookupTable2D extends MetricsWriter {
     public void writeMetrics() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
-        RobotMetricsFile fileWeights = robotMetrics
+        MetricsFile fileWeights = robotMetrics
                 .getMetricsFile(getMetricsSpec("MotorCalibResult-Weights"));
 
-        RobotMetricsFile fileRawData = robotMetrics
+        MetricsFile fileRawData = robotMetrics
                 .getMetricsFile(getMetricsSpec("MotorCalibResult-RawData"));
 
-        RobotMetricsFile fileData = robotMetrics
+        MetricsFile fileData = robotMetrics
                 .getMetricsFile(getMetricsSpec("MotorCalibResult-Data"));
     }
 

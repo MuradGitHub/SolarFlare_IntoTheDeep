@@ -37,10 +37,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
+import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetricsFile;
 import org.firstinspires.ftc.teamcode.base.config.RobotState;
 
 import java.util.logging.Logger;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 public class MotorControl1D implements MetricsWritable {
     Telemetry                  telemetryDash = FtcDashboard.getInstance().getTelemetry();
     Logger                     logger;
-    RobotMetricsFile           metricsFile;
+    MetricsFile metricsFile;
     HardwareConfig             hw;
     RobotState                 state;
     PID                        pid;

@@ -48,7 +48,7 @@ public abstract class MetricsDataPoint {
 
     public abstract Object[] getFields();
 
-    public static RobotMetricsFileSpec getMetricsSpec(String metricsFileId) {
-        return new RobotMetricsFileSpec(tableType, format, fieldNames, metricsFileId);
+    public static MetricsFileSpec getMetricsSpec(String metricsFileId) {
+        return new MetricsFileSpec(tableType, format, fieldNames, metricsFileId);
     }
 }
