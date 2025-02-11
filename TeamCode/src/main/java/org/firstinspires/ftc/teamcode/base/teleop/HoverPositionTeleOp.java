@@ -58,7 +58,8 @@ public class HoverPositionTeleOp extends LinearOpMode {
                 () -> (gamepad2.options),
                 ()->(gamepad2.b),
                 ()->(gamepad2.y),
-                ()->(gamepad2.dpad_up||gamepad2.dpad_down)
+                ()->(gamepad2.dpad_up),
+                ()->(gamepad2.dpad_down)
         }, new TeleOpAction[]{
                 new TeleOpSequentialAction(
                         bucketSlides.setTargetAction(bucketSlides.getPos("transferPosition")),
@@ -140,25 +141,21 @@ public class HoverPositionTeleOp extends LinearOpMode {
                         extendo.setTargetAction(400),
                         clawFingers.setPositionAction(clawFingers.getPos("openPosition"))
                 ),
+                new TeleOpParallelAction(
+                        extendo.setTargetAction(extendo.MAX_POSITION),
+                        clawPitch.setPositionAction(clawPitch.getPos("hoverPosition")),
+                        innerClawPitch.setPositionAction(innerClawPitch.getPos("hoverPosition")),
+                        bucket.setPositionAction(bucket.getPos("transferPosition"))
+                ),
                 new TeleOpSequentialAction(
                         new TeleOpParallelAction(
-                                bucketSlides.setTargetAction(bucketSlides.getPos("transferPosition")),
-                                bucket.setPositionAction(bucketSlides.getPos("transferPosition")),
                                 clawWrist.setPositionAction(clawWrist.getPos("normalPosition")),
-                                extendo.setTargetAction(extendo.MIN_POSITION),
                                 clawPitch.setPositionAction(clawPitch.getPos("transferPosition")),
-                                innerClawPitch.setPositionAction(innerClawPitch.getPos("transferPosition"))
+                                innerClawPitch.setPositionAction(innerClawPitch.getPos("transferPosition")),
+                                bucket.setPositionAction(bucket.getPos("transferPosition"))
                         ),
-                        new TeleOpParallelAction(
-                                new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("MOTION_PROFILE");}),
-                                extendoPitch.setTargetAction(extendoPitch.getPos("transferPosition"))
-                        ),
-                        clawFingers.setPositionAction(clawFingers.getPos("openPosition")),
-                        new TeleOpParallelAction(
-                                clawPitch.setPositionAction(clawPitch.getPos("backOffPosition")),
-                                innerClawPitch.setPositionAction(innerClawPitch.getPos("backOffPosition"))
-                        )
-                )
+                        extendo.setTargetAction(extendo.MIN_POSITION)
+                ),
         });
         TeleOpActions.runLoop(
                 this::opModeIsActive,
@@ -173,7 +170,7 @@ public class HoverPositionTeleOp extends LinearOpMode {
                 clawFingers.triggeredToggleAction(()->(gamepad2.left_bumper||gamepad2.right_bumper),clawFingers.getPos("openPosition"),clawFingers.getPos("closedPosition")),
                 new PressTrigger(new Condition[]{()->(gamepad2.back)},new TeleOpAction[]{extendoPitch.stallResetAction(-1020)}),
                 new PressTrigger(new Condition[]{()->(gamepad1.back)},new TeleOpAction[]{new TeleOpActions.ShortAction(()->{bucketSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);bucketSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);bucketSlides.offset=1065;})}),
-                bucketSlides.triggeredDynamicAction(()->(gamepad1.dpad_up),()->(gamepad1.dpad_down),15),
+                bucketSlides.triggeredDynamicAction(()->(gamepad1.dpad_left),()->(gamepad1.dpad_right),15),
                 clawWrist.triggeredDynamicAction(()->(gamepad2.right_trigger>0),()->(gamepad2.left_trigger>0),6),
                 bucket.triggeredToggleAction(()->(gamepad2.a),bucket.getPos("transferPosition"),bucket.getPos("depositPosition")),
                 new ConditionalAction(
@@ -188,6 +185,8 @@ public class HoverPositionTeleOp extends LinearOpMode {
                 new ConditionalAction(new Condition[]{()->(!isRRActive)}, new TeleOpAction[]{
                         new RobotCentricMecanumAction(new BotMotor[]{leftFront,leftBack,rightFront,rightBack},()->(gamepad1.left_stick_x),()->(gamepad1.left_stick_y),()->(gamepad1.right_stick_x),()->(gamepad1.left_trigger>0.2))
                 }),
+                extendo.triggeredDynamicAction(()->(gamepad1.right_bumper),()->(gamepad1.left_bumper),15),
+                new TeleOpActions.ShortAction(()->{clawWrist.setPosition(clawWrist.getPosition());}),
                 new UpdateTelemetryAction()
         );
     }
