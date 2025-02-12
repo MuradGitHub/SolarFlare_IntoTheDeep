@@ -43,10 +43,10 @@ import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.join;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
-import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
+import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 
-public class LookupTable2D extends MetricsWriter {
+public class LookupTable2D extends MultiMetricsWriter {
     private final int        xResolution;
     private final int        yResolution;
     private final int        xIdxMax;
