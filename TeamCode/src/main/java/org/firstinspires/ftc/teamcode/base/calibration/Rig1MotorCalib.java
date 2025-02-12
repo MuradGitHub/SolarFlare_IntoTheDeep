@@ -127,7 +127,7 @@ public class Rig1MotorCalib extends LinearOpMode {
         motorProfiles.writeMetrics();
 
         telemetry.addData("Completed writing metrics for profiles", "");
-        telemetry.addData("Waitin for start", "");
+        telemetry.addData("Waiting for start", "");
         telemetry.update();
 
         waitForStart();
