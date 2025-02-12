@@ -37,6 +37,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.pow;
 
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.function.BiPredicate;
 
@@ -96,7 +97,7 @@ public class Math {
                                                  int      eIdx,
                                                  int      lookback,
                                                  BiPredicate<Double, Double> predicate) {
-        int    sIdx        = eIdx-lookback;
+        int    sIdx        = eIdx-lookback+1;
         /// need at least lookback data points to determine steady state
         if(sIdx<0)
             return false;
@@ -109,11 +110,39 @@ public class Math {
         return true;
     }
 
+    public static <T> boolean isSteadyStatePredicate(ArrayList<T>      data,
+                                                     int               eIdx,
+                                                     int               lookback,
+                                                     BiPredicate<T, T> predicate) {
+        int    sIdx        = eIdx-lookback+1;
+        /// need at least lookback data points to determine steady state
+        if(sIdx<0)
+            return false;
+
+        T currentData = data.get(eIdx);
+        for(int idx=sIdx; idx<=eIdx; idx++) {
+            if(!predicate.test(currentData, data.get(idx)))
+                return false;
+        }
+        return true;
+    }
+
     @SuppressWarnings("SpellCheckingInspection")
-    public static Integer getSteadyStateStartPredicate(double[] data,
-                                                   int      lookback,
-                                                   BiPredicate<Double, Double> predicate) {
-        for(int idx=lookback; idx<data.length; idx++)
+    public static Integer getSteadyStateStartPredicate(double[]                    data,
+                                                       int                         lookback,
+                                                       BiPredicate<Double, Double> predicate) {
+        for(int idx=lookback-1; idx<data.length; idx++)
+            if(isSteadyStatePredicate(data, idx, lookback, predicate))
+                return idx;
+
+        return null;
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public static <T> Integer getSteadyStateStartPredicate(ArrayList<T>      data,
+                                                           int               lookback,
+                                                           BiPredicate<T, T> predicate) {
+        for(int idx=lookback-1; idx<data.size(); idx++)
             if(isSteadyStatePredicate(data, idx, lookback, predicate))
                 return idx;
 
