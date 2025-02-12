@@ -89,24 +89,24 @@ public class LookupTable1D implements Function<Double, Double> {
         System.out.println("f(1)="  + f.apply(1.0));
 
         LookupTable1D r = new LookupTable1D();
-        r.addDataPoint(10.0, -1.0);
-        r.addDataPoint( 9.0, -0.9);
-        r.addDataPoint( 8.0, -0.8);
-        r.addDataPoint( 5.0, -0.5);
-        r.addDataPoint( 1.0, -0.1);
+        r.addDataPoint(-10.0, -1.0);
+        r.addDataPoint( -9.0, -0.9);
+        r.addDataPoint( -8.0, -0.8);
+        r.addDataPoint( -5.0, -0.5);
+        r.addDataPoint( -1.0, -0.1);
 
         System.out.println("r=" + r);
 
-        System.out.println("r(10)=" + r.apply(10.0));
-        System.out.println("r(9)="  + r.apply(9.0));
-        System.out.println("r(8)="  + r.apply(8.0));
-        System.out.println("r(7)="  + r.apply(7.0));
-        System.out.println("r(6)="  + r.apply(6.0));
-        System.out.println("r(5)="  + r.apply(5.0));
-        System.out.println("r(4)="  + r.apply(4.0));
-        System.out.println("r(3)="  + r.apply(3.0));
-        System.out.println("r(2)="  + r.apply(2.0));
-        System.out.println("r(1)="  + r.apply(1.0));
+        System.out.println("r(-10)=" + r.apply(-10.0));
+        System.out.println("r(-9)="  + r.apply(-9.0));
+        System.out.println("r(-8)="  + r.apply(-8.0));
+        System.out.println("r(-7)="  + r.apply(-7.0));
+        System.out.println("r(-6)="  + r.apply(-6.0));
+        System.out.println("r(-5)="  + r.apply(-5.0));
+        System.out.println("r(-4)="  + r.apply(-4.0));
+        System.out.println("r(-3)="  + r.apply(-3.0));
+        System.out.println("r(-2)="  + r.apply(-2.0));
+        System.out.println("r(-1)="  + r.apply(-1.0));
 
     }
 }
