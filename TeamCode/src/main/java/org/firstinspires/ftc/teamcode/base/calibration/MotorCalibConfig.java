@@ -34,17 +34,18 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 
 public class MotorCalibConfig implements Validatable {
-    public double minTimeInc;
-    public int    timeResolution;
-    public int    powerResolution;
-    public double averagingTime;
-    public int    endSamples;
-    public double minPower;
-    public double maxPower;
-    public int    targetBuffer;
-    public int    minDistance;
-    public double velocityTolerance;
-    public int    velocityResolution;
+    public double  minTimeInc;
+    public int     timeResolution;
+    public int     powerResolution;
+    public double  averagingTime;
+    public int     endSamples;
+    public double  minPower;
+    public double  maxPower;
+    public int     targetBuffer;
+    public int     minDistance;
+    public double  velocityTolerance;
+    public int     velocityResolution;
+    public double  maxProfileTime;
 
     public boolean isValid() {
         return true;
@@ -66,6 +67,7 @@ public class MotorCalibConfig implements Validatable {
         sb.append("  minDistance=")       .append(minDistance)       .append("\n");
         sb.append("  velocityTolerance=") .append(velocityTolerance) .append("\n");
         sb.append("  velocityResolution=").append(velocityResolution).append("\n");
+        sb.append("  maxProfileTime=")    .append(maxProfileTime)    .append("\n");
 
         return sb.toString();
     }
