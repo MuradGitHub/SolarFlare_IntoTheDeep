@@ -56,7 +56,9 @@ String jsonString = gson.toJson(object);
 
 public class JSONUtils {
     public static <T> T parseJSON(Reader input, Class<T> contentsClass) {
-        Gson gson              = new GsonBuilder().create();
+        Gson gson              = new GsonBuilder()
+                .serializeSpecialFloatingPointValues()
+                .create();
         return gson.fromJson(input, contentsClass);
     }
 
@@ -69,7 +71,10 @@ public class JSONUtils {
                         String fileName = obj.getClass().getName() + "-" + obj.getJSONFileId() + ".json";
                         String fullFileName = Application.getMetricsDirName() + "/" + fileName;
                         try (Writer writer = new FileWriter(fullFileName)) {
-                            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                            Gson gson = new GsonBuilder()
+                                    .setPrettyPrinting()
+                                    .serializeSpecialFloatingPointValues()
+                                    .create();
                             gson.toJson(obj, writer);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -91,7 +96,10 @@ public class JSONUtils {
         String fileName = obj.getClass().getName() + "-" + obj.getJSONFileId() + ".json";
         String fullFileName = Application.getMetricsDirName() + "/" + fileName;
         try (Writer writer = new FileWriter(fullFileName)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .serializeSpecialFloatingPointValues()
+                    .create();
             gson.toJson(obj, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
