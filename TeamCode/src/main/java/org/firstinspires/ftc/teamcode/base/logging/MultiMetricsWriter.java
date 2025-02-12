@@ -31,9 +31,9 @@ package org.firstinspires.ftc.teamcode.base.logging;
 
 import java.util.TreeMap;
 
-public abstract class MetricsWriter {
-    public String                               metricsFileId;
+public abstract class MultiMetricsWriter {
     public TreeMap<String, MetricsFileSpec> metricsSpecs = new TreeMap<>();
+    public String                           metricsFileId;
 
     protected abstract void initMetricsSpecs();
     public abstract void writeMetrics();
@@ -80,14 +80,14 @@ public abstract class MetricsWriter {
         return metricsSpecs.get(tableType);
     }
 
-    public String getMetricsFileId() {
-        return metricsFileId;
-    }
-
     public void setMetricsFileId(String metricsFileId_in) {
         metricsFileId = metricsFileId_in;
         for(var metricsSpec: metricsSpecs.values()) {
             metricsSpec.setMetricsFileId(metricsFileId);
         }
+    }
+
+    public String getMetricsFileId() {
+        return metricsFileId;
     }
 }
