@@ -92,7 +92,7 @@ public class MetricsFile {
             Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
             return;
         }
-        formatter.format(robotMetricsSpec.format, dataPoint.getFields());
+        dataPoint.writeMetrics(formatter);
     }
 
     public boolean isActive() {

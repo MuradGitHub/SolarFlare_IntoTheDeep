@@ -29,6 +29,8 @@
  */
 package org.firstinspires.ftc.teamcode.base.logging;
 
+import java.util.Formatter;
+
 public abstract class MetricsDataPoint {
     public static String   tableType  = null;
     public static String   format     = null;
@@ -46,9 +48,9 @@ public abstract class MetricsDataPoint {
         return fieldNames;
     }
 
-    public abstract Object[] getFields();
-
     public static MetricsFileSpec getMetricsSpec(String metricsFileId) {
         return new MetricsFileSpec(tableType, format, fieldNames, metricsFileId);
     }
+
+    public abstract void writeMetrics(Formatter formatter);
 }
