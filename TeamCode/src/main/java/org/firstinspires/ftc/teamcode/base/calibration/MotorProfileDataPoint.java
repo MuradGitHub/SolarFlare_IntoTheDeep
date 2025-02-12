@@ -31,53 +31,103 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.base.logging.MetricsDataPoint;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFileSpec;
 
+import java.util.Formatter;
 
 public class MotorProfileDataPoint extends MetricsDataPoint {
 
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
-        MetricsDataPoint.format     = "%1$s,%2$.3f,%3$d,%4$.3f,%5$.3f,%6$.3f,%7$.3f,%8$.3f%n";
+        MetricsDataPoint.format     =
+                "%1$s,%2$.3f,%3$.3f,%4$.3f,%5$.3f,%6$.3f," +
+                        "%7$d,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f," +
+                        "%13$.3f,%14$.3f,%15$.3f%n";
+
         MetricsDataPoint.fieldNames = new String[] {
-                "Direction", "Time", "Position", "Power", "Vavg", "Aavg", "ApredFun", "ApredLut"
+                "Direction", "Time",     "TimePExtract", "TimeVextract", "TimeCExtract", "TimeCycle",
+                "Position",  "Power",    "Velocity",     "Vavg",         "A",            "Aavg",
+                "ApredFun",  "ApredLut", "C"
         };
     }
 
     public        Direction direction;
     public        double    t;
+    public        double    tPextract;
+    public        double    tVextract;
+    public        double    tCextract;
+    public        double    tCycle;
     public        int       P;
     public        double    power;
+    public        double    V;
     public        double    Vavg;
+    public        double    A;
     public        double    Aavg;
     public        double    ApredFun;
     public        double    ApredLut;
+    public        double    C;
 
-    public MotorProfileDataPoint() {}
-
-    public MotorProfileDataPoint(DcMotorSimple.Direction direction_in,
-                                 double                  t_in,
-                                 int                     P_in,
-                                 double                  Vavg_in,
-                                 double                  Aavg_in,
-                                 double                  power_in) {
+    public MotorProfileDataPoint(
+            Direction direction_in,
+            double    t_in,
+            double    tPextract_in,
+            double    tVextract_in,
+            double    tCextract_in,
+            double    tCycle_in,
+            int       P_in,
+            double    V_in,
+            double    power_in,
+            double    C_in) {
         direction = direction_in;
         t         = t_in;
+        tPextract = tPextract_in;
+        tVextract = tVextract_in;
+        tCextract = tCextract_in;
+        tCycle    = tCycle_in;
         P         = P_in;
+        V         = V_in;
         power     = power_in;
-        Vavg      = Vavg_in;
-        Aavg      = Aavg_in;
+        C         = C_in;
     }
 
     public static MetricsFileSpec getMetricsSpec(String fileId) {
         return MetricsDataPoint.getMetricsSpec(fileId);
     }
 
-    public Object[] getFields() {
-        return new Object[] {direction, t, P, power, Vavg, Aavg, ApredFun, ApredLut};
+    public void writeMetrics(Formatter formatter) {
+        formatter.format(format,
+                direction, t,    tPextract, tVextract, tCextract, tCycle,   P, power,
+                V,         Vavg, A,          Aavg,     ApredFun,  ApredLut, C);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MotorProfileDataPoint\n");
+
+        sb.append("  direction=").append(direction).append("\n");
+        sb.append("  t=")        .append(t)        .append("\n");
+        sb.append("  tPextract=").append(tPextract).append("\n");
+        sb.append("  tVextract=").append(tVextract).append("\n");
+        sb.append("  tCextract=").append(tCextract).append("\n");
+        sb.append("  tCycle=")   .append(tCycle)   .append("\n");
+        sb.append("  P=")        .append(P)        .append("\n");
+        sb.append("  V=")        .append(V)        .append("\n");
+        sb.append("  Vavg=")     .append(Vavg)     .append("\n");
+        sb.append("  A=")        .append(A)        .append("\n");
+        sb.append("  Aavg=")     .append(Aavg)     .append("\n");
+        sb.append("  ApredFun=") .append(ApredFun) .append("\n");
+        sb.append("  ApredLut=") .append(ApredLut) .append("\n");
+        sb.append("  power=")    .append(power)    .append("\n");
+        sb.append("  C=")        .append(C)        .append("\n");
+
+        return sb.toString();
     }
 
     public static void main(String[] args) {
