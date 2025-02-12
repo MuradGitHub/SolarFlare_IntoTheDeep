@@ -39,7 +39,7 @@ import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
-import org.firstinspires.ftc.teamcode.base.logging.MetricsWriter;
+import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 
@@ -47,7 +47,7 @@ import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeUp;
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeDown;
 
 
-public class MotorCalibResult extends MetricsWriter {
+public class MotorCalibResult extends MultiMetricsWriter {
     public MotorEnum                            motorEnum;
     public int                                  powerResolution;
     public int                                  velocityResolution;
