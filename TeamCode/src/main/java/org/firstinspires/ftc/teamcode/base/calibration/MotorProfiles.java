@@ -29,10 +29,7 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
-import static java.lang.Math.floor;
-
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
-import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
@@ -102,7 +99,12 @@ public class MotorProfiles implements Validatable {
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataForward() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesF) {
-            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateResult();
+            logger.logp(
+                    Level.INFO,
+                    "MotorProfiles",
+                    "getSteadyStateDataForward",
+                    "MotorProfile-Power=" + profile.power);
+            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVData();
             if(ssDataPoint == null)
                 continue;
             data.add(ssDataPoint);
@@ -113,7 +115,7 @@ public class MotorProfiles implements Validatable {
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataReverse() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesR) {
-            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateResult();
+            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVData();
             if(ssDataPoint == null)
                 continue;
             data.add(ssDataPoint);
