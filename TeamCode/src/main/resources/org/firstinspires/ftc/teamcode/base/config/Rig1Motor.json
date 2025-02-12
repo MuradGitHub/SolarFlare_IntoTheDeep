@@ -31,7 +31,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     }
   },

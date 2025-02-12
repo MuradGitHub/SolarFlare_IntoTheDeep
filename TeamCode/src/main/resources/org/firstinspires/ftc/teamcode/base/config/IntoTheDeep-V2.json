@@ -31,7 +31,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "RIGHT_BACK": {
@@ -60,7 +61,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "LEFT_FRONT": {
@@ -89,7 +91,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "RIGHT_FRONT": {
@@ -118,7 +121,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "EXTENDO": {
@@ -147,7 +151,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "EXTENDO_PITCH": {
@@ -176,7 +181,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     },
     "BUCKET_SLIDES": {
@@ -205,7 +211,8 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0
+        "velocityTolerance": 20.0,
+        "maxProfileTime": 10000
       }
     }
   },
