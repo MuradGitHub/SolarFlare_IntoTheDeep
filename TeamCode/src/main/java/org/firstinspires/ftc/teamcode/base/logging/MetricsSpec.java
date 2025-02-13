@@ -37,14 +37,17 @@ import org.firstinspires.ftc.teamcode.base.config.Application;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MetricsSpec implements Comparable<MetricsSpec> {
-    public String   tableType;
-    public int      numberOfFields;
-    public String   itemFormat;
-    public String   format;
-    public String[] fieldNames;
-    public String   header;
+    public static Logger   logger          = RobotLogger.getInstance().getConfigLogger();
+    public        String   tableType;
+    public        int      numberOfFields;
+    public        String   itemFormat;
+    public        String   format;
+    public        String[] fieldNames;
+    public        String   header;
 
     public MetricsSpec(String   tableType_in,
                        String   format_in,
@@ -55,6 +58,13 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         format         = format_in;
         fieldNames     = fieldNames_in.clone();
         header         = String.join(",", fieldNames);
+        logger.logp(
+                Level.INFO,
+                "MetricsSpec",
+                "()",
+                String.format(Locale.US,
+                        "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
+                        tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
     }
 
     public MetricsSpec(String   tableType_in,
@@ -67,6 +77,13 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         format         = repeatAndJoinFormat(itemFormat,",",numberOfFields);
         fieldNames     = fieldNames_in.clone();
         header         = String.join(",", fieldNames);
+        logger.logp(
+                Level.INFO,
+                "MetricsSpec",
+                "()",
+                String.format(Locale.US,
+                        "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
+                        tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
     }
 
     public MetricsSpec(String tableType_in,
@@ -78,6 +95,13 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         header         = header_in;
         fieldNames     = header.split(",");
         numberOfFields = fieldNames.length;
+        logger.logp(
+                Level.INFO,
+                "MetricsSpec",
+                "()",
+                String.format(Locale.US,
+                        "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
+                        tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
     }
 
     public MetricsSpec(String tableType_in,
@@ -90,6 +114,14 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         format         = repeatAndJoinFormat(itemFormat,",",numberOfFields);
         header         = header_in;
         fieldNames     = header.split(",");
+        logger.logp(
+                Level.INFO,
+                "MetricsSpec",
+                "()",
+                String.format(Locale.US,
+                        "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
+                        tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
+
     }
 
     public int compareTo(MetricsSpec other) {
