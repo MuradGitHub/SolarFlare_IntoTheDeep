@@ -177,34 +177,39 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     private void initArrays() {
+        // xValues
         if(xValues == null) {
-            xValues = new double[xResolution];
-            double dx = xRange.getSpan() / xIdxMax;
+            xValues           = new double[xResolution];
+            double dx         = xRange.getSpan() / xIdxMax;
             for(int xIdx=0; xIdx<xResolution; xIdx++)
                 xValues[xIdx] = xRange.min + xIdx*dx;
         }
 
+        // yValues
         if(yValues == null) {
-            yValues = new double[yResolution];
-            double dy = yRange.getSpan() / yIdxMax;
+            yValues           = new double[yResolution];
+            double dy         = yRange.getSpan() / yIdxMax;
             for(int yIdx=0; yIdx<xResolution; yIdx++)
                 yValues[yIdx] = yRange.min + yIdx*dy;
         }
 
+        // data
         if(data == null) {
-            data    = new double[xResolution][yResolution];
+            data              = new double[xResolution][yResolution];
             for(double[] r: data)
                 Arrays.fill(r, 0.0);
         }
 
+        // rawData
         if(rawData == null) {
-            rawData = new double[xResolution][yResolution];
+            rawData           = new double[xResolution][yResolution];
             for (double[] r: rawData)
                 Arrays.fill(r, 0.0);
         }
 
+        // weights
         if(weights == null) {
-            weights  = new double[xResolution][yResolution];
+            weights           = new double[xResolution][yResolution];
             for(double[] r: weights)
                 Arrays.fill(r, 0.0);
         }
