@@ -214,7 +214,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         // Header labeled columns. the elements of each row. These are velocities
         //   first column is the power labels
         String header      = "," + join(yValues, "%1$.4f", ",");
-        // String format   = repeatAndJoinFormat("%?$.3f",",",yResolution+1);
+        // String format   = repeatAndJoinFormat("%1$.3f",",",yResolution+1);
         String itemFormat  = "%1$.3f";
 
         // Weights - prefilled
