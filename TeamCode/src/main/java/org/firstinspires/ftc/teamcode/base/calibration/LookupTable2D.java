@@ -35,6 +35,8 @@ import static java.lang.Math.max;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.PriorityQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
 import static org.firstinspires.ftc.teamcode.base.calibration.Math.findInsertionIndex;
@@ -44,9 +46,11 @@ import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 
 public class LookupTable2D extends MultiMetricsWriter {
+    private final Logger     logger  = RobotLogger.getInstance().getConfigLogger();
     private final int        xResolution;
     private final int        yResolution;
     private final int        xIdxMax;
@@ -189,7 +193,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         if(yValues == null) {
             yValues           = new double[yResolution];
             double dy         = yRange.getSpan() / yIdxMax;
-            for(int yIdx=0; yIdx<xResolution; yIdx++)
+            for(int yIdx=0; yIdx<yResolution; yIdx++)
                 yValues[yIdx] = yRange.min + yIdx*dy;
         }
 
@@ -262,22 +266,22 @@ public class LookupTable2D extends MultiMetricsWriter {
             for(int yIdx=0; yIdx<yResolution; yIdx++) {
                 if(weights[xIdx][yIdx] == 0.0) {
                     EmptyPoint   ePoint            = new EmptyPoint(xIdx, yIdx);
-                    NeighborIterator itr               = new NeighborIterator(xIdx, yIdx, xIdxMax, yIdxMax);
+                    NeighborIterator itr           = new NeighborIterator(xIdx, yIdx, xIdxMax, yIdxMax);
                     int          numberOfNeighbors = 0;
                     // System.out.println("neighbor itr\n" + itr);
                     while(itr.hasMorePoints()) {
                         numberOfNeighbors++;
                         Point nPoint               = itr.getNextPoint();
-                        if(weights[nPoint.xIdx][nPoint.yIdx] == 0)
+                        if(weights[nPoint.xIdx][nPoint.yIdx] == 0.0)
                             ePoint.emptyValencesRatio++;
                     }
-                    ePoint.emptyValencesRatio /= numberOfNeighbors;
+                    ePoint.emptyValencesRatio     /= numberOfNeighbors;
                     ePoints.add(ePoint);
                 }
             }
         }
         for(EmptyPoint ePoint: ePoints) {
-            NeighborIterator itr         = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
+            NeighborIterator itr     = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
             double z                 = 0;
             double weight            = 0;
             int    numberOfNeighbors = 0;
@@ -289,11 +293,17 @@ public class LookupTable2D extends MultiMetricsWriter {
                 z                   += rawData[point.xIdx][point.yIdx];
                 weight              += weights[point.xIdx][point.yIdx];
             }
-            z                       /= numberOfNeighbors;
-            weight                  /= numberOfNeighbors;
+            if(numberOfNeighbors == 0.0)
+                logger.logp(
+                        Level.INFO,
+                        "LookupTable2D",
+                        "fillEmptyCells",
+                        ePoint.toString() + " has no neighbors"
+                        );
+
             // System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
-            rawData[ePoint.xIdx][ePoint.yIdx] = z;
-            weights[ePoint.xIdx][ePoint.yIdx] = weight;
+            rawData[ePoint.xIdx][ePoint.yIdx] = z      / numberOfNeighbors;
+            weights[ePoint.xIdx][ePoint.yIdx] = weight / numberOfNeighbors;
         }
     }
 
@@ -460,40 +470,53 @@ public class LookupTable2D extends MultiMetricsWriter {
     public void writeMetricsPrefill() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
-        // Weights - Prefill
+        // weights - pre-fill
         MetricsFile fileWeightsPrefill = robotMetrics
                 .getMetricsFile(getMetricsSpec("LookupTable2D-Weights-Prefill"));
-        for(double[] r: weights)
-            fileWeightsPrefill.addData(r);
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            fileWeightsPrefill.addDataItem("%1$.3f,", xValues[xIdx]);
+            fileWeightsPrefill.addData(weights[xIdx]);
+        }
         fileWeightsPrefill.close();
 
+        // raw data - pre-fill
         MetricsFile fileRawDataPrefill = robotMetrics
                 .getMetricsFile(getMetricsSpec("LookupTable2D-RawData-Prefill"));
-        for(double[] r: rawData)
-            fileRawDataPrefill.addData(r);
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            fileRawDataPrefill.addDataItem("%1$.3f,", xValues[xIdx]);
+            fileRawDataPrefill.addData(rawData[xIdx]);
+        }
         fileRawDataPrefill.close();
     }
 
     public void writeMetrics() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
+        // weights
         MetricsFile fileWeights = robotMetrics
-                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights"));
-        for(double[] r: weights)
-            fileWeights.addData(r);
+                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights"));;
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            fileWeights.addDataItem("%1$.3f,", xValues[xIdx]);
+            fileWeights.addData(weights[xIdx]);
+        }
         fileWeights.close();
 
-
+        // rawData
         MetricsFile fileRawData = robotMetrics
                 .getMetricsFile(getMetricsSpec("LookupTable2D-RawData"));
-        for(double[] r: rawData)
-            fileRawData.addData(r);
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            fileRawData.addDataItem("%1$.3f,", xValues[xIdx]);
+            fileRawData.addData(rawData[xIdx]);
+        }
         fileRawData.close();
 
+        // data
         MetricsFile fileData = robotMetrics
                 .getMetricsFile(getMetricsSpec("LookupTable2D-Data"));
-        for(double[] r: data)
-            fileData.addData(r);
+        for(int xIdx=0; xIdx<xResolution; xIdx++) {
+            fileData.addDataItem("%1$.3f,", xValues[xIdx]);
+            fileData.addData(data[xIdx]);
+        }
         fileData.close();
     }
 
