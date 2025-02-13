@@ -82,9 +82,11 @@ public class MetricsFile {
             return;
         }
 
-        for(double n: data)
-            formatter.format(robotMetricsSpec.itemFormat, n);
-        formatter.format("%n");
+        String formatWithSep = robotMetricsSpec.itemFormat + ",";
+        int    dIdx          = 0;
+        for(dIdx=0; dIdx<data.length-1; dIdx++)
+            formatter.format(formatWithSep, data[dIdx]);
+        formatter.format(robotMetricsSpec.itemFormat, data[dIdx]).format("%n");
     }
 
     public void addData(MetricsDataPoint dataPoint) {
