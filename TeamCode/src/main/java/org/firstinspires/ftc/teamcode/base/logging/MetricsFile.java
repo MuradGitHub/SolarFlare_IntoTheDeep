@@ -68,6 +68,14 @@ public class MetricsFile {
         formatter.format("%1$s", robotMetricsSpec.getHeader() + "\n");
     }
 
+    public <T> void addDataItem(String format, T dataItem) {
+        if(!isActive()) {
+            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            return;
+        }
+        formatter.format(format, dataItem);
+    }
+
     public void addData(Object... data) {
         if(!isActive()) {
             Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
