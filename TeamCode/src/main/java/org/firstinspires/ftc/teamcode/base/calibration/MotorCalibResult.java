@@ -60,10 +60,10 @@ public class MotorCalibResult extends MultiMetricsWriter {
     public ArrayList<MotorProfileDataPoint>     ssDataR;
     public ArrayList<MotorProfileDataPoint>     dataF;
     public ArrayList<MotorProfileDataPoint>     dataR;
-    public LookupTable1D Vss             = new LookupTable1D();
-    public LookupTable2D PVALutF;
+    public LookupTable1D                        Vss             = new LookupTable1D();
+    public LookupTable2D                        PVALutF;
     public LookupTable2D                        PVALutR;
-    public Range VssRangeF       = new Range();
+    public Range                                VssRangeF       = new Range();
     public Range                                VssRangeR       = new Range();
     public MotorPVAFunction                     PVAFunctionF;
     public MotorPVAFunction                     PVAFunctionR;
@@ -176,7 +176,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
         PVALutF.setMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
         PVALutR = new LookupTable2D(
-                powerResolution, 0.0, 1.0,
+                powerResolution, -1.0, 0.0,
                 velocityResolution,
                 regularizeDown(VssRangeR.min,2),
                 regularizeUp(VssRangeR.max,2));
