@@ -11,7 +11,7 @@ public class HardwareConfig implements Validatable {
     private static HardwareConfig                 hardwareConfig;
 
     private final  Logger                         logger;
-    private final  RobotConfig                    robotConfig;
+    public  final  RobotConfig                    robotConfig;
     public  final  RobotDimensions                robotDimensions;
     private final  HashMap<MotorEnum,MotorConfig> motorConfigs;
     private final  HashMap<ServoEnum,ServoConfig> servoConfigs;

@@ -22,7 +22,7 @@
       "zeroPowerBehavior": "BRAKE",
       "maxPower": 1.0,
       "minTarget": 0,
-      "maxTarget": 10000,
+      "maxTarget": 2500,
       "maxAcceleration": 3000,
       "maxVelocity": 1500,
       "calibParams": {

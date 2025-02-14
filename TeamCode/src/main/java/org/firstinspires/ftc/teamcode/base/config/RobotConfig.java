@@ -42,16 +42,16 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class RobotConfig implements Validatable {
-    private static RobotConfig                        instance = null;
-    public         PartsSpecs                         partsSpecs = null;
-    public         String                             robotName;
-    public         RobotDimensions                    robotDimensions;
-    public         HashMap<MotorEnum, MotorConfig>    motors;
-    public         HashMap<ServoEnum, ServoConfig>    servos;
-    public         IMUConfig                          imu;
-    public         PinpointConfig                     pinpoint;
-    public         LimelightConfig                    limelight;
-    public         HashMap<String, ArrayList<String>> calibration;
+    private static RobotConfig                           instance = null;
+    public         PartsSpecs                            partsSpecs = null;
+    public         String                                robotName;
+    public         RobotDimensions                       robotDimensions;
+    public         HashMap<MotorEnum, MotorConfig>       motors;
+    public         HashMap<ServoEnum, ServoConfig>       servos;
+    public         IMUConfig                             imu;
+    public         PinpointConfig                        pinpoint;
+    public         LimelightConfig                       limelight;
+    public         HashMap<String, ArrayList<MotorEnum>> calibration;
 
     public static RobotConfig createInstance(String robotName) {
         try(InputStream input = Application.getResourceAsStream(robotName + ".json")) {
