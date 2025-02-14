@@ -97,7 +97,7 @@ public class MotorProfiles implements Validatable {
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataForward() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesF) {
-            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVData();
+            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVDataPoint();
             if(ssDataPoint == null)
                 continue;
             data.add(ssDataPoint);
@@ -108,7 +108,7 @@ public class MotorProfiles implements Validatable {
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataReverse() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesR) {
-            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVData();
+            MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVDataPoint();
             if(ssDataPoint == null)
                 continue;
             data.add(ssDataPoint);

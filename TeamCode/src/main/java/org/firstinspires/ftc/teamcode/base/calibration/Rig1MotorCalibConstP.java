@@ -93,7 +93,7 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         motorProfileF.writeJSON();
 
 
-        telemetry.addData("Starting to write Metriccs for Forward Profile", "");
+        telemetry.addData("Starting to write Metrics for Forward Profile", "");
         telemetry.update();
         motorProfileF.writeMetrics();
 
@@ -107,7 +107,7 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         telemetry.update();
         motorProfileR.writeJSON();
 
-        telemetry.addData("Starting to write Metriccs for Reverse Profile", "");
+        telemetry.addData("Starting to write Metrics for Reverse Profile", "");
         telemetry.update();
         motorProfileR.writeMetrics();
 
@@ -117,14 +117,14 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         telemetry.addData("Pi",                  Pi);
         telemetry.addData("Pf",                  Pf);
 
-        MotorProfileDataPoint ssPointVF    = motorProfileF.getSteadyStateVData();
-        MotorProfileDataPoint ssPointAF    = motorProfileF.getSteadyStateAData();
-        MotorProfileDataPoint targetPointF = motorProfileF.getTargetData();
+        MotorProfileDataPoint ssPointVF    = motorProfileF.getSteadyStateVDataPoint();
+        MotorProfileDataPoint ssPointAF    = motorProfileF.getSteadyStateADataPoint();
+        MotorProfileDataPoint targetPointF = motorProfileF.getTargetDataPoint();
         MotorProfileDataPoint lastPointF   = motorProfileF.getLastData();
 
-        MotorProfileDataPoint ssPointVR    = motorProfileR.getSteadyStateVData();
-        MotorProfileDataPoint ssPointAR    = motorProfileR.getSteadyStateAData();
-        MotorProfileDataPoint targetPointR = motorProfileR.getTargetData();
+        MotorProfileDataPoint ssPointVR    = motorProfileR.getSteadyStateVDataPoint();
+        MotorProfileDataPoint ssPointAR    = motorProfileR.getSteadyStateADataPoint();
+        MotorProfileDataPoint targetPointR = motorProfileR.getTargetDataPoint();
         MotorProfileDataPoint lastPointR   = motorProfileR.getLastData();
 
         telemetry.addData("F_isValid",            motorProfileF.isValid());

@@ -191,7 +191,7 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
 
             try {
                 sleep((int) (1000 * minTimeInc));
-                pp = new MotorProfileDataPoint(motor, "Profile", calibDirection, timer);
+                pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer);
                 startData.add(pp);
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
@@ -310,7 +310,7 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
                 sleep((int) (1000 * minTimeInc));
                 MotorProfileDataPoint pp = new MotorProfileDataPoint(
                         motor,
-                        "Start",
+                        "Profile",
                         calibDirection,
                         timer);
                 data.add(pp);
@@ -355,10 +355,10 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
      * @return time to reach target
      */
     public Double getTimeToTarget() {
-        return hasReachedTarget()? data.get(tIdxTarget).t : null;
+        return hasReachedTarget()? getTargetDataPoint().t : null;
     }
 
-    public MotorProfileDataPoint getTargetData() {
+    public MotorProfileDataPoint getTargetDataPoint() {
         if(!hasReachedTarget())
             return null;
         return data.get(tIdxTarget);
@@ -372,18 +372,24 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
         return ssIdxAavg != null;
     }
 
-    public MotorProfileDataPoint getSteadyStateAData() {
+    public MotorProfileDataPoint getSteadyStateADataPoint() {
         if(!hasSteadyStateA())
             return null;
         return data.get(ssIdxAavg);
     }
 
-    public MotorProfileDataPoint getSteadyStateVData() {
+    public MotorProfileDataPoint getSteadyStateVDataPoint() {
         if(!hasSteadyStateV())
             return null;
         return data.get(ssIdxVavg);
     }
 
+    /**
+     * Obtains the profile data up to the point in time where steady state velocity is achieved
+     *
+     * @return MotorProfileDataPoints up to the point in time were steady state velocity
+     *  is achieved
+     */
     public ArrayList<MotorProfileDataPoint> getProfileData() {
         ArrayList<MotorProfileDataPoint> profileData = new ArrayList<>();
         if(hasSteadyStateV())
@@ -442,9 +448,9 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
         sb.append("  Dmax=")             .append(Dmax)                       .append("\n");
         sb.append("  isTargetReached=")  .append(isTargetReached)            .append("\n");
         sb.append("  ssIdxVavg=")        .append(ssIdxVavg)                  .append("\n");
-        sb.append("  ssV=")              .append(getSteadyStateVData())      .append("\n");
+        sb.append("  ssV=")              .append(getSteadyStateVDataPoint()) .append("\n");
         sb.append("  ssIdxAavg=")        .append(ssIdxAavg)                  .append("\n");
-        sb.append("  ssA=")              .append(getSteadyStateAData())      .append("\n");
+        sb.append("  ssA=")              .append(getSteadyStateADataPoint()) .append("\n");
         for(var point: data)
             sb.append(point);
 
