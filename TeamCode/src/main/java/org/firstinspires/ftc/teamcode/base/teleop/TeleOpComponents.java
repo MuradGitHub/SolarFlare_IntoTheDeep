@@ -998,10 +998,10 @@ public abstract class  TeleOpComponents {
         );
         bucketSlides = new BotMotor(
                 "bucketSlides",
-                0.015,0.006,0.00055, 60,
+                0.015,0.003,0.00055, 60,
                 new String[]{"depositPosition","transferPosition","lowDepositPosition"},new double[]{1065,0,575},
                 Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY,
-                450000,6000,
+                600000,8000,
                 DcMotorEx.RunMode.RUN_WITHOUT_ENCODER,
                 DcMotorEx.Direction.REVERSE,
                 DcMotorEx.ZeroPowerBehavior.BRAKE,
@@ -1067,14 +1067,14 @@ public abstract class  TeleOpComponents {
                 new double[]{95},
                 185,
                 5,
-                270,
+                1800,
                 422,
                 Servo.Direction.FORWARD
         );
         clawPitch = new BotServo(
                 "clawPitchLeft",
                 new String[]{"pickUpPosition", "hoverPosition","transferPosition","backOffPosition","specimenGrabPosition","specimenDepositPosition"},
-                new double[]{13,68,110,72.4,145,13},
+                new double[]{13,68,113,72.4,135,13},
                 270,
                 0,
                 270,
@@ -1084,7 +1084,7 @@ public abstract class  TeleOpComponents {
         clawPitchRight = new BotServo(
                 "clawPitchRight",
                 new String[]{"pickUpPosition", "hoverPosition","transferPosition","backOffPosition","specimenGrabPosition","specimenDepositPosition"},
-                new double[]{13,68,110,72.4,145,13},
+                new double[]{13,68,113,72.4,135,13},
                 270,
                 0,
                 270,
@@ -1094,7 +1094,7 @@ public abstract class  TeleOpComponents {
         innerClawPitch = new BotServo(
                 "innerClawPitch",
                 new String[]{"pickUpPosition", "hoverPosition","transferPosition","backOffPosition","specimenGrabPosition","specimenDepositPosition"},
-                new double[]{82,20,200,160,78,82},
+                new double[]{82,20,205,160,88,82},
                 270,
                 0,
                 270,

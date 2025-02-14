@@ -61,19 +61,21 @@ public class AnUltraOptimizedTeleOp extends LinearOpMode {
                 ()->(gamepad2.dpad_up),
                 ()->(gamepad2.dpad_down)
         }, new TeleOpAction[]{
-                new TeleOpSequentialAction(
-                        bucketSlides.setTargetAction(bucketSlides.getPos("transferPosition")),
-                        new TeleOpParallelAction(
-                                new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("PID");}),
-                                extendoPitch.setTargetAction(extendoPitch.getPos("pickUpPosition")),
-                                clawFingers.setPositionAction(clawFingers.getPos("openPosition")),
-                                clawPitch.setPositionAction(clawPitch.getPos("hoverPosition")),
-                                innerClawPitch.setPositionAction(innerClawPitch.getPos("hoverPosition"))
-                        ),
-                        new TeleOpParallelAction(
-                                extendo.setTargetAction(extendo.MAX_POSITION),
-                                clawFingers.setPositionAction(clawFingers.getPos("openPosition"))
-                        )
+                new TeleOpParallelAction(
+                    bucketSlides.setTargetAction(bucketSlides.getPos("transferPosition")),
+                    new TeleOpSequentialAction(
+                            new TeleOpParallelAction(
+                                    new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("PID");}),
+                                    extendoPitch.setTargetAction(extendoPitch.getPos("pickUpPosition")),
+                                    clawFingers.setPositionAction(clawFingers.getPos("openPosition")),
+                                    clawPitch.setPositionAction(clawPitch.getPos("hoverPosition")),
+                                    innerClawPitch.setPositionAction(innerClawPitch.getPos("hoverPosition"))
+                            ),
+                            new TeleOpParallelAction(
+                                    extendo.setTargetAction(428),
+                                    clawFingers.setPositionAction(clawFingers.getPos("openPosition"))
+                            )
+                    )
                 ),
                 new TeleOpSequentialAction(
                         clawFingers.setPositionAction(clawFingers.getPos("openPosition")),
@@ -94,11 +96,14 @@ public class AnUltraOptimizedTeleOp extends LinearOpMode {
                                 clawWrist.setPositionAction(clawWrist.getPos("normalPosition")),
                                 extendo.setTargetAction(extendo.MIN_POSITION),
                                 clawPitch.setPositionAction(clawPitch.getPos("transferPosition")),
-                                innerClawPitch.setPositionAction(innerClawPitch.getPos("transferPosition"))
-                        ),
-                        new TeleOpParallelAction(
-                                new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("MOTION_PROFILE");}),
-                                extendoPitch.setTargetAction(extendoPitch.getPos("transferPosition"))
+                                innerClawPitch.setPositionAction(innerClawPitch.getPos("transferPosition")),
+                                new TeleOpSequentialAction(
+                                        new TeleOpActions.SleepWhileTrue(()->(extendo.instantTargetPosition<160)),
+                                        new TeleOpParallelAction(
+                                                new TeleOpActions.ShortAction(()->{extendoPitch.setMovementMode("MOTION_PROFILE");}),
+                                                extendoPitch.setTargetAction(extendoPitch.getPos("transferPosition"))
+                                        )
+                                )
                         ),
                         clawFingers.setPositionAction(clawFingers.getPos("openPosition")),
                         new TeleOpSleepAction(0.1),
@@ -133,16 +138,19 @@ public class AnUltraOptimizedTeleOp extends LinearOpMode {
                                         clawPitch.setPositionAction(clawPitch.getPos("specimenDepositPosition")),
                                         innerClawPitch.setPositionAction(innerClawPitch.getPos("specimenDepositPosition"))
                                     )
+                                ),
+                                new TeleOpSequentialAction(
+                                        new TeleOpActions.SleepWhileTrue(()->(extendoPitch.instantTargetPosition<-100)),
+                                        extendo.setTargetAction(extendo.MAX_POSITION)
                                 )
-                        ),
-                        extendo.setTargetAction(extendo.MAX_POSITION)
+                        )
                 ),
                 new TeleOpSequentialAction(
-                        extendo.setTargetAction(375),
+                        extendo.setTargetAction(250),
                         clawFingers.setPositionAction(clawFingers.getPos("openPosition"))
                 ),
                 new TeleOpParallelAction(
-                        extendo.setTargetAction(extendo.MAX_POSITION),
+                        extendo.setTargetAction(428),
                         clawPitch.setPositionAction(clawPitch.getPos("hoverPosition")),
                         innerClawPitch.setPositionAction(innerClawPitch.getPos("hoverPosition")),
                         bucket.setPositionAction(bucket.getPos("transferPosition"))
@@ -171,7 +179,7 @@ public class AnUltraOptimizedTeleOp extends LinearOpMode {
                     new PressTrigger(new Condition[]{()->(gamepad2.back)},new TeleOpAction[]{extendoPitch.stallResetAction(-1020)}),
                     new PressTrigger(new Condition[]{()->(gamepad1.back)},new TeleOpAction[]{new TeleOpActions.ShortAction(()->{bucketSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);bucketSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);bucketSlides.offset=1065;})}),
                     bucketSlides.triggeredDynamicAction(()->(gamepad1.dpad_left),()->(gamepad1.dpad_right),15),
-                    clawWrist.triggeredDynamicAction(()->(gamepad2.right_trigger>0),()->(gamepad2.left_trigger>0),6),
+                    clawWrist.triggeredDynamicAction(()->(gamepad2.left_trigger>0),()->(gamepad2.right_trigger>0),8),
                     bucket.triggeredToggleAction(()->(gamepad2.a),bucket.getPos("transferPosition"),bucket.getPos("depositPosition")),
                     new ConditionalAction(
                             new Condition[]{()->(!isBucketSlidesMaxLowered),()->(isBucketSlidesMaxLowered)},

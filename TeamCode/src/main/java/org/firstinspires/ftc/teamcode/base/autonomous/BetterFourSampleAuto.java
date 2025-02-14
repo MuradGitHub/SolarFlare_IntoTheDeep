@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.base.autonomous;
 
 import androidx.annotation.NonNull;
 
-// RR-specific imports
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -12,8 +11,6 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-
-// Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,8 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 @Config
-@Autonomous(name = "foursample", group = "Autonomous")
-public class FourSampleAuto extends LinearOpMode {
+@Autonomous(name = "betterfoursample", group = "Autonomous")
+public class BetterFourSampleAuto extends LinearOpMode {
     double kP = 0.015;
     DcMotor extendo;
     DcMotor extendoPitch;
@@ -159,7 +156,7 @@ public class FourSampleAuto extends LinearOpMode {
             clawPitchRight.setPosition(clawPitchPosition/270);
             innerClawPitch.setPosition(innerClawPitchPosition/270);
             clawFingers.setPosition(clawFingerPosition/180);
-            clawWrist.setPosition(clawWristPosition/1800);
+            clawWrist.setPosition(clawWristPosition/270);
             bucket.setPosition(bucketPosition/270);
             return true;
         }
@@ -324,38 +321,45 @@ public class FourSampleAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        double robotLength = 15.364;
+        double robotWidth  = 14.375;
 
+        // field tile is 24 inches
+        // 2 field tiles is 48
+        // +1 inch 47
+        // +1.5 for sample 45.5
+        // + 14.375 / 2 for center of robot
 
-        Pose2d initialPose = new Pose2d(-41, -62.5, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(-45.5 + (robotWidth / 2), -70 + (robotLength / 2), Math.toRadians(90));
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
-        Action onePlusThreeBucket1 = drive.actionBuilder(new Pose2d(-41,-62.5, Math.toRadians(90)))
+        Action onePlusThreeBucket1 = drive.actionBuilder(new Pose2d(-45.5 + (robotWidth / 2), -70 + (robotLength / 2), Math.toRadians(90)))
                 // Score preload bucket
-                .strafeToLinearHeading(new Vector2d(-64,-54), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(45))
                 .build();
-        Action onePlusThreeBucket4 = drive.actionBuilder(new Pose2d(-64,-54, Math.toRadians(45)))
+        Action onePlusThreeBucket2 = drive.actionBuilder(new Pose2d(-55,-55, Math.toRadians(45)))
                 // Sample zone 1
-                .strafeToLinearHeading(new Vector2d(-52.5,-55.5), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-48,-35), Math.toRadians(90))
                 .build();
-        Action onePlusThreeBucket5 = drive.actionBuilder(new Pose2d(-52.5,-55.5, Math.toRadians(90)))
+        Action onePlusThreeBucket3 = drive.actionBuilder(new Pose2d(-48,-35, Math.toRadians(90)))
                 // Score bucket
-                .strafeToLinearHeading(new Vector2d(-58.3,-54.3), Math.toRadians(37))
+                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(45))
                 .build();
-        Action onePlusThreeBucket6 = drive.actionBuilder(new Pose2d(-58.3,-54.3, Math.toRadians(37)))
+        Action onePlusThreeBucket4 = drive.actionBuilder(new Pose2d(-55,-55, Math.toRadians(45)))
                 // sample zone 2
-                .strafeToLinearHeading(new Vector2d(-67.5,-53), Math.toRadians(95))
+                .strafeToLinearHeading(new Vector2d(-57,-35), Math.toRadians(90))
                 .build();
-        Action onePlusThreeBucket7 = drive.actionBuilder(new Pose2d(-67.5,-53, Math.toRadians(95)))
+        Action onePlusThreeBucket5 = drive.actionBuilder(new Pose2d(-57,-35, Math.toRadians(90)))
                 // turn and score bucket
-                .strafeToLinearHeading(new Vector2d(-56.5,-53.5), Math.toRadians(49))
+                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(45))
                 .build();
-        Action onePlusThreeBucket8 = drive.actionBuilder(new Pose2d(-56.5,-53.5, Math.toRadians(49)))
+        Action onePlusThreeBucket6 = drive.actionBuilder(new Pose2d(-55,-55, Math.toRadians(45)))
                 // sample 3
-                .strafeToLinearHeading(new Vector2d(-67 ,-54), Math.toRadians(113))
+                .strafeToLinearHeading(new Vector2d(-62 ,-32), Math.toRadians(135))
                 .build();
-        Action onePlusThreeBucket9 = drive.actionBuilder(new Pose2d(-67,-54, Math.toRadians(113)))
-                // obs zone
-                .strafeToLinearHeading(new Vector2d(-56,-56), Math.toRadians(45))
+        Action onePlusThreeBucket7 = drive.actionBuilder(new Pose2d(-62,-32, Math.toRadians(135)))
+                // score 4th sample
+                .strafeToLinearHeading(new Vector2d(-55,-55), Math.toRadians(45))
                 .build();
 
         extendo = hardwareMap.dcMotor.get("extendo");
@@ -394,16 +398,77 @@ public class FourSampleAuto extends LinearOpMode {
                                 new ParallelAction(
                                         // score preload bucket
                                         onePlusThreeBucket1,
-                                        //close claw
                                         new SequentialAction(
                                                 new SleepAction(0.5),
                                                 setBucketSlidesTarget(1070)
                                         )
-
                                 ),
                                 // Move bucketSlides up to scoring position
                                 new ParallelAction(
                                         new SequentialAction(
+                                                //setBucketSlidesTarget(0),
+                                                setInnerClawPitchPosition(5),
+                                                setExtendoTarget(0),
+                                                setClawPitchPosition(68),
+                                                // Extendo pitch pickup position
+                                                setExtendoPitchTarget(-960)
+                                        ),
+                                        new SequentialAction(
+                                                new SleepAction(0.8),
+                                                setBucketPosition(140),
+                                                new SleepAction(0.7),
+                                                setBucketPosition(36),
+                                                new SleepAction(0.4)
+                                        )
+                                ),
+                                new ParallelAction(
+                                        // Drive to sample zone 1
+                                        setBucketSlidesTarget(0),
+                                        onePlusThreeBucket2
+                                ),
+                                new SleepAction(0.2),
+
+                                new ParallelAction(
+                                        setInnerClawPitchPosition(78),
+                                        setClawPitchPosition(13)
+                                ),
+                                // Close Claw
+                                new SleepAction(0.25),
+                                setClawFingerPosition(20),
+
+                                new SleepAction(0.3),
+
+                                new ParallelAction(
+                                        setClawWristPosition(95),
+                                        setInnerClawPitchPosition(200),
+                                        setExtendoTarget(0),
+                                        setClawPitchPosition(110)
+                                ),
+
+                                // Retract extendo, transfer and move to scoring pos
+                                new ParallelAction(
+                                        // Move to scoring position
+                                        onePlusThreeBucket3,
+                                        new SequentialAction(
+                                                // Retract extendo
+                                                // Claw pitch transfer position
+                                                new SleepAction(0.4),
+                                                // Extendo pitch transfer position
+                                                setExtendoPitchTarget(0),
+                                                new SleepAction(0.7),
+                                                setClawFingerPosition(86),
+                                                new SleepAction(0.4),
+                                                setClawPitchPosition(72.4),
+                                                setInnerClawPitchPosition(160)
+                                        )
+                                ),
+                                // Wait for sample to settle in bucket
+                                new SleepAction(0.4),
+                                // Move bucketSlides up to scoring position
+                                setBucketSlidesTarget(1070),
+                                new ParallelAction(
+                                        new SequentialAction(
+
                                                 //setBucketSlidesTarget(0),
                                                 setInnerClawPitchPosition(5),
                                                 setClawPitchPosition(68),
@@ -420,10 +485,11 @@ public class FourSampleAuto extends LinearOpMode {
                                 ),
                                 new ParallelAction(
                                         // Drive to sample zone 2
-                                        setBucketSlidesTarget(0),
                                         onePlusThreeBucket4,
-                                        setExtendoTarget(557)
+                                        setBucketSlidesTarget(0),
+                                        setExtendoTarget(0)
                                 ),
+
                                 // Claw pitch picking up pos
                                 new SleepAction(0.2),
 
@@ -486,9 +552,8 @@ public class FourSampleAuto extends LinearOpMode {
                                         // Drive to sample zone 3
                                         onePlusThreeBucket6,
                                         setBucketSlidesTarget(0),
-                                        setExtendoTarget(557)
+                                        setExtendoTarget(0)
                                 ),
-
                                 // Claw pitch picking up pos
                                 new SleepAction(0.2),
 
@@ -503,6 +568,7 @@ public class FourSampleAuto extends LinearOpMode {
                                 new SleepAction(0.3),
 
                                 new ParallelAction(
+                                        setClawWristPosition(95),
                                         setInnerClawPitchPosition(200),
                                         setExtendoTarget(0),
                                         setClawPitchPosition(110)
@@ -529,80 +595,13 @@ public class FourSampleAuto extends LinearOpMode {
                                 new SleepAction(0.4),
                                 // Move bucketSlides up to scoring position
                                 setBucketSlidesTarget(1070),
-                                new ParallelAction(
-                                        new SequentialAction(
-
-                                                //setBucketSlidesTarget(0),
-                                                setInnerClawPitchPosition(5),
-                                                setClawPitchPosition(68),
-                                                // Extendo pitch pickup position
-                                                setExtendoPitchTarget(-960)
-                                        ),
-                                        new SequentialAction(
-                                                new SleepAction(0.8),
-                                                setBucketPosition(140),
-                                                new SleepAction(0.7),
-                                                setBucketPosition(36),
-                                                new SleepAction(0.4)
-                                        )
-                                ),
-                                new ParallelAction(
-                                        // Drive to sample zone 2
-                                        onePlusThreeBucket8,
-                                        setBucketSlidesTarget(0),
-                                        setExtendoTarget(557)
-                                ),
-                                // Claw pitch picking up pos
-                                new SleepAction(0.2),
-
-                                new ParallelAction(
-                                        setInnerClawPitchPosition(78),
-                                        setClawPitchPosition(13)
-                                ),
-                                // Close Claw
-                                new SleepAction(0.25),
-
-                                setClawFingerPosition(20),
-                                new SleepAction(0.3),
-
-                                new ParallelAction(
-                                        setInnerClawPitchPosition(200),
-                                        setExtendoTarget(0),
-                                        setClawPitchPosition(110)
-                                ),
-
-                                // Retract extendo, transfer and move to scoring pos
-                                new ParallelAction(
-                                        // Move to scoring position
-                                        onePlusThreeBucket9,
-                                        new SequentialAction(
-                                                // Retract extendo
-                                                // Claw pitch transfer position
-                                                new SleepAction(0.4),
-                                                // Extendo pitch transfer position
-                                                setExtendoPitchTarget(0),
-                                                new SleepAction(0.7),
-                                                setClawFingerPosition(86),
-                                                new SleepAction(0.4),
-                                                setClawPitchPosition(72.4),
-                                                setInnerClawPitchPosition(160)
-                                        )
-                                ),
-                                // Wait for sample to settle in bucket
-                                new SleepAction(0.4),
-                                // Move bucketSlides up to scoring position
-                                setBucketSlidesTarget(1070),
                                 new  SleepAction(0.8),
                                 setBucketPosition(140),
                                 new SleepAction(0.7),
                                 setBucketPosition(36),
                                 new SleepAction(0.4),
-                                setBucketSlidesTarget(0),
-                                new SleepAction(0.6),
-                                new ParallelAction(
-                                        setClawPitchPosition(110),
-                                        setInnerClawPitchPosition(200)
-                                )
+                                setBucketSlidesTarget(0)
+
                         )
                 )
         );

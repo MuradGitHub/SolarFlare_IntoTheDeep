@@ -17,7 +17,7 @@ public class SkippyWippyUwU extends LinearOpMode {
         clawPitchRight.setDirection(Servo.Direction.REVERSE);
         innerClawPitch.setDirection(Servo.Direction.REVERSE);
         waitForStart();
-        clawWrist.setPosition((double) 95/270);
+        clawWrist.setPosition((double) 95/1800);
         clawFingers.setPosition((double) 92/180);
         clawPitchLeft.setPosition((double) 68/270);
         clawPitchRight.setPosition((double) 68/270);

@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.PID;
 
 @Autonomous
-public class FourSpecimenAuto extends LinearOpMode {
+public class PreloadSpecimen extends LinearOpMode {
     PID extendoPID;
     PID extendoPitchPID;
     PID bucketSlidesPID;
@@ -402,131 +402,28 @@ public class FourSpecimenAuto extends LinearOpMode {
         waitForStart();
 
         Actions.runBlocking(
-
-                /*
                 new ParallelAction(
                         new MotorPID(),
                         new SequentialAction(
-                                new SetClawFingersPositionAction(CLAW_FINGERS_CLOSED),
-                                scoreSpecimenUpPosition(),
-                                // Move to chambers for preload
-                                fourSpecimenPathing1,
-                                // Score specimen
-                                scoreSpecimenDownPosition(),
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to sample zone 1
                                 new ParallelAction(
-                                        fourSpecimenPathing2,
-                                        new SetExtendoTargetAction(EXTENDO_RETRACTED)
-                                ),
-                                // Pick up first sample
-                                intakePickUpSample(430),
-                                // Turn to observation zone first time
-                                fourSpecimenPathing3,
-                                // Drop sample into observation zone
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to sample zone 2
-                                new ParallelAction(
-                                        fourSpecimenPathing4,
-                                        intakePickUpHover()
-                                        ),
-                                // Pick up second sample
-                                intakePickUpSample(450),
-                                // Turn to observation zone
-                                fourSpecimenPathing5,
-                                // Drop sample into observation zone
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to sample zone 3
-                                new ParallelAction(
-                                        fourSpecimenPathing6,
-                                        intakePickUpHover()
-                                ),
-                                // Pick up third sample
-                                intakePickUpSample(460),
-                                new SetExtendoTargetAction(EXTENDO_RETRACTED),
-                                // Turn to observation zone
-                                fourSpecimenPathing7,
-                                // Drop sample into observation zone
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to specimen pick up position
-                                new ParallelAction(
-                                        fourSpecimenPathing8,
-                                        pickUpSideSpecimenPosition()
-                                ),
-                                // Grab specimen
-                                pickUpSideSpecimen(),
-                                // Go to chambers and prepare for spec scoring
-                                new ParallelAction(
-                                        fourSpecimenPathing9,
-                                        scoreSpecimenUpPosition()
-                                ),
-                                // Score specimen
-                                scoreSpecimenDownPosition(),
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to specimen pick up position
-                                new ParallelAction(
-                                        fourSpecimenPathing10,
+                                        new SetBucketSlidesTargetAction(BUCKET_SLIDES_SCORING_SPECIMEN),
+                                        new SetBucketSlidesTargetAction(BUCKET_DEPOSIT),
+                                        new SetClawFingersPositionAction(CLAW_FINGERS_CLOSED),
+                                        new SetClawPitchPositionAction(CLAW_PITCH_SCORE_SPECIMEN),
+                                        new SetClawWristPositionAction(CLAW_WRIST_DEFAULT),
+                                        new SetInnerClawPitchPositionAction(INNER_CLAW_PITCH_SCORE_SPECIMEN),
+                                        fourSpecimenPathing1,
                                         new SequentialAction(
-                                                new SleepAction(1),
-                                                pickUpSideSpecimenPosition()
+                                                new SleepAction(0.5),
+                                                new SetExtendoPitchTargetAction(EXTENDO_PITCH_SCORE_SPECIMEN),
+                                                new SetExtendoTargetAction(EXTENDO_SCORE_SPECIMEN_UP)
                                         )
                                 ),
-                                // Grab specimen
-                                pickUpSideSpecimen(),
-                                // Prepare for spec scoring
-                                new ParallelAction(
-                                        fourSpecimenPathing11,
-                                        scoreSpecimenUpPosition()
-                                ),
-                                // Score specimen
-                                scoreSpecimenDownPosition(),
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-                                // Go to specimen pick up position
-                                new ParallelAction(
-                                        fourSpecimenPathing12,
-                                        new SequentialAction(
-                                                new SleepAction(1),
-                                                pickUpSideSpecimenPosition()
-                                        )
-                                ),
-                                // Grab specimen
-                                pickUpSideSpecimen(),
-                                // Go tp spec scoring position
-                                new ParallelAction(
-                                        fourSpecimenPathing13,
-                                        scoreSpecimenUpPosition()
-                                ),
-                                // Score specimen
-                                scoreSpecimenDownPosition(),
-                                new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
-
-                                // Park and set motor positions to defaults
-                                new ParallelAction(
-                                        fourSpecimenPathing14,
-                                        new SetExtendoTargetAction(EXTENDO_RETRACTED),
-                                        new SetExtendoPitchTargetAction(EXTENDO_PITCH_TRANSFER),
-                                        new SetBucketSlidesTargetAction(BUCKET_SLIDES_TRANSFER)
-                                )
+                            new SetExtendoTargetAction(EXTENDO_SCORE_SPECIMEN_DOWN),
+                            new SetClawFingersPositionAction(CLAW_FINGERS_OPEN),
+                                fourSpecimenPathing14
                         )
-                )
 
-                 */
-
-                new SequentialAction(
-                        fourSpecimenPathing1,
-                        fourSpecimenPathing2,
-                        fourSpecimenPathing3,
-                        fourSpecimenPathing4,
-                        fourSpecimenPathing5,
-                        fourSpecimenPathing6,
-                        fourSpecimenPathing7,
-                        fourSpecimenPathing8,
-                        fourSpecimenPathing9,
-                        fourSpecimenPathing10,
-                        fourSpecimenPathing11,
-                        fourSpecimenPathing12,
-                        fourSpecimenPathing13,
-                        fourSpecimenPathing14
                 )
 
         );
