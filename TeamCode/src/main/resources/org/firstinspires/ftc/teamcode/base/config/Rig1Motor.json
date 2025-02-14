@@ -4,6 +4,11 @@
     "length": 1.0,
     "width": 1.0
   },
+  "calibration": {
+    "motors": [
+      "TESTING_MOTOR"
+    ]
+  },
   "motors": {
     "TESTING_MOTOR": {
       "motorEnum": "TESTING_MOTOR",

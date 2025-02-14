@@ -4,6 +4,13 @@
     "length": 15.0625,
     "width": 12.4375
   },
+  "calibration": {
+    "motors": [
+      "EXTENDO",
+      "EXTENDO_PITCH",
+      "BUCKET_SLIDES"
+    ]
+  },
   "motors": {
     "LEFT_BACK": {
       "motorEnum": "LEFT_BACK",
