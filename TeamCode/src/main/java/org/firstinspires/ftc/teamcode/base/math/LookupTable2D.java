@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.calibration;
+package org.firstinspires.ftc.teamcode.base.math;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
@@ -38,8 +38,8 @@ import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.findInsertionIndex;
+import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
+import static org.firstinspires.ftc.teamcode.base.math.Math.findInsertionIndex;
 import static org.firstinspires.ftc.teamcode.base.utils.StringUtils.join;
 
 import androidx.annotation.NonNull;
@@ -55,7 +55,7 @@ public class LookupTable2D extends MultiMetricsWriter {
     private final int        yResolution;
     private final int        xIdxMax;
     private final int        yIdxMax;
-    public        Range      xRange;
+    public Range xRange;
     public        Range      yRange;
     private       double[][] rawData = null;
     private       double[][] data    = null;
@@ -273,54 +273,62 @@ public class LookupTable2D extends MultiMetricsWriter {
         for(int xIdx=0; xIdx<xResolution; xIdx++) {
             for(int yIdx=0; yIdx<yResolution; yIdx++) {
                 if(weights[xIdx][yIdx] == 0.0) {
-                    EmptyPoint   ePoint            = new EmptyPoint(xIdx, yIdx);
-                    NeighborIterator itr           = new NeighborIterator(xIdx, yIdx, xIdxMax, yIdxMax);
-                    int          numberOfNeighbors = 0;
+                    EmptyPoint   ePoint        = new EmptyPoint(xIdx, yIdx);
+                    NeighborIterator itr       = new NeighborIterator(xIdx, yIdx, xIdxMax, yIdxMax);
+                    int numberOfNeighbors      = 0;
                     // System.out.println("neighbor itr\n" + itr);
                     while(itr.hasMorePoints()) {
                         numberOfNeighbors++;
-                        Point nPoint               = itr.getNextPoint();
+                        Point nPoint           = itr.getNextPoint();
                         if(weights[nPoint.xIdx][nPoint.yIdx] == 0.0)
                             ePoint.emptyValencesRatio++;
                     }
-                    ePoint.emptyValencesRatio     /= numberOfNeighbors;
+                    ePoint.emptyValencesRatio /= numberOfNeighbors;
                     ePoints.add(ePoint);
                 }
             }
         }
-        int     iIdx                 = 0;
-        boolean hasEmptyPoints       = false;
+        int     maxIIdx                        = max(xResolution, yResolution);
+        int     iIdx                           = 0;
+        int     pIdx                           = 0;
+        int     pXIdx;
+        int     pYIdx;
+        boolean hasEmptyPoints                 = false;
         do {
             for(EmptyPoint ePoint: ePoints) {
-                NeighborIterator itr = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
-                double z = 0;
-                double weight = 0;
-                int numberOfNeighbors = 0;
+                pXIdx                          = ePoint.xIdx;
+                pYIdx                          = ePoint.yIdx;
+                NeighborIterator itr           = new NeighborIterator(pXIdx,pYIdx,xIdxMax,yIdxMax);
+                double z                       = 0;
+                double weight                  = 0;
+                int numberOfNeighbors          = 0;
                 while (itr.hasMorePoints()) {
-                    Point point = itr.getNextPoint();
-                    if (weights[point.xIdx][point.yIdx] == 0)
+                    Point point                = itr.getNextPoint();
+                    int   nPXIdx               = point.xIdx;
+                    int   nPYIdx               = point.yIdx;
+                    if (weights[nPXIdx][nPYIdx] == 0)
                         continue;
                     numberOfNeighbors++;
-                    z += rawData[point.xIdx][point.yIdx];
-                    weight += weights[point.xIdx][point.yIdx];
+                    z                         += rawData[nPXIdx][nPYIdx];
+                    weight                    += weights[nPXIdx][nPYIdx];
                 }
                 if (numberOfNeighbors == 0.0) {
                     logger.logp(
                             Level.INFO,
                             "LookupTable2D",
                             "fillEmptyCells",
-                            "Iteration=" + iIdx + " " + ePoint + " has no neighbors"
+                            "Iteration=" + iIdx + " pIdx=" + pIdx++ + ePoint + " has no neighbors"
                     );
-                    hasEmptyPoints = true;
+                    hasEmptyPoints             = true;
                     continue;
                 }
 
                 // System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
-                rawData[ePoint.xIdx][ePoint.yIdx] = z / numberOfNeighbors;
-                weights[ePoint.xIdx][ePoint.yIdx] = weight / numberOfNeighbors;
+                rawData[pXIdx][pYIdx]          = z      / numberOfNeighbors;
+                weights[pXIdx][pYIdx]          = weight / numberOfNeighbors;
             }
-            iIdx++;
-        } while(hasEmptyPoints);
+            pIdx                               = 0;
+        } while(hasEmptyPoints && iIdx++<maxIIdx);
     }
 
     public void update() {
@@ -334,6 +342,7 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     public void addDataPoint(double x, double y, double z) {
+        // First find the xIdx-yIdx square where the new data point falls
         int xIdx1              = min(findInsertionIndex(x, xValues), xIdxMax);
         int yIdx1              = min(findInsertionIndex(y, yValues), yIdxMax);
         int xIdx2              = min(xIdx1+1, xIdxMax);

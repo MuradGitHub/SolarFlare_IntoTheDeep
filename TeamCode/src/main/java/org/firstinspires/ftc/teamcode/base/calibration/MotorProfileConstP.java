@@ -55,10 +55,10 @@ import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
-import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
+import org.firstinspires.ftc.teamcode.base.math.Math;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
@@ -257,7 +257,7 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
         }
 
         double Vtol                   = abs(Vmax)/250.0;
-        ssIdxVavg                     = Math.getSteadyStateStartPredicate(
+        ssIdxVavg                     = org.firstinspires.ftc.teamcode.base.math.Math.getSteadyStateStartPredicate(
                 data,
                 averagingPeriods,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Vavg-p2.Vavg)<Vtol);

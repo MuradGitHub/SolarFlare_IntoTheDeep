@@ -39,12 +39,12 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.solveQuadraticEquation;
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.approxEquals;
+import static org.firstinspires.ftc.teamcode.base.math.Math.solveQuadraticEquation;
+import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.base.error.CalculationException;
-import org.firstinspires.ftc.teamcode.base.calibration.ComplexNumberPair;
+import org.firstinspires.ftc.teamcode.base.math.ComplexNumberPair;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.regtest.RegTest;
 

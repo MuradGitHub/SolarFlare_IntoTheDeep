@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode.base.config;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.base.calibration.Range;
+import org.firstinspires.ftc.teamcode.base.math.Range;
 
 public class MotorSpec implements Validatable {
     public double nominalVoltage;

@@ -42,9 +42,12 @@ import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
 import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
+import org.firstinspires.ftc.teamcode.base.math.LookupTable1D;
+import org.firstinspires.ftc.teamcode.base.math.LookupTable2D;
+import org.firstinspires.ftc.teamcode.base.math.Range;
 
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeUp;
-import static org.firstinspires.ftc.teamcode.base.calibration.Math.regularizeDown;
+import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeUp;
+import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeDown;
 
 
 public class MotorCalibResult extends MultiMetricsWriter {
@@ -57,10 +60,10 @@ public class MotorCalibResult extends MultiMetricsWriter {
     public ArrayList<MotorProfileDataPoint>     ssDataR;
     public ArrayList<MotorProfileDataPoint>     dataF;
     public ArrayList<MotorProfileDataPoint>     dataR;
-    public LookupTable1D                        Vss             = new LookupTable1D();
-    public LookupTable2D                        PVALutF;
+    public LookupTable1D Vss             = new LookupTable1D();
+    public LookupTable2D PVALutF;
     public LookupTable2D                        PVALutR;
-    public Range                                VssRangeF       = new Range();
+    public Range VssRangeF       = new Range();
     public Range                                VssRangeR       = new Range();
     public MotorPVAFunction                     PVAFunctionF;
     public MotorPVAFunction                     PVAFunctionR;
