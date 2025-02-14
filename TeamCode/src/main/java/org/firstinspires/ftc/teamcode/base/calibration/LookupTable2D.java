@@ -229,6 +229,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         // Weights - prefilled
         addMetricsSpec(
                 "LookupTable2D-Weights-Prefill",
+                "LookupTable2D-Weights-Prefill",
                 itemFormat,
                 yResolution+1,
                 header,
@@ -236,24 +237,31 @@ public class LookupTable2D extends MultiMetricsWriter {
         // Weights - prefilled
         addMetricsSpec(
                 "LookupTable2D-Weights",
+                "LookupTable2D-Weights",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // rawData - prefilled
-        addMetricsSpec("LookupTable2D-RawData-Prefill",
+        addMetricsSpec(
+                "LookupTable2D-RawData-Prefill",
+                "LookupTable2D-RawData-Prefill",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // rawData
-        addMetricsSpec("LookupTable2D-RawData",
+        addMetricsSpec(
+                "LookupTable2D-RawData",
+                "LookupTable2D-RawData",
                 itemFormat,
                 yResolution+1,
                 header,
                 getMetricsFileId());
         // data
-        addMetricsSpec("LookupTable2D-Data",
+        addMetricsSpec(
+                "LookupTable2D-Data",
+                "LookupTable2D-Data",
                 itemFormat,
                 yResolution+1,
                 header,
