@@ -288,31 +288,39 @@ public class LookupTable2D extends MultiMetricsWriter {
                 }
             }
         }
-        for(EmptyPoint ePoint: ePoints) {
-            NeighborIterator itr     = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
-            double z                 = 0;
-            double weight            = 0;
-            int    numberOfNeighbors = 0;
-            while(itr.hasMorePoints()) {
-                Point point = itr.getNextPoint();
-                if(weights[point.xIdx][point.yIdx] == 0)
+        int     iIdx                 = 0;
+        boolean hasEmptyPoints       = false;
+        do {
+            for(EmptyPoint ePoint: ePoints) {
+                NeighborIterator itr = new NeighborIterator(ePoint.xIdx, ePoint.yIdx, xIdxMax, yIdxMax);
+                double z = 0;
+                double weight = 0;
+                int numberOfNeighbors = 0;
+                while (itr.hasMorePoints()) {
+                    Point point = itr.getNextPoint();
+                    if (weights[point.xIdx][point.yIdx] == 0)
+                        continue;
+                    numberOfNeighbors++;
+                    z += rawData[point.xIdx][point.yIdx];
+                    weight += weights[point.xIdx][point.yIdx];
+                }
+                if (numberOfNeighbors == 0.0) {
+                    logger.logp(
+                            Level.INFO,
+                            "LookupTable2D",
+                            "fillEmptyCells",
+                            "Iteration=" + iIdx + " " + ePoint + " has no neighbors"
+                    );
+                    hasEmptyPoints = true;
                     continue;
-                numberOfNeighbors++;
-                z                   += rawData[point.xIdx][point.yIdx];
-                weight              += weights[point.xIdx][point.yIdx];
-            }
-            if(numberOfNeighbors == 0.0)
-                logger.logp(
-                        Level.INFO,
-                        "LookupTable2D",
-                        "fillEmptyCells",
-                        ePoint.toString() + " has no neighbors"
-                        );
+                }
 
-            // System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
-            rawData[ePoint.xIdx][ePoint.yIdx] = z      / numberOfNeighbors;
-            weights[ePoint.xIdx][ePoint.yIdx] = weight / numberOfNeighbors;
-        }
+                // System.out.printf(Locale.US, "%1$s z=%2$.3f weight=%3$.3f%n",ePoint,z,weight);
+                rawData[ePoint.xIdx][ePoint.yIdx] = z / numberOfNeighbors;
+                weights[ePoint.xIdx][ePoint.yIdx] = weight / numberOfNeighbors;
+            }
+            iIdx++;
+        } while(hasEmptyPoints);
     }
 
     public void update() {
@@ -360,7 +368,7 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     /**
-     * Method to perform bilinear interpolation. get z using interpolatation on theLUT
+     * Method to perform bilinear interpolation. get z using interpolation on theLUT
      * @param x: x value of the point to interpolate
      * @param y: y value of the point to interpolate
      * @return interpolated z value
@@ -502,7 +510,7 @@ public class LookupTable2D extends MultiMetricsWriter {
 
         // weights
         MetricsFile fileWeights = robotMetrics
-                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights"));;
+                .getMetricsFile(getMetricsSpec("LookupTable2D-Weights"));
         for(int xIdx=0; xIdx<xResolution; xIdx++) {
             fileWeights.addDataItem("%1$.3f,", xValues[xIdx]);
             fileWeights.addData(weights[xIdx]);
