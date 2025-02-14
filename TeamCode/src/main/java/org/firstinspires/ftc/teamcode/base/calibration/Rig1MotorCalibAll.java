@@ -79,17 +79,17 @@ public class Rig1MotorCalibAll extends LinearOpMode {
             telemetry.update();
             motorProfiles.calcProfiles(Pi, Pf);
 
-            telemetry.addData("Starting to Generate MotorCalibResult", motorEnum);
+            telemetry.addData("Starting to Generate CalibResult", motorEnum);
             telemetry.update();
 
             MotorCalibResult result = motorProfiles.getCalibResult(true, true);
             telemetry.addData("Finished calibration", motorEnum);
-            telemetry.addData("Starting to write calibration result json", motorEnum);
+            telemetry.addData("Starting to write CalibResult json", motorEnum);
             telemetry.update();
 
             result.writeJSON();
 
-            telemetry.addData("Finished finished writing calibration result jsons", motorEnum);
+            telemetry.addData("Finished finished writing CalibResult json", motorEnum);
             telemetry.addData("PVAFunctionF", result.PVAFunctionF);
             telemetry.addData("PVAFunctionR", result.PVAFunctionR);
             telemetry.addData("FORWARD Vss(0.4)", result.getVss(Direction.FORWARD, 0.4));
@@ -106,15 +106,15 @@ public class Rig1MotorCalibAll extends LinearOpMode {
             telemetry.addData("REVERSE Vss(-0.8)", result.getVss(Direction.REVERSE, -0.8));
             telemetry.addData("REVERSE Vss(-0.9)", result.getVss(Direction.REVERSE, -0.9));
             telemetry.addData("REVERSE Vss(-1.0)", result.getVss(Direction.REVERSE, -1.0));
-            telemetry.addData("Starting to write metrics for the calibration result", motorEnum);
+            telemetry.addData("Starting to write metrics for CalibResult", motorEnum);
             telemetry.update();
 
             result.writeMetrics();
 
             sleep(60000);
 
-            telemetry.addData("Finished writing metrics for the calibration result", "");
-            telemetry.addData("Starting to write JSONs for Profiles", "");
+            telemetry.addData("Finished writing metrics for CalibResult", motorEnum);
+            telemetry.addData("Starting to write JSONs for Profiles", motorEnum);
             telemetry.update();
             motorProfiles.writeJSONs();
 

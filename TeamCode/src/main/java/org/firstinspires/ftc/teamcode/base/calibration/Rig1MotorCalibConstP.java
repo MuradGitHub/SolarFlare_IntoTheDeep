@@ -120,12 +120,12 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         MotorProfileDataPoint ssPointVF    = motorProfileF.getSteadyStateVDataPoint();
         MotorProfileDataPoint ssPointAF    = motorProfileF.getSteadyStateADataPoint();
         MotorProfileDataPoint targetPointF = motorProfileF.getTargetDataPoint();
-        MotorProfileDataPoint lastPointF   = motorProfileF.getLastData();
+        MotorProfileDataPoint lastPointF   = motorProfileF.getLastDataPoint();
 
         MotorProfileDataPoint ssPointVR    = motorProfileR.getSteadyStateVDataPoint();
         MotorProfileDataPoint ssPointAR    = motorProfileR.getSteadyStateADataPoint();
         MotorProfileDataPoint targetPointR = motorProfileR.getTargetDataPoint();
-        MotorProfileDataPoint lastPointR   = motorProfileR.getLastData();
+        MotorProfileDataPoint lastPointR   = motorProfileR.getLastDataPoint();
 
         telemetry.addData("F_isValid",            motorProfileF.isValid());
         telemetry.addData("F_averagingPeriods",   motorProfileF.averagingPeriods);
