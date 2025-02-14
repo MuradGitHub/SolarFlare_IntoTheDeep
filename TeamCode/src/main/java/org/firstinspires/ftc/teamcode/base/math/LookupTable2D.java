@@ -317,7 +317,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                             Level.INFO,
                             "LookupTable2D",
                             "fillEmptyCells",
-                            "Iteration=" + iIdx + " pIdx=" + pIdx++ + ePoint + " has no neighbors"
+                            "Iteration=" + iIdx + " pIdx=" + pIdx++ + " " + ePoint + " has no neighbors"
                     );
                     hasEmptyPoints             = true;
                     continue;
