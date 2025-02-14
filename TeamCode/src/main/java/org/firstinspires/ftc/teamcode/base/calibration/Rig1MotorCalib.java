@@ -91,8 +91,13 @@ public class Rig1MotorCalib extends LinearOpMode {
         telemetry.update();
 
         MotorCalibResult result = motorProfiles.getCalibResult(true, true);
-
         telemetry.addData("Finished calibration", "");
+        telemetry.addData("Starting to write calibration result json", "");
+        telemetry.update();
+
+        result.writeJSON();
+
+        telemetry.addData("Finished finished writing calibration result jsons", "");
         telemetry.addData("PVAFunctionF",     result.PVAFunctionF);
         telemetry.addData("PVAFunctionR",     result.PVAFunctionR);
         telemetry.addData("FORWARD Vss(0.4)", result.getVss(Direction.FORWARD,  0.4));

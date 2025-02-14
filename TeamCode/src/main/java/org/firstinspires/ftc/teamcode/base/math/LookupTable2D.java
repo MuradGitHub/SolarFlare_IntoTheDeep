@@ -50,18 +50,18 @@ import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 
 public class LookupTable2D extends MultiMetricsWriter {
-    private final Logger     logger  = RobotLogger.getInstance().getConfigLogger();
-    private final int        xResolution;
-    private final int        yResolution;
-    private final int        xIdxMax;
-    private final int        yIdxMax;
-    public Range xRange;
-    public        Range      yRange;
-    private       double[][] rawData = null;
-    private       double[][] data    = null;
-    private       double[][] weights = null;
-    public        double[]   xValues = null;
-    public        double[]   yValues = null;
+    private transient final Logger     logger  = RobotLogger.getInstance().getConfigLogger();
+    private final           int        xResolution;
+    private final           int        yResolution;
+    private final           int        xIdxMax;
+    private final           int        yIdxMax;
+    public                  Range      xRange;
+    public                  Range      yRange;
+    private                 double[][] rawData = null;
+    private                 double[][] data    = null;
+    private                 double[][] weights = null;
+    public                  double[]   xValues = null;
+    public                  double[]   yValues = null;
 
     public static class EmptyPoint implements Comparable<EmptyPoint> {
         public int    xIdx;

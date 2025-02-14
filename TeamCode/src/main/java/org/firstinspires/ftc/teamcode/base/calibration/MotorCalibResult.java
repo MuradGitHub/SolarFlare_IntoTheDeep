@@ -32,10 +32,12 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
+import org.firstinspires.ftc.teamcode.base.config.JSONWritable;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
@@ -45,12 +47,13 @@ import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.math.LookupTable1D;
 import org.firstinspires.ftc.teamcode.base.math.LookupTable2D;
 import org.firstinspires.ftc.teamcode.base.math.Range;
+import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 
 import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeUp;
 import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeDown;
 
 
-public class MotorCalibResult extends MultiMetricsWriter {
+public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable {
     public MotorEnum                            motorEnum;
     public int                                  powerResolution;
     public int                                  velocityResolution;
@@ -250,6 +253,14 @@ public class MotorCalibResult extends MultiMetricsWriter {
             metricsFile.addData(dataPoint);
 
         metricsFile.close();
+    }
+
+    public String getJSONFileId() {
+        return String.format(Locale.US, "%1$s", motorEnum.name());
+    }
+
+    public void writeJSON() {
+        JSONUtils.writeJSON(this);
     }
 
     public static void main(String[] args) {
