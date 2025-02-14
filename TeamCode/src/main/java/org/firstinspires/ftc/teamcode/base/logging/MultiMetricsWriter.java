@@ -38,11 +38,15 @@ public abstract class MultiMetricsWriter {
     protected abstract void initMetricsSpecs();
     public abstract void writeMetrics();
 
-    public void addMetricsSpec(String tableType, String format, String header) {
-        addMetricsSpec(tableType, format, header, getMetricsFileId());
+    public void addMetricsSpec(String specId,
+                               String tableType,
+                               String format,
+                               String header) {
+        addMetricsSpec(specId, tableType, format, header, getMetricsFileId());
     }
 
-    public void addMetricsSpec(String tableType,
+    public void addMetricsSpec(String specId,
+                               String tableType,
                                String format,
                                String header,
                                String fileId) {
@@ -53,10 +57,11 @@ public abstract class MultiMetricsWriter {
                 header,
                 fileId
         );
-        metricsSpecs.put(metricsSpec.tableType, metricsSpec);
+        metricsSpecs.put(specId, metricsSpec);
     }
 
-    public void addMetricsSpec(String tableType,
+    public void addMetricsSpec(String specId,
+                               String tableType,
                                String itemFormat,
                                int    numberOfFields,
                                String header,
@@ -69,15 +74,15 @@ public abstract class MultiMetricsWriter {
                 header,
                 fileId
         );
-        metricsSpecs.put(metricsSpec.tableType, metricsSpec);
+        metricsSpecs.put(specId, metricsSpec);
     }
 
-    public void addMetricsSpec(MetricsFileSpec metricsSpec) {
-        metricsSpecs.put(metricsSpec.tableType, metricsSpec);
+    public void addMetricsSpec(String specId, MetricsFileSpec metricsSpec) {
+        metricsSpecs.put(specId, metricsSpec);
     }
 
-    public MetricsFileSpec getMetricsSpec(String tableType) {
-        return metricsSpecs.get(tableType);
+    public MetricsFileSpec getMetricsSpec(String specId) {
+        return metricsSpecs.get(specId);
     }
 
     public void setMetricsFileId(String metricsFileId_in) {
