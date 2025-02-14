@@ -167,9 +167,14 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
     }
 
     protected void gotoStart() {
-        String msg = String.format(Locale.US,"Entring: motor: %1$s direction=%2$s P=%3$df Pi=%4$d",
+        String msg;
+        String format;
+        /*
+        format                   = "Entring: %1$s direction=%2$s P=%3$df Pi=%4$d";
+        msg                      = String.format(Locale.US,format,
                 motorEnum.name(), calibDirection.name(), motor.getCurrentPosition(), Pi);
         logger.logp(Level.INFO, "MotorProfileConsP", "gotoStart", msg);
+         */
 
         double      toStartPower = motor.getCurrentPosition()<Pi?1.0:-1.0;
         ElapsedTime timer        = new ElapsedTime();
@@ -194,20 +199,28 @@ public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfi
 
             offTarget            = abs(Pi - pp.P) > 5;
 
-            msg                  = String.format(Locale.US,"%1$s power=%2$.3f P=%3$d C=%4$.3f V=%5$.3f - off target",
+            /*
+            format               = "%1$s power=%2$.3f P=%3$d C=%4$.3f V=%5$.3f - off target";
+            msg                  = String.format(Locale.US,format,
                     calibDirection, pp.power, pp.P, pp.C, pp.V);
-            logger.logp(Level.INFO,"MotorProfileConstP","TheWhileLoop",msg);
+            logger.logp(Level.INFO,"MotorProfileConstP","gotoStart-TheWhileLoop",msg);
+            */
         }
 
         motor.setPower(0.0);
 
-        logger.logp(Level.INFO,
-                "MotorProfileConsP",
-                "gotoStart",
-                "Exiting: Motor: " + motorEnum + " " + calibDirection + " appliedPower=" +
-                        toStartPower + " motorPower=" + motor.getPower() + " offTarget=" +
-                        offTarget + " P=" + motor.getCurrentPosition() + " V=" +
-                        motor.getVelocity() + " C=" + motor.getCurrent(CurrentUnit.AMPS));
+        format                   = "Exiting: %1$s %2$s appliedPower=%3$.3f motorPower=%4$.3f P=%5$d V=%6$.3f C=%7$.3f";
+        msg                      = String.format(
+                Locale.US,
+                format,
+                motorEnum.name(),
+                calibDirection.name(),
+                toStartPower,
+                motor.getPower(),
+                motor.getCurrentPosition(),
+                motor.getVelocity(),
+                motor.getCurrent(CurrentUnit.AMPS));
+        logger.logp(Level.INFO,"MotorProfileConsP", "gotoStart", msg);
     }
 
     private void calcDerivedData() {

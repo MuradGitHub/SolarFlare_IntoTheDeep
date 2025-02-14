@@ -97,11 +97,6 @@ public class MotorProfiles implements Validatable {
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataForward() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesF) {
-            logger.logp(
-                    Level.INFO,
-                    "MotorProfiles",
-                    "getSteadyStateDataForward",
-                    "MotorProfile-Power=" + profile.power);
             MotorProfileDataPoint ssDataPoint = profile.getSteadyStateVData();
             if(ssDataPoint == null)
                 continue;

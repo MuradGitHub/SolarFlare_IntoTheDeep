@@ -114,6 +114,7 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         format         = repeatAndJoinFormat(itemFormat,",",numberOfFields);
         header         = header_in;
         fieldNames     = header.split(",");
+        /*
         logger.logp(
                 Level.INFO,
                 "MetricsSpec",
@@ -121,6 +122,7 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
                 String.format(Locale.US,
                         "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
                         tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
+         */
 
     }
 
@@ -128,7 +130,7 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
         return tableType.compareTo(other.tableType);
     }
 
-    public String getMetricsTableType() {
+    public String getTableType() {
         return tableType;
     }
 
