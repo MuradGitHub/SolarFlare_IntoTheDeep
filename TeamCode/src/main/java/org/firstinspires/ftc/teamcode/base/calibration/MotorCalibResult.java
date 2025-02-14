@@ -52,20 +52,20 @@ public class MotorCalibResult extends MultiMetricsWriter {
     public int                                  powerResolution;
     public int                                  velocityResolution;
 
+    public String                               metricsSpecId = "MotorProfileData";
     public ArrayList<MotorProfileDataPoint>     ssDataF;
     public ArrayList<MotorProfileDataPoint>     ssDataR;
     public ArrayList<MotorProfileDataPoint>     dataF;
     public ArrayList<MotorProfileDataPoint>     dataR;
-    public LookupTable1D                        VssF            = new LookupTable1D();
-    public LookupTable1D                        VssR            = new LookupTable1D();
+    public LookupTable1D                        Vss             = new LookupTable1D();
     public LookupTable2D                        PVALutF;
     public LookupTable2D                        PVALutR;
     public Range                                VssRangeF       = new Range();
     public Range                                VssRangeR       = new Range();
     public MotorPVAFunction                     PVAFunctionF;
     public MotorPVAFunction                     PVAFunctionR;
-    public boolean                              writeMetrics    = false;
-    public boolean                              writeMetricsLUT = false;
+    public boolean                              writeMetrics;
+    public boolean                              writeMetricsLUT;
 
     /**
      * Constructor
@@ -100,7 +100,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
     }
 
     public void initMetricsSpecs() {
-        addMetricsSpec(MotorProfileDataPoint.getMetricsSpec(motorEnum.name()));
+        addMetricsSpec(metricsSpecId,MotorProfileDataPoint.makeMetricsSpec(motorEnum.name()));
     }
 
     /**
@@ -119,7 +119,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
         /// Forward data
         for(var dataPoint: ssDataF) {
             obs.add(dataPoint.Vavg, dataPoint.power);
-            VssF.addDataPoint(dataPoint.power, dataPoint.Vavg);
+            Vss.addDataPoint(dataPoint.power, dataPoint.Vavg);
         }
         coeff                          = fitter.fit(obs.toList());
         double k3F                     = coeff[0];
@@ -128,7 +128,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
         obs.clear();
         for(var dataPoint: ssDataR) {
             obs.add(dataPoint.Vavg, dataPoint.power);
-            VssR.addDataPoint(dataPoint.power, dataPoint.Vavg);
+            Vss.addDataPoint(dataPoint.power, dataPoint.Vavg);
         }
         coeff                          = fitter.fit(obs.toList());
         double k3R                     = coeff[0];
@@ -223,10 +223,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
     }
 
     public double getVss(DcMotorSimple.Direction direction, double power) {
-        if(direction == DcMotorSimple.Direction.FORWARD)
-            return VssF.apply(power);
-        else
-            return VssR.apply(power);
+        return Vss.apply(power);
     }
 
     public void setWriteMetricsLUT(boolean writeMetricsLUT_in) {
@@ -241,7 +238,7 @@ public class MotorCalibResult extends MultiMetricsWriter {
 
         MetricsFile metricsFile = RobotMetrics
                 .getInstance()
-                .getMetricsFile(getMetricsSpec("MotorProfileData"));
+                .getMetricsFile(getMetricsSpec(metricsSpecId));
 
         for(MotorProfileDataPoint dataPoint: dataF)
             metricsFile.addData(dataPoint);
