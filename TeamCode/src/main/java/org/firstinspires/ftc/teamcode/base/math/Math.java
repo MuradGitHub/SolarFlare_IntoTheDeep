@@ -149,6 +149,14 @@ public class Math {
         return null;
     }
 
+    /**
+     * Returns the index at which target can be inserted while preserving the order of the
+     * array values
+     *
+     * @param target: The new value
+     * @param values: A sorted array of values
+     * @return insertion index. The index of the first element greater than target in values
+     */
     public static int findInsertionIndex(double target, double[] values) {
         int low  = 0;
         int high = values.length - 1;
@@ -183,6 +191,7 @@ public class Math {
         int[][]    casesI   = new int[][] {
                 { 1, 0, findInsertionIndex(  1.0, values)},
                 {-4, 0, findInsertionIndex( -4.0, values)},
+                { 3, 2, findInsertionIndex(  3.0, values)},
                 { 6, 4, findInsertionIndex(  6.0, values)},
                 {10, 5, findInsertionIndex( 10.0, values)},
         };
