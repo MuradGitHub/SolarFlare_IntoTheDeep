@@ -69,12 +69,10 @@ public class MotorProfiles implements Validatable {
         Ptarget              = Ptarget_in;
         for(int pIdx=0; pIdx<powerResolution; pIdx++) {
             double power     = minPower + pIdx*dP;
-            String logMsg    = "Profile=" + pIdx + " power=" + power;
-            logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
-            logMsg           = "Calculating Profile from=" + Pi + " to=" + Ptarget;
+            String logMsg    = "Profile=" + pIdx + " power=" + power + " Pi=" + Pi + " Ptarget=" + Ptarget;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
             motorProfilesF[pIdx].calcProfile(power, Pi,      Ptarget);
-            logMsg           = "Calculating Profile from=" + Ptarget + " to=" + Pi;
+            logMsg           = "Profile=" + pIdx + " power=" + power + " Pi=" + Ptarget + " Ptarget=" + Pi;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
             motorProfilesR[pIdx].calcProfile(power, Ptarget, Pi);
         }
