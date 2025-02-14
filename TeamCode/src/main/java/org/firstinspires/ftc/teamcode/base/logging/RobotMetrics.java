@@ -105,8 +105,9 @@ public class RobotMetrics {
         return new MetricsFile(metricsSpec, fileId);
     }
 
+    // The storage of this MetricsFileSpec is managed elsewhere. Do not put the MetricsFileSpec
+    // in the metricsSpecs map. You might want to keep track of the file. I don't do that yet
     public MetricsFile getMetricsFile(MetricsFileSpec metricsSpec) {
-        tablesSpecs.put(metricsSpec.getMetricsTableType(), metricsSpec);
         return new MetricsFile(metricsSpec, metricsSpec.getMetricsFileId());
     }
 
