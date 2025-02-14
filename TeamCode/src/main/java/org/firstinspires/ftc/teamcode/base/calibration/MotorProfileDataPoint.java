@@ -33,8 +33,11 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsDataPoint;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFileSpec;
 
@@ -45,17 +48,18 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$.3f,%3$.3f,%4$.3f,%5$.3f,%6$.3f," +
-                        "%7$d,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f," +
-                        "%13$.3f,%14$.3f,%15$.3f%n";
+                "%1$s,%2$s,%3$.3f,%4$.3f,%5$.3f,%6$.3f,%7$.3f," +
+                        "%8$d,%9$.3f,%10$.3f,%11$.3f,%12$.3f,%13$.3f," +
+                        "%14$.3f,%15$.3f,%16$.3f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "Direction", "Time",     "TimePExtract", "TimeVextract", "TimeCExtract", "TimeCycle",
-                "Position",  "Power",    "Velocity",     "Vavg",         "A",            "Aavg",
-                "ApredFun",  "ApredLut", "C"
+                "ProfileId", "Direction", "Time",     "TimePExtract", "TimeVextract", "TimeCExtract",
+                "TimeCycle", "Position",  "Power",    "Velocity",     "Vavg",         "A",
+                "Aavg",      "ApredFun",  "ApredLut", "C"
         };
     }
 
+    public        String    profileId;
     public        Direction direction;
     public        double    t;
     public        double    tPextract;
@@ -73,6 +77,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        double    C;
 
     public MotorProfileDataPoint(
+            String    profileId_in,
             Direction direction_in,
             double    t_in,
             double    tPextract_in,
@@ -83,6 +88,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
             double    V_in,
             double    power_in,
             double    C_in) {
+        profileId = profileId_in;
         direction = direction_in;
         t         = t_in;
         tPextract = tPextract_in;
@@ -95,14 +101,39 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         C         = C_in;
     }
 
-    public static MetricsFileSpec getMetricsSpec(String fileId) {
-        return MetricsDataPoint.getMetricsSpec(fileId);
+    public MotorProfileDataPoint(DcMotorEx   motor,
+                                 String      profileId_in,
+                                 Direction   direction_in,
+                                 ElapsedTime timer) {
+        // Because of the time it takes to pull data from the motor, there measurements
+        // unfortunately are not exactly synchronous
+        profileId = profileId_in;
+        direction = direction_in;
+        t         = timer.seconds();
+        P         = motor.getCurrentPosition();
+        tPextract = timer.seconds() - t;
+        // Pull velocity info
+        // With no arguments getVelocity() returns Ticks Per Second
+        V         = motor.getVelocity();
+        tVextract = timer.seconds() - tPextract - t;
+        C         = motor.getCurrent(CurrentUnit.AMPS);
+        tCextract = timer.seconds() - tVextract - tPextract - t;
+        power     = motor.getPower();
+        tCycle    = timer.seconds() - t;
+    }
+
+    public boolean isTargetReached(int Ptarget) {
+        return direction == Direction.FORWARD ? P>=Ptarget : P<=Ptarget;
+    }
+
+    public static MetricsFileSpec makeMetricsSpec(String fileId) {
+        return MetricsDataPoint.makeMetricsSpec(fileId);
     }
 
     public void writeMetrics(Formatter formatter) {
         formatter.format(format,
-                direction, t,    tPextract, tVextract, tCextract, tCycle,   P, power,
-                V,         Vavg, A,          Aavg,     ApredFun,  ApredLut, C);
+                profileId, direction, t, tPextract, tVextract, tCextract, tCycle, P, power,
+                V,         Vavg,      A, Aavg,      ApredFun,  ApredLut,  C);
     }
 
     @NonNull
@@ -131,7 +162,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
 
     public static void main(String[] args) {
-        MetricsFileSpec ms = MotorProfileDataPoint.getMetricsSpec("This File");
+        MetricsFileSpec ms = MotorProfileDataPoint.makeMetricsSpec("This File");
         System.out.println(ms);
     }
 }
