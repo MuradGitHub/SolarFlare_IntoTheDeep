@@ -343,10 +343,10 @@ public class LookupTable2D extends MultiMetricsWriter {
 
     public void addDataPoint(double x, double y, double z) {
         // First find the xIdx-yIdx square where the new data point falls
-        int xIdx1              = min(findInsertionIndex(x, xValues), xIdxMax);
-        int yIdx1              = min(findInsertionIndex(y, yValues), yIdxMax);
-        int xIdx2              = min(xIdx1+1, xIdxMax);
-        int yIdx2              = min(yIdx1+1, yIdxMax);
+        int xIdx2              = findInsertionIndex(x, xValues);
+        int yIdx2              = findInsertionIndex(y, yValues);
+        int xIdx1              = max(xIdx2-1, 0);
+        int yIdx1              = max(yIdx2-1, 0);
 
         // System.out.printf(Locale.US, "addDataPoint x= %1$.3f y= %2$.3f z= %3$.3f%n",x,y,z);
         // System.out.printf(Locale.US, "addDataPoint square: xIdx1= %1$d yIdx1= %2$d xIdx2= %3$d yIdx2= %4$d%n",xIdx1,yIdx1,xIdx2,yIdx2);
