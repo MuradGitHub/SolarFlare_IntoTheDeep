@@ -33,6 +33,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.Thread.sleep;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -55,16 +56,18 @@ import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
+import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
-public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWritable, Validatable {
+public class MotorProfileConstP extends MultiMetricsWriter implements MotorProfile, JSONWritable, Validatable {
     private transient final Logger                     logger;
     private           final MotorEnum                  motorEnum;
     private transient final MotorConfig                motorConfig;
     private transient final DcMotorEx                  motor;
+    private           final String                     metricsSpecId = "MotorProfileData";
     /**
      * Calibration Direction: FORWARD, REVERSE
      */
@@ -95,6 +98,10 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
      * Data
      */
     public            ArrayList<MotorProfileDataPoint> data;
+    /**
+     * Goto Start Data
+     */
+    public            ArrayList<MotorProfileDataPoint> startData;
     /**
      * The number of periods used to compute Aavg and Vavg
      */
@@ -140,35 +147,56 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         minTimeInc                    = motorConfig.calibParams.minTimeInc;
         timeResolution                = motorConfig.calibParams.timeResolution;
         maxProfileTime                = motorConfig.calibParams.maxProfileTime;
-        data                          = new ArrayList<MotorProfileDataPoint>(timeResolution);
+        startData                     = new ArrayList<>(timeResolution);
+        data                          = new ArrayList<>(timeResolution);
+    }
+
+    /**
+     * Create necessary MetricsSpecs to write out profile metrics
+     * Has to be called at the end of calcProfile as the calibDirection is only available
+     * after the profile is calculated
+     */
+    public void initMetricsSpecs() {
+        String fileId = String.format(
+                Locale.US,
+                "%1$s-%2$s-%3$.4f",
+                motorEnum.name(),
+                calibDirection.name(),
+                power);
+        addMetricsSpec(metricsSpecId, MotorProfileDataPoint.makeMetricsSpec(fileId));
     }
 
     protected void gotoStart() {
-        logger.logp(Level.INFO,
-                "MotorProfileConsP",
-                "gotoStart",
-                "Entering: Motor: " + motorEnum +  " " + calibDirection + " P=" + motor.getCurrentPosition() + " Pi=" + Pi);
+        String msg = String.format(Locale.US,"Entring: motor: %1$s direction=%2$s P=%3$df Pi=%4$d",
+                motorEnum.name(), calibDirection.name(), motor.getCurrentPosition(), Pi);
+        logger.logp(Level.INFO, "MotorProfileConsP", "gotoStart", msg);
 
-        double toStartPower = motor.getCurrentPosition()<Pi?1.0:-1.0;
+        double      toStartPower = motor.getCurrentPosition()<Pi?1.0:-1.0;
+        ElapsedTime timer        = new ElapsedTime();
+        MotorProfileDataPoint pp;
 
         motor.setMode(RunMode.RUN_TO_POSITION);
         motor.setTargetPosition(Pi);
         motor.setPower(toStartPower);
 
-        boolean offTarget   = true;
+        boolean     offTarget    = true;
         while(motor.isBusy() ||
                 offTarget    ||
                 abs(motor.getVelocity()) > motorConfig.calibParams.velocityTolerance) {
-            offTarget = abs(Pi - motor.getCurrentPosition()) > 5;
 
-            logger.logp(Level.INFO,
-                    "MotorProfileConstP",
-                    "TheWhileLoop",
-                    calibDirection + " power=" + motor.getPower() + " C=" +
-                            motor.getCurrent(CurrentUnit.AMPS) + " P=" +
-                            motor.getCurrentPosition() + " V=" + motor.getVelocity() +
-                            " - still offTarget");
+            try {
+                sleep((int) (1000 * minTimeInc));
+                pp = new MotorProfileDataPoint(motor, "Profile", calibDirection, timer);
+                startData.add(pp);
+            } catch(InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
+            offTarget            = abs(Pi - pp.P) > 5;
+
+            msg                  = String.format(Locale.US,"%1$s power=%2$.3f P=%3$d C=%4$.3f V=%5$.3f - off target",
+                    calibDirection, pp.power, pp.P, pp.C, pp.V);
+            logger.logp(Level.INFO,"MotorProfileConstP","TheWhileLoop",msg);
         }
 
         motor.setPower(0.0);
@@ -238,115 +266,54 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
     }
 
     public void calcProfile(double power_in, int Pi_in, int Ptarget_in) {
-        Pi                            = Pi_in;
-        Ptarget                       = Ptarget_in;
-        power                         = abs(power_in);
-        calibDirection                = Ptarget > Pi? Direction.FORWARD : Direction.REVERSE;
+        Pi                               = Pi_in;
+        Ptarget                          = Ptarget_in;
+        power                            = abs(power_in);
+        calibDirection                   = Ptarget > Pi? Direction.FORWARD : Direction.REVERSE;
         // pull the final position Pf back by targetBuffer
-        Pf                            = calibDirection == Direction.FORWARD ?
+        Pf                               = calibDirection == Direction.FORWARD ?
                 Ptarget - motorConfig.calibParams.targetBuffer :
                 Ptarget + motorConfig.calibParams.targetBuffer;
-        signedPower                   = Pf > Pi? power : -power;
+        signedPower                      = Pf > Pi? power : -power;
 
         checkCalcInput();
 
-        ElapsedTime           timer   = new ElapsedTime();
-        ElapsedTime           eTimer  = new ElapsedTime();
-        MotorProfileDataPoint point;
-        double  dt;
-        double  tPrev                 = Double.NEGATIVE_INFINITY;
-        int     tIdx                  = 0;
+        ElapsedTime           timer      = new ElapsedTime();
+        int     tIdx                     = 0;
 
         gotoStart();
+
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
 
-        double  tCycleNow             = 0;
-        double  tPextractNow          = 0;
-        double  tVextractNow          = 0;
-        double  tCextractNow          = 0;
-        double  tNow;
-        int     PNow;
-        double  VNow;
-        double  CNow;
-        double  motorPowerNow;
-        int     endSamples            = motorConfig.calibParams.endSamples;
-        String  format                = "tIdx=%1$d shortOfTarget=%2$b Pi=%3$d Pf=%4$d P=%5$d";
+        int     endSamples               = motorConfig.calibParams.endSamples;
 
         // Start the path
         // timer keeps time for the entire path. It will not be reset
         timer.reset();
-        // eTimer times each iteration to figure out how long each step takes. It will be reset
-        // at the start of each iteration
-        eTimer.reset();
         motor.setPower(signedPower);
         do {
-            tCycleNow                += eTimer.seconds();
-            eTimer.reset();
-            tNow                      = timer.seconds();
-
-            /// Because of the time it takes to pull data from the motor, there measurements
-            /// unfortunately are not exactly synchronous
-
-            /// Pull current position info
-            PNow                      = motor.getCurrentPosition();
-            tPextractNow             += eTimer.seconds();
-
-            /// Pull velocity info
-            /// With no arguments getVelocity() returns Ticks Per Second
-            VNow                      = motor.getVelocity();
-            tVextractNow             += eTimer.seconds();
-
-            /// Pull current info
-            CNow                      = motor.getCurrent(CurrentUnit.AMPS);
-            motorPowerNow             = motor.getPower();
-            tCextractNow             += eTimer.seconds();
-
-            dt                        = tNow - tPrev;
-            if(dt >= minTimeInc) {
-                data.add(new MotorProfileDataPoint(
+            try {
+                sleep((int) (1000 * minTimeInc));
+                MotorProfileDataPoint pp = new MotorProfileDataPoint(
+                        motor,
+                        "Start",
                         calibDirection,
-                        tNow,
-                        tPextractNow - tCextractNow,
-                        tVextractNow - tPextractNow,
-                        tCextractNow - tVextractNow,
-                        tCycleNow,
-                        PNow,
-                        VNow,
-                        motorPowerNow,
-                        CNow));
-                tPrev                 = tNow;
-                tCycleNow             = 0;
-                tPextractNow          = 0;
-                tVextractNow          = 0;
-                tCextractNow          = 0;
-
-                tIdx++;
+                        timer);
+                data.add(pp);
+                isTargetReached          = pp.isTargetReached(Pf);
+                if (isTargetReached && tIdxTarget == null)
+                    tIdxTarget           = tIdx++ - 1;
+                // if the target has been reached, likely exceeded, then set power to zero and
+                // start counting backwards the number of required endSamples
+                if (isTargetReached) {
+                    motor.setPower(0.0);
+                    endSamples--;
+                }
+            } catch(InterruptedException e) {
+                throw new RuntimeException(e);
             }
-
-            isTargetReached           = calibDirection == Direction.FORWARD? PNow>=Pf : PNow<=Pf;
-
-            if(isTargetReached && tIdxTarget == null)
-                tIdxTarget            = tIdx-1;
-
-            /*
-            logger.logp(Level.SEVERE,
-                    "MotorProfileConstP",
-                    "calclProfile",
-                    String.format(Locale.US, format, tIdx, shortOfTarget, Pi, Pf, PNow));
-            */
-
-            if(timer.seconds() >= maxProfileTime)
-                break;
-
-            /// if the target has been reached, likely exceeded, then set power to zero and
-            /// start counting backwards the number of required endSamples
-            if(isTargetReached) {
-                motor.setPower(0.0);
-                endSamples--;
-            }
-
-        } while(endSamples>=0 || !isTargetReached);
+        } while((endSamples>=0 || !isTargetReached) && timer.seconds() < maxProfileTime);
 
         /// you get here either because you reached the target AND observed for endSamples
         /// after that. Or, because you simply ran out of space. I.e. you can not perform
@@ -354,7 +321,10 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         motor.setPower(0);
 
         data.trimToSize();
+        startData.trimToSize();
+
         calcDerivedData();
+        initMetricsSpecs();
     }
 
     public MotorProfileDataPoint getLastData() {
@@ -417,29 +387,24 @@ public class MotorProfileConstP implements MotorProfile, JSONWritable, MetricsWr
         JSONUtils.writeJSON(this);
     }
 
-    public String getMetricsFileId() {
-        return String.format(Locale.US, "%1$s-%2$s-%3$.4f", motorEnum, calibDirection.name(), power);
-    }
-
-    public String getMetricsTableType() {
-        return "MotorProfileConstP";
-    }
-
     /**
      * The caller needs to close the metrics file
-     * @param file: the MetricsFile to write metrics to
+     * @param metricsFile: the MetricsFile to write metrics to
      */
-    public void writeMetrics(MetricsFile file) {
-        for(var point: data)
-            file.addData(point);
+    public void writeMetrics(MetricsFile metricsFile) {
+        for(var p: startData)
+            metricsFile.addData(p);
+
+        for(var p: data)
+            metricsFile.addData(p);
     }
 
     public void writeMetrics() {
-        MetricsFile metricsFile = RobotMetrics.getInstance().getMetricsFile(this);
+        MetricsFile metricsFile = RobotMetrics.getInstance()
+                .getMetricsFile(getMetricsSpec(metricsSpecId));
         writeMetrics(metricsFile);
         metricsFile.close();
     }
-
 
     @NonNull
     @Override
