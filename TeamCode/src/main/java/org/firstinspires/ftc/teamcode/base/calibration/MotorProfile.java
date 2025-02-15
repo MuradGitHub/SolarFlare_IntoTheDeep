@@ -196,6 +196,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         ElapsedTime timer        = new ElapsedTime();
         MotorProfileDataPoint pp;
 
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(RunMode.RUN_TO_POSITION);
         motor.setTargetPosition(Pi);
         motor.setPower(toStartPower);
@@ -208,6 +209,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                         motor,
                         "Start-Seeking",
                         calibDirection,
+                        Pi,
                         timer,
                         true);
                 startData.add(pp);
@@ -220,9 +222,11 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 seeking          = pp.isSeeking(Pi, posTol, velTol);
             } else {
                 pp.setProfileId("Start-EndSamples");
+                pp.setStrategySuccess(true);
                 endSamples--;
             }
 
+            /*
             format               = "%1$s power=%2$.3f Pi=%3$d P=%4$d C=%5$.3f V=%6$.3f isBusy=%7$b" +
                     " posTol=%8$d isAtTarget=%9$b velTol=%10$.3f isMoving=%11$b seeking=%12$b" +
                     " endSamples=%13$d";
@@ -230,6 +234,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                     calibDirection, pp.power, Pi, pp.P, pp.C, pp.V, pp.isBusy, posTol,
                     pp.isAtTarget(Pi, posTol), velTol, pp.isMoving(velTol), seeking, endSamples);
             logger.logp(Level.INFO,"MotorProfileConstP","gotoStart-TheWhileLoop",msg);
+             */
 
         } while((endSamples>=0 || seeking) && timer.milliseconds() < maxProfileTime);
 
@@ -339,9 +344,9 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 if(!isTargetReached) {
                     motorPower      = powerStrategy.calcPower(motor, Pf);
                     motor.setPower(motorPower);
-                    if(motorPower == 0.0)
-                        isTargetReached = true;
                 }
+
+                isTargetReached     = powerStrategy.isTargetReached;;
 
                 sleep(minTimeInc);
 
@@ -349,8 +354,10 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                         motor,
                         "Profile-Seeking",
                         calibDirection,
+                        Pf,
                         timer,
                         true);
+                pp.setStrategySuccess(isTargetReached);
                 data.add(pp);
 
                 // if the target has been reached, likely exceeded, then set power to zero and

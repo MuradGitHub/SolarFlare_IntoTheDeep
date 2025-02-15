@@ -51,17 +51,17 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$s,%3$d,%4$b,%5$.3f,%6$.3f,%7$.3f,%8$.3f,%9$.3f,%10$.3f,%11$.3f," +
-                        "%12$.3f,%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$d,%20$.3f," +
-                        "%21$.5f,%22$.5f,%23$.5f,%24$.5f,%25$.5f,%26$.5f,%27$.5f%n";
+                "%1$s,%2$s,%3$d,%4$b,%5$b,%6$.3f,%7$.3f,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f," +
+                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$d,%21$d," +
+                        "%22$.5f,%23$.5f,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "ProfileId",    "Direction",    "PosTol",       "isBusy",
+                "ProfileId",    "Direction",    "PosTol",       "isBusy",           "isStrategySuccess",
                 "RUE.Kp",       "RUE.Ki",       "RUE.Kd",       "RUE.Kf",
                 "RTP.Kp",       "RTP.Ki",       "RTP.Kd",       "RTP.Kf",
                 "Time",
                 "TimePExtract", "TimeVextract", "TimeCExtract", "TimeOtherExtract", "TimeCycle",
-                "Position",     "Power",        "Velocity",     "Vavg",
+                "Position",     "Target",       "Power",        "Velocity",     "Vavg",
                 "A",            "Aavg",         "ApredFun",     "ApredLut",
                 "C"
         };
@@ -71,6 +71,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        Direction        direction;
     public        int              posTol;
     public        boolean          isBusy;
+    public        boolean          isStrategySuccess;
     public        double           t;
     public        double           tPextract;
     public        double           tVextract;
@@ -78,6 +79,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        double           tOtherExtract;
     public        double           tCycle;
     public        int              P;
+    public        int              target;
     public        double           power;
     public        double           V;
     public        double           Vavg;
@@ -100,6 +102,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
             double    tOtherExtract_in,
             double    tCycle_in,
             int       P_in,
+            int       target_in,
             double    V_in,
             double    power_in,
             double    C_in,
@@ -114,6 +117,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tOtherExtract     = tOtherExtract_in;
         tCycle            = tCycle_in;
         P                 = P_in;
+        target            = target_in;
         V                 = V_in;
         power             = power_in;
         C                 = C_in;
@@ -124,6 +128,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public MotorProfileDataPoint(DcMotorEx   motor,
                                  String      profileId_in,
                                  Direction   direction_in,
+                                 int         target_in,
                                  ElapsedTime timer,
                                  boolean     extractOther) {
         // Because of the time it takes to pull data from the motor, there measurements
@@ -132,6 +137,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         direction     = direction_in;
         t             = timer.milliseconds();
         P             = motor.getCurrentPosition();
+        target        = target_in;
         tPextract     = timer.milliseconds() - t;
         // Pull velocity info
         // With no arguments getVelocity() returns Ticks Per Second
@@ -151,6 +157,10 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
 
     public void setProfileId(String profileId_in) {
         profileId = profileId_in;
+    }
+
+    public void setStrategySuccess(boolean isStrategySuccess_in) {
+        isStrategySuccess = isStrategySuccess_in;
     }
 
     public boolean isSeeking(int Ptarget, int posTol, double velTol) {
@@ -175,12 +185,12 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
 
     public void writeMetrics(Formatter formatter) {
         formatter.format(format,
-                profileId, direction, posTol,    isBusy,
+                profileId, direction, posTol,    isBusy,    isStrategySuccess,
                 pidfRUE.p, pidfRUE.i, pidfRUE.d, pidfRUE.f,
                 pidfRTP.p, pidfRTP.i, pidfRTP.d, pidfRTP.f,
-                t,         tPextract, tVextract, tCextract, tOtherExtract, tCycle,
-                P,         power,     V,          Vavg,     A,             Aavg,
-                ApredFun,  ApredLut,  C
+                t,         tPextract, tVextract, tCextract, tOtherExtract,      tCycle,
+                P,         target,    power,     V,          Vavg,              A,
+                Aavg,      ApredFun,  ApredLut,  C
         );
     }
 

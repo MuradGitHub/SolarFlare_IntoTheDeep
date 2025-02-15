@@ -32,14 +32,12 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.Locale;
 
-public class MotorPowerStrategyConst implements MotorPowerStrategy {
+public class MotorPowerStrategyConst extends MotorPowerStrategy {
     public double    power;
     public Direction direction;
-    public boolean   isTargetReached = false;
 
     public MotorPowerStrategyConst(double power_in, int Pi, int Pf) {
         power     = power_in;

@@ -31,7 +31,8 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public interface MotorPowerStrategy {
-    double calcPower(DcMotorEx motor, int target);
-    String getId();
+public abstract class MotorPowerStrategy {
+    public boolean   isTargetReached = false;
+    public abstract double calcPower(DcMotorEx motor, int target);
+    public abstract String getId();
 }
