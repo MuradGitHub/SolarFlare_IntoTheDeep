@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibConfig;
+import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibResult;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
 import java.util.logging.Level;
@@ -45,7 +46,8 @@ import java.util.logging.Logger;
 public class MotorConfig implements Validatable {
     public MotorEnum                 motorEnum;
     public MotorSpec                 motorSpec;
-    public MotorCalibConfig calibParams;
+    public MotorCalibConfig          calibParams;
+    public MotorCalibResult          calibResult;
     public String                    partName;
     public String                    deviceName;
     public DcMotorEx                 motor;
@@ -103,6 +105,8 @@ public class MotorConfig implements Validatable {
         sb.append("  motorEnum=")             .append(motorEnum)             .append("\n");
         sb.append("  partName=")              .append(partName)              .append("\n");
         sb.append("  motorSpec=\n")           .append(motorSpec)             .append("\n");
+        sb.append("  calibParams=\n")         .append(calibParams)           .append("\n");
+        sb.append("  calibResult\n")          .append(calibResult)           .append("\n");
         sb.append("  deviceName=")            .append(deviceName)            .append("\n");
         sb.append("  motor=")                 .append(motor)                 .append("\n");
         sb.append("  kP=")                    .append(kP)                    .append("\n");
@@ -118,8 +122,7 @@ public class MotorConfig implements Validatable {
         sb.append("  maxAcceleration=")       .append(maxAcceleration)       .append("\n");
         sb.append("  maxVelocity=")           .append(maxVelocity)           .append("\n");
         sb.append("  noLoadVelocity=")        .append(getNoLoadVelocity())   .append("\n");
-        sb.append("  calibParams=\n")         .append(calibParams)           .append("\n");
-
+        
         return sb.toString();
     }
 }

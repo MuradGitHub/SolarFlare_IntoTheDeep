@@ -33,16 +33,19 @@ import static org.firstinspires.ftc.teamcode.base.utils.JSONUtils.parseJSON;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibResult;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RobotConfig implements Validatable {
-    private static RobotConfig                           instance = null;
+    private transient final static Logger logger = RobotLogger.getInstance().getConfigLogger();
+    private static RobotConfig                           instance   = null;
     public         PartsSpecs                            partsSpecs = null;
     public         String                                robotName;
     public         RobotDimensions                       robotDimensions;
@@ -53,15 +56,23 @@ public class RobotConfig implements Validatable {
     public         LimelightConfig                       limelight;
     public         HashMap<String, ArrayList<MotorEnum>> calibration;
 
-    public static RobotConfig createInstance(String robotName) {
+    public static RobotConfig makeInstance(String robotName) {
         try(InputStream input = Application.getResourceAsStream(robotName + ".json")) {
             instance            = parseJSON(new InputStreamReader(input), RobotConfig.class);
             instance.partsSpecs = PartsSpecs.getInstance();
-            for(var motorConfig: instance.motors.values())
+            for(var motorConfig: instance.motors.values()) {
                 motorConfig.setMotorSpec(instance.partsSpecs.getMotorSpec(motorConfig.partName));
+                String calibFileName = MotorCalibResult.getJSONFileName(motorConfig.motorEnum);
+                try(InputStream input2 = Application.getResourceAsStream(calibFileName)) {
+                    motorConfig.calibResult = parseJSON(new InputStreamReader(input2), MotorCalibResult.class);
+                } catch(Exception e2) {
+                    logger.logp(Level.SEVERE,"RobotConfig", "makeInstance",
+                            "No MotorCalibResult for " + motorConfig.motorEnum.name());
+                }
+            }
         } catch(Exception e) {
             Logger logger   = RobotLogger.getInstance().getConfigLogger();
-            logger.throwing("RobotConfig", "createInstance", e);
+            logger.throwing("RobotConfig", "makeInstance", e);
         }
         return instance;
     }
@@ -140,7 +151,7 @@ public class RobotConfig implements Validatable {
         String[] robotNames = new String[] {"IntoTheDeep-V2", "Rig1Motor"};
         try {
             for(String robotName: robotNames) {
-                RobotConfig config = RobotConfig.createInstance(robotName);
+                RobotConfig config = RobotConfig.makeInstance(robotName);
                 System.out.println("RobotConfig: " + robotName + " isValid: " + config.isValid());
                 System.out.println(config);
             }

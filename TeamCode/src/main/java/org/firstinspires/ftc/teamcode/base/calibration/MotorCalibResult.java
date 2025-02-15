@@ -255,8 +255,16 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         metricsFile.close();
     }
 
-    public String getJSONFileId() {
+    public static String getJSONFileName(MotorEnum motorEnum) {
+        return MotorCalibResult.class.getSimpleName() + "-" + getJSONFileId(motorEnum) + ".json";
+    }
+
+    public static String getJSONFileId(MotorEnum motorEnum) {
         return String.format(Locale.US, "%1$s", motorEnum.name());
+    }
+
+    public String getJSONFileId() {
+        return getJSONFileId(motorEnum);
     }
 
     public void writeJSON() {
@@ -264,7 +272,7 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
     }
 
     public static void main(String[] args) {
-        RobotConfig robotConfig = RobotConfig.createInstance("Rig1Motor");
+        RobotConfig robotConfig = RobotConfig.makeInstance("Rig1Motor");
         MotorConfig motorConfig = robotConfig.motors.get(MotorEnum.TESTING_MOTOR);
         MotorCalibResult result = new MotorCalibResult(
                 motorConfig,
