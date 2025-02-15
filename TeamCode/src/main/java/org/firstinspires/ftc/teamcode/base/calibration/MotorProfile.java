@@ -68,7 +68,8 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
     protected           final MotorEnum                motorEnum;
     protected transient final MotorConfig              motorConfig;
     protected transient final DcMotorEx                motor;
-    protected           final String                   metricsSpecId = "MotorProfileData";
+    protected           final String                   metricsSpecStartId   = "MotorProfileData-Start";
+    protected           final String                   metricsSpecProfileId = "MotorProfileData-Profile";
     /**
      * Calibration Direction: FORWARD, REVERSE
      */
@@ -162,11 +163,20 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
     public void initMetricsSpecs() {
         String fileId = String.format(
                 Locale.US,
-                "%1$s-%2$s-%3$s",
+                "%1$s-%2$s-%3$s-%3$s",
                 motorEnum.name(),
                 calibDirection.name(),
+                "Start",
                 powerStrategy.getId());
-        addMetricsSpec(metricsSpecId, MotorProfileDataPoint.makeMetricsSpec(fileId));
+        addMetricsSpec(metricsSpecStartId, MotorProfileDataPoint.makeMetricsSpec(fileId));
+        fileId        = String.format(
+                Locale.US,
+                "%1$s-%2$s-%3$s-%3$s",
+                motorEnum.name(),
+                calibDirection.name(),
+                "Profile",
+                powerStrategy.getId());
+        addMetricsSpec(metricsSpecProfileId, MotorProfileDataPoint.makeMetricsSpec(fileId));
     }
 
     protected void gotoStart() {
@@ -425,23 +435,18 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         JSONUtils.writeJSON(this);
     }
 
-    /**
-     * The caller needs to close the metrics file
-     * @param metricsFile: the MetricsFile to write metrics to
-     */
-    public void writeMetrics(MetricsFile metricsFile) {
-        for(var p: startData)
-            metricsFile.addData(p);
-
-        for(var p: data)
-            metricsFile.addData(p);
-    }
-
     public void writeMetrics() {
-        MetricsFile metricsFile = RobotMetrics.getInstance()
-                .getMetricsFile(getMetricsSpec(metricsSpecId));
-        writeMetrics(metricsFile);
-        metricsFile.close();
+        MetricsFile metricsStartFile   = RobotMetrics.getInstance()
+                .getMetricsFile(getMetricsSpec(metricsSpecStartId));
+        for(var p: startData)
+            metricsStartFile.addData(p);
+        metricsStartFile.close();
+
+        MetricsFile metricsProfileFile = RobotMetrics.getInstance()
+                .getMetricsFile(getMetricsSpec(metricsSpecProfileId));
+        for(var p: data)
+            metricsProfileFile.addData(p);
+        metricsProfileFile.close();
     }
 
     @NonNull
