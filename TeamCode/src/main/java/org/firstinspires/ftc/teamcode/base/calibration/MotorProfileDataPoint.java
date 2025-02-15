@@ -149,12 +149,16 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tCycle        = timer.milliseconds() - t;
     }
 
+    public void setProfileId(String profileId_in) {
+        profileId = profileId_in;
+    }
+
     public boolean isTargetReached(int Ptarget) {
         return direction == Direction.FORWARD ? P>=Ptarget : P<=Ptarget;
     }
 
     public boolean isAtTarget(int Ptarget, int posTol) {
-        return abs(P - Ptarget) < posTol;
+        return abs(P - Ptarget) <= posTol;
     }
 
     public boolean isMoving(double velTol) {

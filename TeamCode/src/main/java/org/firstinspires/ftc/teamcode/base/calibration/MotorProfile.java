@@ -204,7 +204,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         do {
             try {
                 sleep(minTimeInc);
-                pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer, true);
+                pp = new MotorProfileDataPoint(motor, "Start-Seeking", calibDirection, timer, true);
                 startData.add(pp);
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
@@ -214,6 +214,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 // Don't try to set seeking to true if it is already false
                 seeking = motor.isBusy() || !pp.isAtTarget(Pi, posTol) || pp.isMoving(velTol);
             } else {
+                pp.setProfileId("Start-EndSamples");
                 endSamples--;
             }
 
@@ -339,7 +340,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
                 MotorProfileDataPoint pp = new MotorProfileDataPoint(
                         motor,
-                        "Profile",
+                        "Profile-Seeking",
                         calibDirection,
                         timer,
                         true);
@@ -348,6 +349,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 // if the target has been reached, likely exceeded, then set power to zero and
                 // start counting backwards the number of required endSamples
                 if (isTargetReached) {
+                    pp.setProfileId("Profile-EndSamples");
                     endSamples--;
                     if (tIdxTarget == null)
                         tIdxTarget = tIdx++ - 1;
