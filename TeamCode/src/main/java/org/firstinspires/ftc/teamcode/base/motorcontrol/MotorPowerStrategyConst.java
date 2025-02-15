@@ -47,7 +47,7 @@ public class MotorPowerStrategyConst implements MotorPowerStrategy {
     }
 
     public String getId() {
-        return String.format(Locale.US, "Power=%1$s", power);
+        return String.format(Locale.US, "Power=%1$.2f", power);
     }
 
     public double calcPower(DcMotorEx motor, int target) {

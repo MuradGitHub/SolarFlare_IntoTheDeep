@@ -68,7 +68,7 @@ public class JSONUtils {
         Thread      jsonThread = new Thread(
                 group,
                 () -> {
-                        String fileName = obj.getClass().getName() + "-" + obj.getJSONFileId() + ".json";
+                        String fileName = obj.getClass().getSimpleName() + "-" + obj.getJSONFileId() + ".json";
                         String fullFileName = Application.getMetricsDirName() + "/" + fileName;
                         try (Writer writer = new FileWriter(fullFileName)) {
                             Gson gson = new GsonBuilder()
@@ -93,7 +93,7 @@ public class JSONUtils {
     }
 
     public static <T extends JSONWritable> void writeJSON(T obj) {
-        String fileName = obj.getClass().getName() + "-" + obj.getJSONFileId() + ".json";
+        String fileName     = obj.getClass().getSimpleName() + "-" + obj.getJSONFileId() + ".json";
         String fullFileName = Application.getMetricsDirName() + "/" + fileName;
         try (Writer writer = new FileWriter(fullFileName)) {
             Gson gson = new GsonBuilder()
