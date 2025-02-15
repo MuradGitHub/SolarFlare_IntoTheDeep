@@ -30,7 +30,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -60,7 +60,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -90,7 +90,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -120,7 +120,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -150,7 +150,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -180,7 +180,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
@@ -210,7 +210,7 @@
       "calibParams": {
         "minTimeInc": 1.0,
         "timeResolution": 100,
-        "powerResolution": 21,
+        "powerResolution": 19,
         "averagingTime": 40.0,
         "endSamples": 20,
         "minPower": 0.1,
