@@ -204,7 +204,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
             try {
                 sleep((int) (minTimeInc));
-                pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer);
+                pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer, true);
                 startData.add(pp);
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
@@ -336,7 +336,8 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                         motor,
                         "Profile",
                         calibDirection,
-                        timer);
+                        timer,
+                        true);
                 data.add(pp);
 
                 // if the target has been reached, likely exceeded, then set power to zero and
