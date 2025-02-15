@@ -41,22 +41,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.base.config.Application;
 import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
 @Autonomous
 public class Rig1MotorCalibAll extends LinearOpMode {
-    String          className  = "Rig1MotorCalibAll";
-    String          methodName = "runOpMode";
-    String          robotName  = "Rig1Motor";
+    String          className           = "Rig1MotorCalibAll";
+    String          methodName          = "runOpMode";
+    String          robotName           = "Rig1Motor";
 
     Logger          logger;
     HardwareConfig  hardwareConfig;
 
 
     public void runOpMode(){
-        sleep(3000);
+        Application.hardwareMap         = hardwareMap;
+        Application.telemetry           = telemetry;
+
         try {
             logger                      = RobotLogger.getInstance().getConfigLogger();
             hardwareConfig              = HardwareConfig.makeInstance(hardwareMap, robotName);

@@ -29,6 +29,10 @@
  */
 package org.firstinspires.ftc.teamcode.base.config;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +40,21 @@ import java.util.Objects;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Application {
+    public static Telemetry   telemetry;
+    public static HardwareMap hardwareMap;
+
+    /**
+     * sleep is a utility function that catches the InterruptedExcption and converts this
+     * into a RunTimeException hence avoiding having to do that in the application code
+     */
+    public static void        sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Returns Metrics directory name. Select based on context
      * This is the directory on the Robot Controller where metrics files are going to be saved
@@ -64,7 +83,7 @@ public class Application {
         return resource;
     }
 
-    public static String getApplicationResourcesPath() {
+    public static String      getApplicationResourcesPath() {
         String        packageName  = Objects.requireNonNull(Application.class.getPackage()).getName();
         String[]      packageDirs  = packageName.split("\\.");
         StringBuilder resourcesDir = new StringBuilder();
@@ -76,11 +95,11 @@ public class Application {
         return resourcesDir.toString();
     }
 
-    public static String getApplicationResourcesPath(String fileName) {
+    public static String      getApplicationResourcesPath(String fileName) {
         return getApplicationResourcesPath() + fileName;
     }
 
-    public static void main(String[] args) {
+    public static void        main(String[] args) {
         String   packageName = Objects.requireNonNull(Application.class.getPackage()).getName();
         String[] robotNames  = new String[] {"IntoTheDeep-V2", "Rig1Motor"};
         System.out.println("Package is:            " + packageName);

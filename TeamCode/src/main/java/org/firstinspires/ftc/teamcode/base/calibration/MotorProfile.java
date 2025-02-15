@@ -49,6 +49,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.base.config.Application;
 import org.firstinspires.ftc.teamcode.base.config.JSONWritable;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
@@ -180,6 +181,9 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
     }
 
     protected void gotoStart() {
+        Application.telemetry.addData("Entering gotoStart", powerStrategy.getId());
+        Application.telemetry.update();
+
         String msg;
         String format;
         /*
@@ -238,7 +242,17 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
         } while((endSamples>=0 || seeking) && timer.milliseconds() < maxProfileTime);
 
+        Application.telemetry.addData("gotoStart: Exited control loop", "");
+        Application.telemetry.addData("Sleeping 10 seconds", "");
+        Application.telemetry.update();
+        Application.sleep(10000);
+
         motor.setPower(0.0);
+
+        Application.telemetry.addData("gotoStart: power=0", "");
+        Application.telemetry.addData("Sleeping 10 seconds", "");
+        Application.telemetry.update();
+        Application.sleep(10000);
 
         format                   = "Exiting: %1$s %2$s appliedPower=%3$.3f motorPower=%4$.3f P=%5$d V=%6$.3f C=%7$.3f";
         msg                      = String.format(
@@ -329,6 +343,11 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         int          tIdx           = 0;
 
         gotoStart();
+
+        Application.telemetry.addData("calcProfile after gotoStart", powerStrategy.getId());
+        Application.telemetry.addData("sleeping 10 secs", "");
+        Application.telemetry.update();
+        Application.sleep(10000);
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
