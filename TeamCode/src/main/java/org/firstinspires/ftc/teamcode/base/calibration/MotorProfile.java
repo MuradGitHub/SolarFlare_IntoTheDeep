@@ -163,7 +163,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
     public void initMetricsSpecs() {
         String fileId = String.format(
                 Locale.US,
-                "%1$s-%2$s-%3$s-%3$s",
+                "%1$s-%2$s-%3$s-%4$s",
                 motorEnum.name(),
                 calibDirection.name(),
                 "Start",
@@ -171,7 +171,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         addMetricsSpec(metricsSpecStartId, MotorProfileDataPoint.makeMetricsSpec(fileId));
         fileId        = String.format(
                 Locale.US,
-                "%1$s-%2$s-%3$s-%3$s",
+                "%1$s-%2$s-%3$s-%4$s",
                 motorEnum.name(),
                 calibDirection.name(),
                 "Profile",
@@ -200,10 +200,10 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         boolean     offTarget    = true;
         while(motor.isBusy() ||
                 offTarget    ||
-                abs(motor.getVelocity()) > motorConfig.calibParams.velocityTolerance) {
+                abs(motor.getVelocity()/1000.0) > motorConfig.calibParams.velocityTolerance) {
 
             try {
-                sleep((int) (1000 * minTimeInc));
+                sleep((int) (minTimeInc));
                 pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer);
                 startData.add(pp);
             } catch(InterruptedException e) {
@@ -231,7 +231,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 toStartPower,
                 motor.getPower(),
                 motor.getCurrentPosition(),
-                motor.getVelocity(),
+                motor.getVelocity() / 1000.0,
                 motor.getCurrent(CurrentUnit.AMPS));
         logger.logp(Level.INFO,"MotorProfileConsP", "gotoStart", msg);
     }
@@ -270,7 +270,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         }
 
         double Vtol                   = abs(Vmax)/250.0;
-        ssIdxVavg                     = org.firstinspires.ftc.teamcode.base.math.Math.getSteadyStateStartPredicate(
+        ssIdxVavg                     = Math.getSteadyStateStartPredicate(
                 data,
                 averagingPeriods,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Vavg-p2.Vavg)<Vtol);
@@ -330,7 +330,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                         isTargetReached = true;
                 }
 
-                sleep((int) (1000 * minTimeInc));
+                sleep((int) (minTimeInc));
 
                 MotorProfileDataPoint pp = new MotorProfileDataPoint(
                         motor,
@@ -350,7 +350,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        } while((endSamples>=0 || !isTargetReached) && timer.seconds() < maxProfileTime);
+        } while((endSamples>=0 || !isTargetReached) && timer.milliseconds() < maxProfileTime);
 
         /// you get here either because you reached the target AND observed for endSamples
         /// after that. Or, because you simply ran out of space. I.e. you can not perform

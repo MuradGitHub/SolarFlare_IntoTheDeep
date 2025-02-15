@@ -109,17 +109,17 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         // unfortunately are not exactly synchronous
         profileId = profileId_in;
         direction = direction_in;
-        t         = timer.seconds();
+        t         = timer.milliseconds();
         P         = motor.getCurrentPosition();
-        tPextract = timer.seconds() - t;
+        tPextract = timer.milliseconds() - t;
         // Pull velocity info
         // With no arguments getVelocity() returns Ticks Per Second
-        V         = motor.getVelocity();
-        tVextract = timer.seconds() - tPextract - t;
+        V         = motor.getVelocity() / 1000.0;
+        tVextract = timer.milliseconds() - tPextract - t;
         C         = motor.getCurrent(CurrentUnit.AMPS);
-        tCextract = timer.seconds() - tVextract - tPextract - t;
+        tCextract = timer.milliseconds() - tVextract - tPextract - t;
         power     = motor.getPower();
-        tCycle    = timer.seconds() - t;
+        tCycle    = timer.milliseconds() - t;
     }
 
     public boolean isTargetReached(int Ptarget) {

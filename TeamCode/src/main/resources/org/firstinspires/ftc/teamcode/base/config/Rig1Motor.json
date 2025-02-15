@@ -26,10 +26,10 @@
       "maxAcceleration": 3000,
       "maxVelocity": 1500,
       "calibParams": {
-        "minTimeInc": 0.002,
+        "minTimeInc": 1.0,
         "timeResolution": 3000,
         "powerResolution": 21,
-        "averagingTime": 0.040,
+        "averagingTime": 40.0,
         "endSamples": 10,
         "minPower": 0.1,
         "maxPower": 1.0,
@@ -37,7 +37,7 @@
         "minDistance": 200,
         "velocityResolution": 40,
         "velocityTolerance": 20.0,
-        "maxProfileTime": 10000
+        "maxProfileTime": 20000
       }
     }
   },

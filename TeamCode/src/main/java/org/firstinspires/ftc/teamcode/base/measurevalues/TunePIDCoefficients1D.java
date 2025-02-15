@@ -96,12 +96,12 @@ public class TunePIDCoefficients1D extends LinearOpMode {
 
             double currentTarget     = state.getMotorTarget(motorEnum);
             double currentPosition   = motor.getCurrentPosition();
-            double dt                = timer.seconds();
+            double dt                = timer.milliseconds();
             double error             = currentTarget - currentPosition;
             double derivative        = (currentPosition - lastPosition) / dt;
 
             // We get better stability by asking the motor to provide speed
-            derivative               = motor.getVelocity();
+            derivative               = motor.getVelocity() / 1000.0;
 
             if (currentTarget != lastTarget) {
                 convFlag             = false;
@@ -112,7 +112,7 @@ public class TunePIDCoefficients1D extends LinearOpMode {
 
             if(abs(error) < errorTol && !convFlag) {
                 convFlag             = true;
-                convTime             = convTimer.seconds();
+                convTime             = convTimer.milliseconds();
             }
 
             double proportionalPower = max(min(error * kP,1),-1);

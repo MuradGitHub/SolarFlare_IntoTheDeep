@@ -122,7 +122,7 @@ public class MotorControl1D implements MetricsWritable {
         // If the target, maxVelocity, or maxAcceleration changes
         if (targetPosition != previousLoopTarget || isVmaxChanged || isAmaxChanged ) {
             Pi            = motor.getCurrentPosition();
-            Vi            = motor.getVelocity();
+            Vi            = motor.getVelocity() / 1000.0;
             distance      = targetPosition - Pi;
 
             profile.calcProfile(distance, Pi, Vi, Vmax, Amax, Amax);
@@ -133,7 +133,7 @@ public class MotorControl1D implements MetricsWritable {
             timer.reset();
         }
 
-        Double now                   = timer.seconds();
+        Double now                   = timer.milliseconds();
         Integer targetMotorPosition  = profile.runProfile(now);
 
         // targetMotorPower             = pid.getPIDOutput(motorEnum, targetMotorPosition, hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD);
@@ -148,7 +148,7 @@ public class MotorControl1D implements MetricsWritable {
         */
         Integer motorPosition        = motor.getCurrentPosition();
         Double  motorPower           = motor.getPower();
-        Double  motorVelocity        = motor.getVelocity();
+        Double  motorVelocity        = motor.getVelocity() / 1000.0;
 
         telemetryDash.addData("iteration",           iter);
         telemetryDash.addData("targetPosition",      targetPosition);
