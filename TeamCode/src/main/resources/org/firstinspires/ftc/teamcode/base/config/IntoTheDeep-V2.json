@@ -28,7 +28,7 @@
       "maxAcceleration": 0,
       "maxVelocity": 0,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -58,7 +58,7 @@
       "maxAcceleration": 0,
       "maxVelocity": 0,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -88,7 +88,7 @@
       "maxAcceleration": 0,
       "maxVelocity": 0,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -118,7 +118,7 @@
       "maxAcceleration": 0,
       "maxVelocity": 0,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -148,7 +148,7 @@
       "maxAcceleration": 20000,
       "maxVelocity": 3000,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -178,7 +178,7 @@
       "maxAcceleration": 20000,
       "maxVelocity": 3000,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,
@@ -208,7 +208,7 @@
       "maxAcceleration": 20000,
       "maxVelocity": 3000,
       "calibParams": {
-        "minTimeInc": 1.0,
+        "minTimeInc": 0,
         "timeResolution": 100,
         "powerResolution": 19,
         "averagingTime": 40.0,

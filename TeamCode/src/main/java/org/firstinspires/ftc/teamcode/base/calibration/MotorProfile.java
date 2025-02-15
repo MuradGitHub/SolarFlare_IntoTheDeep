@@ -64,80 +64,80 @@ import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
 public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Validatable {
-    protected transient final Logger                   logger;
-    protected           final MotorEnum                motorEnum;
-    protected transient final MotorConfig              motorConfig;
-    protected transient final DcMotorEx                motor;
-    protected           final String                   metricsSpecStartId   = "MotorProfileData-Start";
-    protected           final String                   metricsSpecProfileId = "MotorProfileData-Profile";
+    protected transient final Logger                           logger;
+    protected           final MotorEnum                        motorEnum;
+    protected transient final MotorConfig                      motorConfig;
+    protected transient final DcMotorEx                        motor;
+    protected           final String                           metricsSpecStartId   = "MotorProfileData-Start";
+    protected           final String                           metricsSpecProfileId = "MotorProfileData-Profile";
     /**
      * Calibration Direction: FORWARD, REVERSE
      */
-    public    transient       Direction                calibDirection;
+    public    transient       Direction                        calibDirection;
 
     /**
      * Encoder resolution of the motor itself at the shaft output (PPR)
      */
-    public            double                           minTimeInc;
-    public            double                           encoderResolution;
-    public            int                              timeResolution;
-    public            double                           maxProfileTime;
+    public                    int                              minTimeInc;
+    public                    double                           encoderResolution;
+    public                    int                              timeResolution;
+    public                    double                           maxProfileTime;
     /**
      * Power strategy
      */
-    public            MotorPowerStrategy               powerStrategy;
+    public                    MotorPowerStrategy               powerStrategy;
     /**
      * Starting Position
      */
-    public            int                              Pi;
+    public                    int                              Pi;
     /**
      * Final Position
      */
-    public            int                              Pf;
+    public                    int                              Pf;
     /**
      * Target Position. The motor position should never be driven past this limit
      */
-    public            int                              Ptarget;
+    public                    int                              Ptarget;
     /**
      * Data
      */
-    public            ArrayList<MotorProfileDataPoint> data;
+    public                    ArrayList<MotorProfileDataPoint> data;
     /**
      * Goto Start Data
      */
-    public            ArrayList<MotorProfileDataPoint> startData;
+    public                    ArrayList<MotorProfileDataPoint> startData;
     /**
      * The number of periods used to compute Aavg and Vavg
      */
-    public            int                              averagingPeriods;
+    public                    int                              averagingPeriods;
     /**
      * Maximum velocity. should be close the stread state velocity
      */
-    public            double                           Vmax;
+    public                    double                           Vmax;
     /**
      * Maximum Acceleration
      */
-    public            double                           Amax;
+    public                    double                           Amax;
     /**
      * Maximum Deceleration
      */
-    public            double                           Dmax;
+    public                    double                           Dmax;
     /**
      * Has the profile reached the target position Pf
      */
-    public            boolean                          isTargetReached = false;
+    public                    boolean                          isTargetReached = false;
     /**
      * Index when target has been reached
      */
-    public            Integer                          tIdxTarget = null;
+    public                    Integer                          tIdxTarget = null;
     /**
      * Index of steady state for Vavg
      */
-    public            Integer                          ssIdxVavg  = null;
+    public                    Integer                          ssIdxVavg  = null;
     /**
      * Index of steady state of Aavg
      */
-    public            Integer                          ssIdxAavg  = null;
+    public                    Integer                          ssIdxAavg  = null;
     /**
      * Constructor requires information about the motor
      * @param motorConfig_in: The configuration of the motor being calibrated
@@ -203,7 +203,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 abs(motor.getVelocity()/1000.0) > motorConfig.calibParams.velocityTolerance) {
 
             try {
-                sleep((int) (minTimeInc));
+                sleep(minTimeInc);
                 pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer, true);
                 startData.add(pp);
             } catch(InterruptedException e) {
@@ -330,7 +330,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                         isTargetReached = true;
                 }
 
-                sleep((int) (minTimeInc));
+                sleep(minTimeInc);
 
                 MotorProfileDataPoint pp = new MotorProfileDataPoint(
                         motor,
@@ -484,7 +484,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         return Validation.validate("motorEnum",          motorEnum)                                                              &&
                 Validation.validate("motorConfig",       motorConfig)                                                            &&
                 Validation.validate("motor",             motor)                                                                  &&
-                Validation.validate("minTimeInc",        minTimeInc,        (Double x)  -> x!=null && x>0.0)                     &&
+                Validation.validate("minTimeInc",        minTimeInc,        (Integer x) -> x!=null && x>0)                       &&
                 Validation.validate("encoderResolution", encoderResolution, (Double x)  -> x!=null && x>0)                       &&
                 Validation.validate("timeResolution",    timeResolution,    (Integer i) -> i!=null && i>0)                       &&
                 Validation.validate("averagingPeriods",  averagingPeriods,  (Integer i) -> i!=null && i>0   && i<timeResolution) &&

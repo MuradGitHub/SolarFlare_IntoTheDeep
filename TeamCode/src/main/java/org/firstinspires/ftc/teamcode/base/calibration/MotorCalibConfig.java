@@ -34,7 +34,7 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 
 public class MotorCalibConfig implements Validatable {
-    public double  minTimeInc;
+    public int     minTimeInc;
     public int     timeResolution;
     public int     powerResolution;
     public double  averagingTime;
