@@ -17,8 +17,8 @@ public class TestPID extends LinearOpMode {
     MotorControl motorControl;
 
     public void runOpMode(){
-        RobotConfig robotConfig = RobotConfig.createInstance("Rig1Motor");
-        HardwareConfig.createInstance(hardwareMap, robotConfig);
+        RobotConfig robotConfig = RobotConfig.makeInstance("Rig1Motor");
+        HardwareConfig.makeInstance(hardwareMap, robotConfig);
 
         hw = HardwareConfig.getInstance();
         state = RobotState.getInstance();

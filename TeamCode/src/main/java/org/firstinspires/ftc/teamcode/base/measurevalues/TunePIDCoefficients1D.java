@@ -48,8 +48,8 @@ public class TunePIDCoefficients1D extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        robotConfig              = RobotConfig.createInstance("Rig1Motor");
-        hardwareConfig           = HardwareConfig.createInstance(hardwareMap, robotConfig);
+        robotConfig              = RobotConfig.makeInstance("Rig1Motor");
+        hardwareConfig           = HardwareConfig.makeInstance(hardwareMap, robotConfig);
         motorConfig              = hardwareConfig.getMotorConfig(motorEnum);
         motor                    = motorConfig.motor;
         state                    = RobotState.getInstance();

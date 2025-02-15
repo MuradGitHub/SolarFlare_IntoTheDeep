@@ -30,8 +30,8 @@ public class MeasureMotorVelocity extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     @Override
     public void runOpMode() {
-        RobotConfig robotConfig = RobotConfig.createInstance("Rig1Motor");
-        hw = HardwareConfig.createInstance(hardwareMap, robotConfig);
+        RobotConfig robotConfig = RobotConfig.makeInstance("Rig1Motor");
+        hw = HardwareConfig.makeInstance(hardwareMap, robotConfig);
         state = RobotState.getInstance();
         pid = new PID();
 

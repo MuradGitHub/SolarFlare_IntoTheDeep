@@ -14,8 +14,8 @@ public class SimpleMotorTest extends LinearOpMode {
     public void runOpMode() {
         RobotConfig robotConfig = null;
         HardwareConfig hw = null;
-        robotConfig = RobotConfig.createInstance("Rig1Motor");
-        hw = HardwareConfig.createInstance(hardwareMap, robotConfig);
+        robotConfig = RobotConfig.makeInstance("Rig1Motor");
+        hw = HardwareConfig.makeInstance(hardwareMap, robotConfig);
         MotorConfig motorConfig = hw.getMotorConfig(MotorEnum.TESTING_MOTOR);
         DcMotorEx      motor    = motorConfig.motor;
         DcMotorEx motor_direct  = hardwareMap.get(DcMotorEx.class, "motor-1");

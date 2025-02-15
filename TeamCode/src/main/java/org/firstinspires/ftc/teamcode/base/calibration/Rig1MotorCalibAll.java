@@ -59,7 +59,7 @@ public class Rig1MotorCalibAll extends LinearOpMode {
         sleep(3000);
         try {
             logger                      = RobotLogger.getInstance().getConfigLogger();
-            hardwareConfig              = HardwareConfig.createInstance(hardwareMap, robotName);
+            hardwareConfig              = HardwareConfig.makeInstance(hardwareMap, robotName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

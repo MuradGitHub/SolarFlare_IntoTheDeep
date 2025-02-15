@@ -49,7 +49,7 @@ public class PartsSpecs implements Validatable {
             instance      = parseJSON(new InputStreamReader(input), PartsSpecs.class);
         } catch(Exception e) {
             Logger logger = RobotLogger.getInstance().getConfigLogger();
-            logger.throwing("RobotConfig", "createInstance", e);
+            logger.throwing("RobotConfig", "makeInstance", e);
         }
         return instance;
     }

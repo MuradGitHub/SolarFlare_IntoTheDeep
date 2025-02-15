@@ -42,13 +42,13 @@ public class HardwareConfig implements Validatable {
         limelightConfig.initialize(hardwareMap);
     }
 
-    public static HardwareConfig createInstance(HardwareMap hardwareMap, RobotConfig robotConfig) {
+    public static HardwareConfig makeInstance(HardwareMap hardwareMap, RobotConfig robotConfig) {
         hardwareConfig = new HardwareConfig(hardwareMap, robotConfig);
         return hardwareConfig;
     }
 
-    public static HardwareConfig createInstance(HardwareMap hardwareMap, String robotName) {
-        return createInstance(hardwareMap, RobotConfig.createInstance(robotName));
+    public static HardwareConfig makeInstance(HardwareMap hardwareMap, String robotName) {
+        return makeInstance(hardwareMap, RobotConfig.makeInstance(robotName));
     }
 
     public static HardwareConfig getInstance() {

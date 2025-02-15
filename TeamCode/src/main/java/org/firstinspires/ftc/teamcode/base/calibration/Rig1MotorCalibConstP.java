@@ -63,7 +63,7 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         try {
             logger         = RobotLogger.getInstance().getConfigLogger();
             logger.logp(INFO, className, methodName, "Created configLogger");
-            hardwareConfig = HardwareConfig.createInstance(hardwareMap, robotName);
+            hardwareConfig = HardwareConfig.makeInstance(hardwareMap, robotName);
             logger.logp(INFO, className, methodName, "Created hardwareConfig");
             motorConfig    = hardwareConfig.getMotorConfig(motorEnum);
             logger.logp(INFO, className, methodName, "got motorConfig: " + motorEnum);

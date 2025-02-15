@@ -55,9 +55,9 @@ public class Rig1Motor extends LinearOpMode {
         try {
             logger         = RobotLogger.getInstance().getConfigLogger();
             logger.logp(INFO, "Rig1Motor", "runOpMode", "Created configLogger");
-            robotConfig    = RobotConfig.createInstance("Rig1Motor");
+            robotConfig    = RobotConfig.makeInstance("Rig1Motor");
             logger.logp(INFO, "Rig1Motor", "runOpMode", "Created robotConfig");
-            hardwareConfig = HardwareConfig.createInstance(hardwareMap, robotConfig);
+            hardwareConfig = HardwareConfig.makeInstance(hardwareMap, robotConfig);
             logger.logp(INFO, "Rig1Motor", "runOpMode", "Created hardwareConfig");
             motorControl   = new MotorControl1D(MotorEnum.TESTING_MOTOR);
             logger.logp(INFO, "Rig1Motor", "runOpMode", "Created motorControl");

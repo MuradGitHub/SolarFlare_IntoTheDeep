@@ -21,10 +21,10 @@ public class TestPathing extends LinearOpMode {
     CustomActions actions;
     @Override
     public void runOpMode(){
-        robotConfig = RobotConfig.createInstance("IntoTheDeep-V2");
+        robotConfig = RobotConfig.makeInstance("IntoTheDeep-V2");
 
         try {
-            hw = HardwareConfig.createInstance(hardwareMap, robotConfig);
+            hw = HardwareConfig.makeInstance(hardwareMap, robotConfig);
         }
         catch (Exception e){
             throw new RuntimeException(e);
