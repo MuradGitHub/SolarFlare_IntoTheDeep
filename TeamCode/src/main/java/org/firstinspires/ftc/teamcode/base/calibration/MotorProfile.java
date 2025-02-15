@@ -189,7 +189,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         logger.logp(Level.INFO, "MotorProfileConsP", "gotoStart", msg);
          */
 
-        double      toStartPower = motor.getCurrentPosition()<Pi?1.0:-1.0;
+        double      toStartPower = motor.getCurrentPosition()<=Pi?1.0:-1.0;
         double      velTol       = motorConfig.calibParams.velocityTolerance;
         int         posTol       = motorConfig.calibParams.positionTolerance;
         int         endSamples   = motorConfig.calibParams.endSamples;
@@ -204,7 +204,12 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         do {
             try {
                 sleep(minTimeInc);
-                pp = new MotorProfileDataPoint(motor, "Start-Seeking", calibDirection, timer, true);
+                pp               = new MotorProfileDataPoint(
+                        motor,
+                        "Start-Seeking",
+                        calibDirection,
+                        timer,
+                        true);
                 startData.add(pp);
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
@@ -212,18 +217,20 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
             if(seeking) {
                 // Don't try to set seeking to true if it is already false
-                seeking = motor.isBusy() || !pp.isAtTarget(Pi, posTol) || pp.isMoving(velTol);
+                seeking          = pp.isSeeking(Pi, posTol, velTol);
             } else {
                 pp.setProfileId("Start-EndSamples");
                 endSamples--;
             }
 
-            /*
-            format               = "%1$s power=%2$.3f P=%3$d C=%4$.3f V=%5$.3f - off target";
+            format               = "%1$s power=%2$.3f Pi=%3$d P=%4$d C=%5$.3f V=%6$.3f isBusy=%7$b" +
+                    " posTol=%8$d isAtTarget=%9$b velTol=%10$.3f isMoving=%11$b seeking=%12$b" +
+                    " endSamples=%13$d";
             msg                  = String.format(Locale.US,format,
-                    calibDirection, pp.power, pp.P, pp.C, pp.V);
+                    calibDirection, pp.power, Pi, pp.P, pp.C, pp.V, pp.isBusy, posTol,
+                    pp.isAtTarget(Pi, posTol), velTol, pp.isMoving(velTol), seeking, endSamples);
             logger.logp(Level.INFO,"MotorProfileConstP","gotoStart-TheWhileLoop",msg);
-            */
+
         } while((endSamples>=0 || seeking) && timer.milliseconds() < maxProfileTime);
 
         motor.setPower(0.0);

@@ -153,6 +153,10 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         profileId = profileId_in;
     }
 
+    public boolean isSeeking(int Ptarget, int posTol, double velTol) {
+        return isBusy || !isAtTarget(Ptarget, posTol) || isMoving(velTol);
+    }
+
     public boolean isTargetReached(int Ptarget) {
         return direction == Direction.FORWARD ? P>=Ptarget : P<=Ptarget;
     }
@@ -162,7 +166,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
 
     public boolean isMoving(double velTol) {
-        return abs(V) <= velTol;
+        return abs(V) > velTol;
     }
 
     public static MetricsFileSpec makeMetricsSpec(String fileId) {
