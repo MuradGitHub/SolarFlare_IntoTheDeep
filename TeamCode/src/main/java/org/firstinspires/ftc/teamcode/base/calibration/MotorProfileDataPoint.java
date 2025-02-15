@@ -53,7 +53,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         MetricsDataPoint.format     =
                 "%1$s,%2$s,%3$d,%4$b,%5$.3f,%6$.3f,%7$.3f,%8$.3f,%9$.3f,%10$.3f,%11$.3f," +
                         "%12$.3f,%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$d,%20$.3f," +
-                        "%21$.3f,%22$.3f,%23$.3f,%24$.3f,%25$.3f,%26$.3f,%27$.3f%n";
+                        "%21$.5f,%22$.5f,%23$.5f,%24$.5f,%25$.5f,%26$.5f,%27$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
                 "ProfileId",    "Direction",    "PosTol",       "isBusy",
