@@ -190,6 +190,9 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
          */
 
         double      toStartPower = motor.getCurrentPosition()<Pi?1.0:-1.0;
+        double      velTol       = motorConfig.calibParams.velocityTolerance;
+        int         posTol       = motorConfig.calibParams.positionTolerance;
+        int         endSamples   = motorConfig.calibParams.endSamples;
         ElapsedTime timer        = new ElapsedTime();
         MotorProfileDataPoint pp;
 
@@ -197,11 +200,8 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         motor.setTargetPosition(Pi);
         motor.setPower(toStartPower);
 
-        boolean     offTarget    = true;
-        while(motor.isBusy() ||
-                offTarget    ||
-                abs(motor.getVelocity()/1000.0) > motorConfig.calibParams.velocityTolerance) {
-
+        boolean     seeking      = true;
+        do {
             try {
                 sleep(minTimeInc);
                 pp = new MotorProfileDataPoint(motor, "Start", calibDirection, timer, true);
@@ -210,7 +210,12 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 throw new RuntimeException(e);
             }
 
-            offTarget            = abs(Pi - pp.P) > 5;
+            if(seeking) {
+                // Don't try to set seeking to true if it is already false
+                seeking = motor.isBusy() || !pp.isAtTarget(Pi, posTol) || pp.isMoving(velTol);
+            } else {
+                endSamples--;
+            }
 
             /*
             format               = "%1$s power=%2$.3f P=%3$d C=%4$.3f V=%5$.3f - off target";
@@ -218,7 +223,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                     calibDirection, pp.power, pp.P, pp.C, pp.V);
             logger.logp(Level.INFO,"MotorProfileConstP","gotoStart-TheWhileLoop",msg);
             */
-        }
+        } while((endSamples>=0 || seeking) && timer.milliseconds() < maxProfileTime);
 
         motor.setPower(0.0);
 

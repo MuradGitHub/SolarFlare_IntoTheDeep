@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import static java.lang.Math.abs;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -87,7 +89,6 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
 
     public        PIDFCoefficients pidfRUE;
     public        PIDFCoefficients pidfRTP;
-
 
     public MotorProfileDataPoint(
             String    profileId_in,
@@ -150,6 +151,14 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
 
     public boolean isTargetReached(int Ptarget) {
         return direction == Direction.FORWARD ? P>=Ptarget : P<=Ptarget;
+    }
+
+    public boolean isAtTarget(int Ptarget, int posTol) {
+        return abs(P - Ptarget) < posTol;
+    }
+
+    public boolean isMoving(double velTol) {
+        return abs(V) <= velTol;
     }
 
     public static MetricsFileSpec makeMetricsSpec(String fileId) {

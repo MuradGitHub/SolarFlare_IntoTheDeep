@@ -37,8 +37,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -67,8 +68,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -97,8 +99,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -127,8 +130,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -157,8 +161,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -187,8 +192,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     },
@@ -217,8 +223,9 @@
         "maxPower": 1.0,
         "targetBuffer": 100,
         "minDistance": 200,
+        "positionTolerance": 2,
         "velocityResolution": 40,
-        "velocityTolerance": 20.0,
+        "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
     }

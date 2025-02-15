@@ -43,6 +43,7 @@ public class MotorCalibConfig implements Validatable {
     public double  maxPower;
     public int     targetBuffer;
     public int     minDistance;
+    public int     positionTolerance;
     public double  velocityTolerance;
     public int     velocityResolution;
     public double  maxProfileTime;
@@ -65,6 +66,7 @@ public class MotorCalibConfig implements Validatable {
         sb.append("  maxPower=")          .append(maxPower)          .append("\n");
         sb.append("  targetBuffer=")      .append(targetBuffer)      .append("\n");
         sb.append("  minDistance=")       .append(minDistance)       .append("\n");
+        sb.append("  positionTolerance=") .append(positionTolerance) .append("\n");
         sb.append("  velocityTolerance=") .append(velocityTolerance) .append("\n");
         sb.append("  velocityResolution=").append(velocityResolution).append("\n");
         sb.append("  maxProfileTime=")    .append(maxProfileTime)    .append("\n");
