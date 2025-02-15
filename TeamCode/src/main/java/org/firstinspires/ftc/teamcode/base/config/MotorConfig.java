@@ -122,7 +122,7 @@ public class MotorConfig implements Validatable {
         sb.append("  maxAcceleration=")       .append(maxAcceleration)       .append("\n");
         sb.append("  maxVelocity=")           .append(maxVelocity)           .append("\n");
         sb.append("  noLoadVelocity=")        .append(getNoLoadVelocity())   .append("\n");
-        
+
         return sb.toString();
     }
 }

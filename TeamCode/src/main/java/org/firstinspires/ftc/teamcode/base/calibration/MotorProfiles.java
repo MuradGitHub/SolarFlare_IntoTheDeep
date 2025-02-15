@@ -55,7 +55,7 @@ public class MotorProfiles implements Validatable {
         powerResolution      = motorConfig.calibParams.powerResolution;
         minPower             = motorConfig.calibParams.minPower;
         maxPower             = motorConfig.calibParams.maxPower;
-        dP                   = (maxPower-minPower)/powerResolution;
+        dP                   = (maxPower-minPower)/(powerResolution-1);
         motorProfilesF = new MotorProfileConstP[powerResolution];
         motorProfilesR = new MotorProfileConstP[powerResolution];
         for(int i=0; i<powerResolution; i++) {
