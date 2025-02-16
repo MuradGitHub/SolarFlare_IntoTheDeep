@@ -29,40 +29,10 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Thread.sleep;
-
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import androidx.annotation.NonNull;
 
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.base.config.JSONWritable;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
-import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
-import org.firstinspires.ftc.teamcode.base.config.Validatable;
-import org.firstinspires.ftc.teamcode.base.error.CalculationException;
-import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
-import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
-import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
-import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
-import org.firstinspires.ftc.teamcode.base.math.Math;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategy;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyConst;
-import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
-import org.firstinspires.ftc.teamcode.base.validate.Validation;
 
 public class MotorProfileConstP extends MotorProfile {
     public            double                           power;
@@ -72,28 +42,29 @@ public class MotorProfileConstP extends MotorProfile {
      * Constructor requires information about the motor
      * @param motorConfig: The configuration of the motor being calibrated
      */
-    public MotorProfileConstP(MotorConfig motorConfig) {
+    public             MotorProfileConstP(MotorConfig motorConfig) {
         super(motorConfig);
     }
 
-    public void preCalcProfile(int Pi_in, int Pf_in) {
+    public void        preCalcProfile(int Pi_in, int Pf_in) {
         super.preCalcProfile(Pi_in, Pf_in);
     }
 
-    public void calcProfile(double power_in, int Pi_in, int Ptarget_in) {
+    public void        calcProfile(double power_in, int Pi_in, int Ptarget_in) {
+        // This will set Pi and Pf based on Ptarget_in and other parameters
         preCalcProfile(Pi_in, Ptarget_in);
 
-        power                 = abs(power_in);
-        signedPower           = Pf > Pi? power : -power;
+        MotorPowerStrategyConst startPS   = new MotorPowerStrategyConst(1.0, Pi, Pf);
+        MotorPowerStrategyConst profilePS = new MotorPowerStrategyConst(power_in, Pi, Pf);
 
-        MotorPowerStrategy ps = new MotorPowerStrategyConst(signedPower, Pi, Pf);
+        profilePS.setBreakInc(1.0);
 
-        super.calcProfile(ps, Pi_in, Ptarget_in);
+        super.calcProfile(startPS, profilePS, Pi_in, Ptarget_in);
     }
 
     @NonNull
     @Override
-    public String toString() {
+    public String      toString() {
         var sb = new StringBuilder();
         sb.append(super.toString());
         sb.append("MotorProfileConstP\n");
@@ -103,7 +74,7 @@ public class MotorProfileConstP extends MotorProfile {
         return sb.toString();
     }
 
-    public boolean isValid() {
+    public boolean     isValid() {
         return super.isValid();
     }
 

@@ -29,10 +29,30 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 public abstract class MotorPowerStrategy {
+    public Direction direction;
     public boolean   isTargetReached = false;
-    public abstract double calcPower(DcMotorEx motor, int target);
+    public boolean   stopped         = false;
+
+    public          void   setDirection(int Pi, int Pf) {
+        direction = Pi < Pf ? Direction.FORWARD : Direction.REVERSE;
+    }
+    public abstract double applyPower(DcMotorEx motor, int target);
     public abstract String getId();
+    @Override
+    @NonNull
+    public          String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MotorPowerStrategy\n");
+        sb.append("  direction=")      .append(direction)      .append("\n");
+        sb.append("  isTargetReached=").append(isTargetReached).append("\n");
+        sb.append("  stopped=")        .append(stopped)        .append("\n");
+
+        return sb.toString();
+    }
 }

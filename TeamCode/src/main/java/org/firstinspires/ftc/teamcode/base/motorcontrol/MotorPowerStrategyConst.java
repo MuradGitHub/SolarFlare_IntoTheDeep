@@ -31,34 +31,80 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.util.Locale;
 
 public class MotorPowerStrategyConst extends MotorPowerStrategy {
+    public double    nominalPower;
+    public double    signPower;
     public double    power;
-    public Direction direction;
 
-    public MotorPowerStrategyConst(double power_in, int Pi, int Pf) {
-        power     = power_in;
-        direction = Pi<Pf ? Direction.FORWARD : Direction.REVERSE;
+    public double    brakeInc   = 0.05;
+
+    public        MotorPowerStrategyConst(double power_in, int Pi, int Pf) {
+        nominalPower    = power_in;
+        setDirection(Pi, Pf);
     }
 
     public String getId() {
-        return String.format(Locale.US, "Power=%1$.2f", power);
+        return String.format(Locale.US, "Power=%1$.2f", getSignedNominalPower());
     }
 
-    public double calcPower(DcMotorEx motor, int target) {
-        if(isTargetReached) {
+    public double getSignedNominalPower() {
+        return signPower * abs(nominalPower);
+    }
+
+    public void   setDirection(int Pi, int Pf) {
+        super.setDirection(Pi, Pf);
+        signPower       = direction == Direction.FORWARD ? 1.0 : -1.0;
+        power           = signPower * abs(nominalPower);
+    }
+
+    public double applyPower(DcMotorEx motor, int target) {
+        if(stopped) {
+            motor.setPower(0.0);
             return 0.0;
         } else {
             int P = motor.getCurrentPosition();
-            if (direction == Direction.FORWARD ? P >= target : P <= target) {
+
+            if (direction == Direction.FORWARD ? P >= target : P <= target)
                 isTargetReached = true;
-                return 0.0;
+
+            if(isTargetReached) {
+                // start reducing power
+                power = signPower * max(abs(power) - brakeInc, 0.0);
+                motor.setPower(power);
+                if (power == 0.0)
+                    stopped = true;
+                return power;
             } else {
+                motor.setPower(power);
                 return power;
             }
         }
+    }
+
+    public void   setBreakInc(double brakeInc_in) {
+        brakeInc = max(min(brakeInc_in, 1.0), 0.0);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MotorPowerStrategyConst\n");
+        sb.append("  nominalPower=").append(nominalPower).append("\n");
+        sb.append("  signPower=")   .append(signPower)   .append("\n");
+        sb.append("  power=")       .append(power)       .append("\n");
+        sb.append("  brakeInc=")    .append(brakeInc)    .append("\n");
+
+        return super.toString() + sb;
     }
 }

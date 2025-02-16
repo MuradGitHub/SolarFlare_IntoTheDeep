@@ -33,7 +33,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-import static java.lang.Thread.sleep;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -43,6 +42,7 @@ import java.util.logging.Logger;
 import androidx.annotation.NonNull;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -86,7 +86,8 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
     /**
      * Power strategy
      */
-    public                    MotorPowerStrategy               powerStrategy;
+    public                    MotorPowerStrategy               profilePowerStrategy;
+    public                    MotorPowerStrategy               startPowerStrategy;
     /**
      * Starting Position
      */
@@ -112,7 +113,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
      */
     public                    int                              averagingPeriods;
     /**
-     * Maximum velocity. should be close the stread state velocity
+     * Maximum velocity. should be close the steady state velocity
      */
     public                    double                           Vmax;
     /**
@@ -161,14 +162,14 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
      * Has to be called at the end of calcProfile as the calibDirection is only available
      * after the profile is calculated
      */
-    public void initMetricsSpecs() {
+    public    void initMetricsSpecs() {
         String fileId = String.format(
                 Locale.US,
                 "%1$s-%2$s-%3$s-%4$s",
                 motorEnum.name(),
                 calibDirection.name(),
                 "Start",
-                powerStrategy.getId());
+                profilePowerStrategy.getId());
         addMetricsSpec(metricsSpecStartId, MotorProfileDataPoint.makeMetricsSpec(fileId));
         fileId        = String.format(
                 Locale.US,
@@ -176,18 +177,21 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
                 motorEnum.name(),
                 calibDirection.name(),
                 "Profile",
-                powerStrategy.getId());
+                profilePowerStrategy.getId());
         addMetricsSpec(metricsSpecProfileId, MotorProfileDataPoint.makeMetricsSpec(fileId));
     }
 
     protected void gotoStart() {
-        Application.telemetry.addData("Entering gotoStart", powerStrategy.getId());
+        startPowerStrategy.setDirection(motor.getCurrentPosition(), Pi);
+
+        Application.telemetry.addData("Entering gotoStart", startPowerStrategy.toString());
         Application.telemetry.update();
 
         String msg;
         String format;
+
         /*
-        format                   = "Entring: %1$s direction=%2$s P=%3$df Pi=%4$d";
+        format                   = "Entering: %1$s direction=%2$s P=%3$df Pi=%4$d";
         msg                      = String.format(Locale.US,format,
                 motorEnum.name(), calibDirection.name(), motor.getCurrentPosition(), Pi);
         logger.logp(Level.INFO, "MotorProfileConsP", "gotoStart", msg);
@@ -203,27 +207,25 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(RunMode.RUN_TO_POSITION);
         motor.setTargetPosition(Pi);
-        motor.setPower(toStartPower);
 
         boolean     seeking      = true;
         do {
-            try {
-                sleep(minTimeInc);
-                pp               = new MotorProfileDataPoint(
-                        motor,
-                        "Start-Seeking",
-                        calibDirection,
-                        Pi,
-                        timer,
-                        true);
-                startData.add(pp);
-            } catch(InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            startPowerStrategy.applyPower(motor, Pi);
+
+            Application.sleep(minTimeInc);
+
+            pp               = new MotorProfileDataPoint(
+                    motor,
+                    "Start-Seeking",
+                    calibDirection,
+                    Pi,
+                    timer,
+                    true);
+            startData.add(pp);
 
             if(seeking) {
                 // Don't try to set seeking to true if it is already false
-                seeking          = pp.isSeeking(Pi, posTol, velTol);
+                seeking          = pp.isSeeking(Pi, posTol, velTol) || !startPowerStrategy.stopped;
             } else {
                 pp.setProfileId("Start-EndSamples");
                 pp.setStrategySuccess(true);
@@ -242,17 +244,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
         } while((endSamples>=0 || seeking) && timer.milliseconds() < maxProfileTime);
 
-        Application.telemetry.addData("gotoStart: Exited control loop", "");
-        Application.telemetry.addData("Sleeping 10 seconds", "");
-        Application.telemetry.update();
-        Application.sleep(10000);
-
         motor.setPower(0.0);
-
-        Application.telemetry.addData("gotoStart: power=0", "");
-        Application.telemetry.addData("Sleeping 10 seconds", "");
-        Application.telemetry.update();
-        Application.sleep(10000);
 
         format                   = "Exiting: %1$s %2$s appliedPower=%3$.3f motorPower=%4$.3f P=%5$d V=%6$.3f C=%7$.3f";
         msg                      = String.format(
@@ -335,61 +327,52 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         checkCalcInput();
     }
 
-    public void calcProfile(MotorPowerStrategy powerStrategy_in, int Pi_in, int Ptarget_in) {
-        preCalcProfile(Pi_in, Ptarget_in);
-        powerStrategy               = powerStrategy_in;
+    public    void calcProfile(MotorPowerStrategy startPowerStrategy_in,
+                               MotorPowerStrategy profilePowerStrategy_in,
+                               int Pi_in,
+                               int Ptarget_in) {
 
-        ElapsedTime  timer          = new ElapsedTime();
-        int          tIdx           = 0;
+        preCalcProfile(Pi_in, Ptarget_in);
+
+        startPowerStrategy           = startPowerStrategy_in;
+        profilePowerStrategy         = profilePowerStrategy_in;
+
+        ElapsedTime  timer           = new ElapsedTime();
+        int          tIdx            = 0;
 
         gotoStart();
 
-        Application.telemetry.addData("calcProfile after gotoStart", powerStrategy.getId());
-        Application.telemetry.addData("sleeping 10 secs", "");
-        Application.telemetry.update();
-        Application.sleep(10000);
-
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
 
-        int     endSamples          = motorConfig.calibParams.endSamples;
-        double  motorPower          = 0.0;
+        int     endSamples           = motorConfig.calibParams.endSamples;
 
         // Start the path
         // timer keeps time for the entire path. It will not be reset
         timer.reset();
         do {
-            try {
-                if(!isTargetReached) {
-                    motorPower      = powerStrategy.calcPower(motor, Pf);
-                    motor.setPower(motorPower);
-                }
+            profilePowerStrategy.applyPower(motor, Pf);
+            isTargetReached          = profilePowerStrategy.stopped;
 
-                isTargetReached     = powerStrategy.isTargetReached;;
+            Application.sleep(minTimeInc);
 
-                sleep(minTimeInc);
-
-                MotorProfileDataPoint pp = new MotorProfileDataPoint(
-                        motor,
-                        "Profile-Seeking",
-                        calibDirection,
-                        Pf,
-                        timer,
-                        true);
-                pp.setStrategySuccess(isTargetReached);
-                data.add(pp);
+            MotorProfileDataPoint pp = new MotorProfileDataPoint(
+                    motor,
+                    "Profile-Seeking",
+                    calibDirection,
+                    Pf,
+                    timer,
+                    true);
+            pp.setStrategySuccess(isTargetReached);
+            data.add(pp);
 
                 // if the target has been reached, likely exceeded, then set power to zero and
                 // start counting backwards the number of required endSamples
-                if (isTargetReached) {
-                    pp.setProfileId("Profile-EndSamples");
-                    endSamples--;
-                    if (tIdxTarget == null)
-                        tIdxTarget = tIdx++ - 1;
-                }
-
-            } catch(InterruptedException e) {
-                throw new RuntimeException(e);
+            if (isTargetReached) {
+                pp.setProfileId("Profile-EndSamples");
+                endSamples--;
+                if (tIdxTarget == null)
+                    tIdxTarget = tIdx++ - 1;
             }
         } while((endSamples>=0 || !isTargetReached) && timer.milliseconds() < maxProfileTime);
 
@@ -419,7 +402,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
      * Returns time to reach target
      * @return time to reach target
      */
-    public Double getTimeToTarget() {
+    public Double  getTimeToTarget() {
         return hasReachedTarget()? getTargetDataPoint().t : null;
     }
 
@@ -463,20 +446,20 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
         return profileData;
     }
 
-    public String getJSONFileId() {
+    public String  getJSONFileId() {
         return String.format(
                 Locale.US,
                 "%1$s-%2$s-%3$s",
                 motorEnum.name(),
                 calibDirection.name(),
-                powerStrategy.getId());
+                profilePowerStrategy.getId());
     }
 
-    public void writeJSON() {
+    public void    writeJSON() {
         JSONUtils.writeJSON(this);
     }
 
-    public void writeMetrics() {
+    public void    writeMetrics() {
         MetricsFile metricsStartFile   = RobotMetrics.getInstance()
                 .getMetricsFile(getMetricsSpec(metricsSpecStartId));
         for(var p: startData)
@@ -492,7 +475,7 @@ public class MotorProfile extends MultiMetricsWriter implements JSONWritable, Va
 
     @NonNull
     @Override
-    public String toString() {
+    public String  toString() {
         var sb = new StringBuilder();
 
         sb.append("MotorProfileConstP\n");

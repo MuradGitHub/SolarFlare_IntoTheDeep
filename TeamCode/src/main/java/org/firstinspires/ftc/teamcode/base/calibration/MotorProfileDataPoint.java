@@ -61,7 +61,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                 "RTP.Kp",       "RTP.Ki",       "RTP.Kd",       "RTP.Kf",
                 "Time",
                 "TimePExtract", "TimeVextract", "TimeCExtract", "TimeOtherExtract", "TimeCycle",
-                "Position",     "Target",       "Power",        "Velocity",     "Vavg",
+                "Position",     "Target",       "Power",        "Velocity",         "Vavg",
                 "A",            "Aavg",         "ApredFun",     "ApredLut",
                 "C"
         };
