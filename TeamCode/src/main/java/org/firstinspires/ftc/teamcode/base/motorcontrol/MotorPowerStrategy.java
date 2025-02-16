@@ -36,17 +36,23 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 public abstract class MotorPowerStrategy {
     public Direction direction;
-    public boolean   isTargetReached = false;
-    public boolean   stopped         = false;
+    public boolean   isTargetReached   = false;
+    public boolean   stopped           = false;
 
-    public          void   setDirection(int Pi, int Pf) {
+    public          boolean isTargetReached() {
+        return isTargetReached;
+    }
+    public          boolean isStopped() {
+        return stopped;
+    }
+    public          void    setDirection(int Pi, int Pf) {
         direction = Pi < Pf ? Direction.FORWARD : Direction.REVERSE;
     }
-    public abstract double applyPower(DcMotorEx motor, int target);
-    public abstract String getId();
+    public abstract double  applyPower(DcMotorEx motor, int target);
+    public abstract String  getId();
     @Override
     @NonNull
-    public          String toString() {
+    public          String  toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MotorPowerStrategy\n");
         sb.append("  direction=")      .append(direction)      .append("\n");

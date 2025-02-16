@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -63,26 +65,30 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
 
     public void   setDirection(int Pi, int Pf) {
         super.setDirection(Pi, Pf);
-        signPower       = direction == Direction.FORWARD ? 1.0 : -1.0;
-        power           = signPower * abs(nominalPower);
+        signPower               = direction == Direction.FORWARD ? 1.0 : -1.0;
+        power                   = signPower * abs(nominalPower);
     }
 
     public double applyPower(DcMotorEx motor, int target) {
         if(stopped) {
+            // return exactly 0.0 power
             motor.setPower(0.0);
             return 0.0;
         } else {
-            int P = motor.getCurrentPosition();
+            int P               = motor.getCurrentPosition();
 
+            // isTargetReached is not revised once true
             if (direction == Direction.FORWARD ? P >= target : P <= target)
                 isTargetReached = true;
 
             if(isTargetReached) {
                 // start reducing power
-                power = signPower * max(abs(power) - brakeInc, 0.0);
+                power           = signPower * max(abs(power) - brakeInc, 0.0);
                 motor.setPower(power);
-                if (power == 0.0)
+                if (approxEquals(power, 0.0)) {
                     stopped = true;
+                    return 0.0;
+                }
                 return power;
             } else {
                 motor.setPower(power);

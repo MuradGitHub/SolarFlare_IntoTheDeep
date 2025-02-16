@@ -72,19 +72,19 @@ public class Math {
         }
     }
 
-    public static boolean approxEquals(double n1, double n2, double tolerance) {
+    public static boolean     approxEquals(double n1, double n2, double tolerance) {
         if(n1 == 0.0 && n2 == 0.0)
             return true;
         double errorRatio = abs(n1-n2)/(abs(n1)+abs(n2));
         return errorRatio < tolerance;
     }
 
-    public static boolean approxEquals(double n1, double n2) {
+    public static boolean     approxEquals(double n1, double n2) {
         return approxEquals(n1, n2, NUMERICAL_TOLERANCE_RATIO);
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public static boolean isSteadyState(double[] data, int eIdx, int lookback, double tolerance) {
+    public static boolean     isSteadyState(double[] data, int eIdx, int lookback, double tolerance) {
         return isSteadyStatePredicate(
                 data,
                 eIdx,
@@ -93,10 +93,10 @@ public class Math {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public static boolean isSteadyStatePredicate(double[] data,
-                                                 int      eIdx,
-                                                 int      lookback,
-                                                 BiPredicate<Double, Double> predicate) {
+    public static boolean     isSteadyStatePredicate(double[] data,
+                                                     int      eIdx,
+                                                     int      lookback,
+                                                     BiPredicate<Double, Double> predicate) {
         int    sIdx        = eIdx-lookback+1;
         /// need at least lookback data points to determine steady state
         if(sIdx<0)
@@ -128,9 +128,9 @@ public class Math {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public static Integer getSteadyStateStartPredicate(double[]                    data,
-                                                       int                         lookback,
-                                                       BiPredicate<Double, Double> predicate) {
+    public static Integer     getSteadyStateStartPredicate(double[]                    data,
+                                                           int                         lookback,
+                                                           BiPredicate<Double, Double> predicate) {
         for(int idx=lookback-1; idx<data.length; idx++)
             if(isSteadyStatePredicate(data, idx, lookback, predicate))
                 return idx;
@@ -157,7 +157,7 @@ public class Math {
      * @param values: A sorted array of values
      * @return insertion index. The index of the first element greater than target in values
      */
-    public static int findInsertionIndex(double target, double[] values) {
+    public static int         findInsertionIndex(double target, double[] values) {
         int low  = 0;
         int high = values.length - 1;
 
@@ -176,15 +176,15 @@ public class Math {
         return low; // Target not found, return the insertion index
     }
 
-    public static double regularizeDown(double n, int order) {
+    public static double      regularizeDown(double n, int order) {
         return floor(n / pow(10,order)) * pow(10,order);
     }
 
-    public static double regularizeUp(double n, int order) {
+    public static double      regularizeUp(double n, int order) {
         return ceil(n / pow(10,order)) * pow(10,order);
     }
 
-    public static void main(String[] args) {
+    public static void         main(String[] args) {
         /// findInsertionPoint
         double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
         String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
