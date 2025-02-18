@@ -29,6 +29,7 @@
  */
 package org.firstinspires.ftc.teamcode.base.config;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -43,6 +44,10 @@ public class Application {
     public static Telemetry   telemetry;
     public static HardwareMap hardwareMap;
 
+    public static void        init(LinearOpMode opMode) {
+        telemetry     = opMode.telemetry;;
+        hardwareMap   = opMode.hardwareMap;
+    }
     /**
      * sleep is a utility function that catches the InterruptedExcption and converts this
      * into a RunTimeException hence avoiding having to do that in the application code
@@ -54,7 +59,6 @@ public class Application {
             throw new RuntimeException(e);
         }
     }
-
     /**
      * Returns Metrics directory name. Select based on context
      * This is the directory on the Robot Controller where metrics files are going to be saved
@@ -69,7 +73,6 @@ public class Application {
         else
             return "/storage/emulated/0/Android/data/com.qualcomm.ftcrobotcontroller/files/";
     }
-
     public static InputStream getResourceAsStream(String resourceName) {
         InputStream resource = Application.class.getResourceAsStream(resourceName);
         if(resource == null) {
@@ -82,7 +85,6 @@ public class Application {
         }
         return resource;
     }
-
     public static String      getApplicationResourcesPath() {
         String        packageName  = Objects.requireNonNull(Application.class.getPackage()).getName();
         String[]      packageDirs  = packageName.split("\\.");
@@ -94,11 +96,9 @@ public class Application {
         }
         return resourcesDir.toString();
     }
-
     public static String      getApplicationResourcesPath(String fileName) {
         return getApplicationResourcesPath() + fileName;
     }
-
     public static void        main(String[] args) {
         String   packageName = Objects.requireNonNull(Application.class.getPackage()).getName();
         String[] robotNames  = new String[] {"IntoTheDeep-V2", "Rig1Motor"};
