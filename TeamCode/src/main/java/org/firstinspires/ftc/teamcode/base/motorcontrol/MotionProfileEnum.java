@@ -29,19 +29,6 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
-
-    public        MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
-    }
-    abstract int  getPosition(double time);
-    abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
+public enum MotionProfileEnum {
+    TRAPEZOIDAL
 }
-
-

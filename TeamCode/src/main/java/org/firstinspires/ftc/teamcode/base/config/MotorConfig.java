@@ -48,6 +48,7 @@ public class MotorConfig implements Validatable {
     public MotorSpec                 motorSpec;
     public MotorCalibConfig          calibParams;
     public MotorCalibResult          calibResult;
+    public MotorControlConfig        controlParams;
     public String                    partName;
     public String                    deviceName;
     public DcMotorEx                 motor;

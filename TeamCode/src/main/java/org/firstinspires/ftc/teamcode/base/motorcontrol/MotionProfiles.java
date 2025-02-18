@@ -29,19 +29,13 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
+import org.firstinspires.ftc.teamcode.base.error.BadInputException;
 
-    public        MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
+public class MotionProfiles {
+    public static MotionProfile makeMotionProfile(MotionProfileEnum motionProfileEnum) {
+        switch(motionProfileEnum) {
+            case TRAPEZOIDAL -> {return new TrapezoidalMotionProfile1D();}
+            default -> throw new BadInputException("No such motion profile: "+motionProfileEnum);
+        }
     }
-    abstract int  getPosition(double time);
-    abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
 }
-
-

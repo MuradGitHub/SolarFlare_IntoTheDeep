@@ -25,6 +25,20 @@
       "maxTarget": 2500,
       "maxAcceleration": 3000,
       "maxVelocity": 1500,
+      "controlParams": {
+        "tolerances": {
+          "posTol": 2
+        },
+        "feedback": {
+          "PID": {
+            "Kp": 0.005,
+            "Ki": 0.0,
+            "Kd": 0.0003,
+            "Plookback": 10,
+            "Dlookback": 5
+          }
+        }
+      },
       "calibParams": {
         "minTimeInc": 0,
         "timeResolution": 3000,

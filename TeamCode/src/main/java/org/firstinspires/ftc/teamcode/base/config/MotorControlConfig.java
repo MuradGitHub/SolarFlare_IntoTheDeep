@@ -27,21 +27,13 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.motorcontrol;
+package org.firstinspires.ftc.teamcode.base.config;
 
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
 
-    public        MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
-    }
-    abstract int  getPosition(double time);
-    abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
+import java.util.HashMap;
+
+public class MotorControlConfig {
+    public HashMap<FeedbackControllerEnum,HashMap<String,Double>> feedback;
+    public HashMap<String, Double>                                tolerances;
 }
-
-

@@ -29,19 +29,9 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-    public        MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
-    }
-    abstract int  getPosition(double time);
-    abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
+public interface FeedbackController {
+    void   init(ElapsedTime timer);
+    double getPower(int error);
 }
-
-

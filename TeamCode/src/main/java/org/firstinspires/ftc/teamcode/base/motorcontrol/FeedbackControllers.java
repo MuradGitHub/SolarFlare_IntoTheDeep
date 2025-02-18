@@ -29,19 +29,36 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
+import static java.lang.Math.ceil;
 
-    public        MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
+import org.firstinspires.ftc.teamcode.base.config.MotorControlConfig;
+import org.firstinspires.ftc.teamcode.base.error.BadInputException;
+
+import java.util.HashMap;
+
+public class FeedbackControllers {
+    public static FeedbackController makeFeedbackController(
+            FeedbackControllerEnum FBCEnum,
+            MotorControlConfig config) {
+        switch(FBCEnum) {
+            case PID:
+                HashMap<String,Double> params = config.feedback.get(FBCEnum);
+                if(params == null)
+                    throw new BadInputException("No Control Params for " + FBCEnum);
+                Double Kp        = params.get("Kp");
+                Double Ki        = params.get("Ki");
+                Double Kd        = params.get("Kd");
+                Double Plookback = params.get("Plookback");
+                Double Dlookback = params.get("Dlookback");
+                return new PIDController(
+                        Kp        != null ? Kp : 0.0,
+                        Ki        != null ? Ki : 0.0,
+                        Kd        != null ? Kd : 0.0,
+                        Plookback != null ? (int) ceil(Plookback) : 1,
+                        Dlookback != null ? (int) ceil(Dlookback) : 1);
+
+            default:
+                throw new BadInputException("FeedbackControllerEnum: " + FBCEnum + " not supported");
+            }
     }
-    abstract int  getPosition(double time);
-    abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
 }
-
-

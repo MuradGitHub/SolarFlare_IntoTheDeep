@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2025 Murad Nayal
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * (subject to the limitations in the disclaimer below) provided that the following conditions are
+ * met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of conditions
+ * and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ * and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution.
+ *
+ * Neither the name Murad Nayal nor the names of contributors to this material may be used to
+ * endorse or promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS
+ * SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package org.firstinspires.ftc.teamcode.base.motorcontrol;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Arrays;
+
+public class PIDController implements FeedbackController {
+    public ElapsedTime timer;
+    public double      Kp;
+    public double      Ki;
+    public double      Kd;
+    public int         prevError;
+    public double      prevTime;
+    public double[]    Ehistory;
+    public double[]    Dhistory;
+    public int         EIdx = 0;
+    public int         DIdx = 0;
+
+    public        PIDController(double Kp_in,
+                                double Ki_in,
+                                double Kd_in,
+                                int    Elookback,
+                                int    Dlookback) {
+        Kp                  = Kp_in;
+        Ki                  = Ki_in;
+        Kd                  = Kd_in;
+        Ehistory            = new double[Elookback];
+        Dhistory            = new double[Dlookback];
+
+        reset();
+    }
+    public void   reset() {
+        Arrays.fill(Ehistory, 0.0);
+        Arrays.fill(Dhistory, 0.0);
+        prevError      = 0;
+        EIdx           = 0;
+        DIdx           = 0;
+    }
+    public void   init(ElapsedTime timer_in) {
+        reset();
+        timer          = timer_in;
+        prevTime       = timer.milliseconds();
+    }
+    public double getPower(int error) {
+        EIdx           = (EIdx + 1) % Ehistory.length;
+        DIdx           = (DIdx + 1) % Dhistory.length;
+        double D       = (error - prevError) / (timer.milliseconds() - prevTime);
+
+        Ehistory[EIdx] = error;
+        Dhistory[DIdx] = D;
+
+        double Esum    = 0;
+        for(double e: Ehistory)
+            Esum      += e;
+        double Dsum    = 0;
+        for(double d: Dhistory)
+            Dsum      += d;
+
+        return Kp * error + Ki * Esum + Kd * Dsum;
+    }
+}
