@@ -61,7 +61,6 @@ public class JSONUtils {
                 .create();
         return gson.fromJson(input, contentsClass);
     }
-
     public static <T extends JSONWritable> void writeJSONThreaded(T obj) {
         Thread      thread     = Thread.currentThread();
         ThreadGroup group      = thread.getThreadGroup();
@@ -91,7 +90,6 @@ public class JSONUtils {
             throw new RuntimeException(e);
         }
     }
-
     public static <T extends JSONWritable> void writeJSON(T obj) {
         String fileName     = obj.getClass().getSimpleName() + "-" + obj.getJSONFileId() + ".json";
         String fullFileName = Application.getMetricsDirName() + "/" + fileName;
@@ -168,7 +166,6 @@ public class JSONUtils {
             return sb.toString();
         }
     }
-
     public static void main(String[] args) {
         InputStream input    = Application.getResourceAsStream("JSONTest.json");
         Reader      reader   = new InputStreamReader(input);

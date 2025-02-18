@@ -156,47 +156,33 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tOtherExtract = timer.milliseconds() - tCextract - tVextract - tPextract - t;
         tCycle        = timer.milliseconds() - t;
     }
-
     public void    setProfileId(String profileId_in) {
         profileId = profileId_in;
     }
-
     public boolean isTargetReached() {
         return isTargetReached;
     }
-
     public boolean isTargetReached(int Ptarget) {
         return direction == Direction.FORWARD ? P>=Ptarget : P<=Ptarget;
     }
-
     public void    setIsTargetReached(boolean isTargetReached_in) {
         isTargetReached = isTargetReached_in;
     }
-
     public boolean isStrategyStopped() {
         return isStrategyStopped;
     }
-
     public void    setIsStrategyStopped(boolean isStrategyStopped_in) {
         isStrategyStopped = isStrategyStopped_in;
     }
-
     public boolean isSeeking(int Ptarget, int posTol, double velTol) {
         return isBusy || !isAtTarget(Ptarget, posTol) || isMoving(velTol);
     }
-
     public boolean isAtTarget(int Ptarget, int posTol) {
         return abs(P - Ptarget) <= posTol;
     }
-
     public boolean isMoving(double velTol) {
         return abs(V) > velTol;
     }
-
-    public static MetricsFileSpec makeMetricsSpec(String fileId) {
-        return MetricsDataPoint.makeMetricsSpec(fileId);
-    }
-
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
                 profileId,       direction,         posTol,    isBusy,
@@ -208,7 +194,6 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                 Aavg,            ApredFun,          ApredLut,  C
         );
     }
-
     @NonNull
     @Override
     public String  toString() {
@@ -241,7 +226,10 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
+    public static MetricsFileSpec makeMetricsSpec(String fileId) {
+        return MetricsDataPoint.makeMetricsSpec(fileId);
+    }
+    public static void            main(String[] args) {
         MetricsFileSpec ms = MotorProfileDataPoint.makeMetricsSpec("This File");
         System.out.println(ms);
     }
