@@ -227,7 +227,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
 
     public static MetricsFileSpec makeMetricsSpec(String fileId) {
-        return MetricsDataPoint.makeMetricsSpec(fileId);
+        return MetricsDataPoint.makeMetricsFileSpec(fileId);
     }
     public static void            main(String[] args) {
         MetricsFileSpec ms = MotorProfileDataPoint.makeMetricsSpec("This File");
