@@ -218,7 +218,6 @@ public class LookupTable2D extends MultiMetricsWriter {
                 Arrays.fill(r, 0.0);
         }
     }
-
     protected void initMetricsSpecs() {
         // Header labeled columns. the elements of each row. These are velocities
         //   first column is the power labels
@@ -233,7 +232,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 itemFormat,
                 yResolution+1,
                 header,
-                getMetricsFileId());
+                getBaseMetricsFileId());
         // Weights - prefilled
         addMetricsSpec(
                 "LookupTable2D-Weights",
@@ -241,7 +240,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 itemFormat,
                 yResolution+1,
                 header,
-                getMetricsFileId());
+                getBaseMetricsFileId());
         // rawData - prefilled
         addMetricsSpec(
                 "LookupTable2D-RawData-Prefill",
@@ -249,7 +248,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 itemFormat,
                 yResolution+1,
                 header,
-                getMetricsFileId());
+                getBaseMetricsFileId());
         // rawData
         addMetricsSpec(
                 "LookupTable2D-RawData",
@@ -257,7 +256,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 itemFormat,
                 yResolution+1,
                 header,
-                getMetricsFileId());
+                getBaseMetricsFileId());
         // data
         addMetricsSpec(
                 "LookupTable2D-Data",
@@ -265,7 +264,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 itemFormat,
                 yResolution+1,
                 header,
-                getMetricsFileId());
+                getBaseMetricsFileId());
     }
 
     private void fillEmptyCells() {

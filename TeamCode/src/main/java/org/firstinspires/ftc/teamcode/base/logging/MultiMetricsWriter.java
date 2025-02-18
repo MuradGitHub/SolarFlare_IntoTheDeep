@@ -33,24 +33,22 @@ import java.util.TreeMap;
 
 public abstract class MultiMetricsWriter {
     public TreeMap<String, MetricsFileSpec> metricsSpecs = new TreeMap<>();
-    public String                           metricsFileId;
+    public String                           baseMetricsFileId;
 
-    protected abstract void initMetricsSpecs();
-    public abstract void writeMetrics();
-
-    public void addMetricsSpec(String specId,
-                               String tableType,
-                               String format,
-                               String header) {
-        addMetricsSpec(specId, tableType, format, header, getMetricsFileId());
+    protected abstract void            initMetricsSpecs();
+    public    abstract void            writeMetrics();
+    public             void            addMetricsSpec(String specId,
+                                                      String tableType,
+                                                      String format,
+                                                      String header) {
+        addMetricsSpec(specId, tableType, format, header, getBaseMetricsFileId());
     }
-
-    public void addMetricsSpec(String specId,
-                               String tableType,
-                               String format,
-                               String header,
-                               String fileId) {
-        setMetricsFileId(fileId);
+    public             void            addMetricsSpec(String specId,
+                                                      String tableType,
+                                                      String format,
+                                                      String header,
+                                                      String fileId) {
+        setBaseMetricsFileId(fileId);
         MetricsFileSpec metricsSpec = new MetricsFileSpec(
                 tableType,
                 format,
@@ -59,14 +57,13 @@ public abstract class MultiMetricsWriter {
         );
         metricsSpecs.put(specId, metricsSpec);
     }
-
-    public void addMetricsSpec(String specId,
-                               String tableType,
-                               String itemFormat,
-                               int    numberOfFields,
-                               String header,
-                               String fileId) {
-        setMetricsFileId(fileId);
+    public             void            addMetricsSpec(String specId,
+                                                      String tableType,
+                                                      String itemFormat,
+                                                      int    numberOfFields,
+                                                      String header,
+                                                      String fileId) {
+        setBaseMetricsFileId(fileId);
         MetricsFileSpec metricsSpec = new MetricsFileSpec(
                 tableType,
                 itemFormat,
@@ -76,23 +73,19 @@ public abstract class MultiMetricsWriter {
         );
         metricsSpecs.put(specId, metricsSpec);
     }
-
-    public void addMetricsSpec(String specId, MetricsFileSpec metricsSpec) {
+    public             void            addMetricsSpec(String specId, MetricsFileSpec metricsSpec) {
         metricsSpecs.put(specId, metricsSpec);
     }
-
-    public MetricsFileSpec getMetricsSpec(String specId) {
+    public             MetricsFileSpec getMetricsSpec(String specId) {
         return metricsSpecs.get(specId);
     }
-
-    public void setMetricsFileId(String metricsFileId_in) {
-        metricsFileId = metricsFileId_in;
+    public             void            setBaseMetricsFileId(String metricsFileId_in) {
+        baseMetricsFileId = metricsFileId_in;
         for(var metricsSpec: metricsSpecs.values()) {
-            metricsSpec.setMetricsFileId(metricsFileId);
+            metricsSpec.setMetricsFileId(baseMetricsFileId);
         }
     }
-
-    public String getMetricsFileId() {
-        return metricsFileId;
+    public             String          getBaseMetricsFileId() {
+        return baseMetricsFileId;
     }
 }

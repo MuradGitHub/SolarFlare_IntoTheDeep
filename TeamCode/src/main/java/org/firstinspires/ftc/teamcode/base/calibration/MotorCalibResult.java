@@ -176,7 +176,7 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
                 regularizeDown(VssRangeF.min,2),
                 regularizeUp(VssRangeF.max,2));
 
-        PVALutF.setMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
+        PVALutF.setBaseMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
         PVALutR = new LookupTable2D(
                 powerResolution, -1.0, 0.0,
@@ -184,7 +184,7 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
                 regularizeDown(VssRangeR.min,2),
                 regularizeUp(VssRangeR.max,2));
 
-        PVALutR.setMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
+        PVALutR.setBaseMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
 
         /// add points to the LUTs
         for(var dataPoint: dataF)
