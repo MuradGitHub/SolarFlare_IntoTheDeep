@@ -42,16 +42,16 @@ public class RobotMetrics {
         if(instance == null)
         {
             instance = new RobotMetrics();
-            instance.initialize();
+            instance.init();
         }
 
         return instance;
     }
-    private       void         initialize() {
-        initializeTablesFormats();
+    private       void         init() {
+        initTablesFormats();
     }
     @SuppressWarnings("SpellCheckingInspection")
-    private       void         initializeTablesFormats() {
+    private       void         initTablesFormats() {
         /// MotionProfile files
         tablesSpecs.put("MotionProfile",
                 new MetricsSpec(
