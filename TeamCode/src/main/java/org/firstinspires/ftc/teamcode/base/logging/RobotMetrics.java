@@ -35,9 +35,8 @@ import java.util.TreeMap;
 import org.firstinspires.ftc.teamcode.base.config.MissingDataException;
 
 public class RobotMetrics {
-    private static RobotMetrics instance;
-
-    private final SortedMap<String, MetricsSpec> tablesSpecs = new TreeMap<>();
+    private static       RobotMetrics                   instance;
+    private        final SortedMap<String, MetricsSpec> tablesSpecs = new TreeMap<>();
 
     public static RobotMetrics getInstance() {
         if(instance == null)
@@ -48,13 +47,11 @@ public class RobotMetrics {
 
         return instance;
     }
-
-    private void initialize() {
+    private       void         initialize() {
         initializeTablesFormats();
     }
-
     @SuppressWarnings("SpellCheckingInspection")
-    private void initializeTablesFormats() {
+    private       void         initializeTablesFormats() {
         /// MotionProfile files
         tablesSpecs.put("MotionProfile",
                 new MetricsSpec(
@@ -96,22 +93,19 @@ public class RobotMetrics {
                         "motorPower",
                         "motorVelocity"}));
     }
-
-    public MetricsFile getMetricsFile(String tableType, String fileId) {
+    public        MetricsFile  getMetricsFile(String tableType, String fileId) {
         MetricsSpec metricsSpec = tablesSpecs.get(tableType);
         if(metricsSpec == null)
             throw new MissingDataException("No MetricsSpec for TableType: " + tableType);
 
         return new MetricsFile(metricsSpec, fileId);
     }
-
     // The storage of this MetricsFileSpec is managed elsewhere. Do not put the MetricsFileSpec
     // in the metricsSpecs map. You might want to keep track of the file. I don't do that yet
-    public MetricsFile getMetricsFile(MetricsFileSpec metricsSpec) {
+    public        MetricsFile  getMetricsFile(MetricsFileSpec metricsSpec) {
         return new MetricsFile(metricsSpec, metricsSpec.getMetricsFileId());
     }
-
-    public MetricsFile getMetricsFile(MetricsWritable obj) {
+    public        MetricsFile  getMetricsFile(MetricsWritable obj) {
         return getMetricsFile(obj.getMetricsTableType(), obj.getMetricsFileId());
     }
 }
