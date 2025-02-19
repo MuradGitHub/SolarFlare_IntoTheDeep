@@ -49,106 +49,104 @@ import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
 import org.firstinspires.ftc.teamcode.base.regtest.RegTest;
 
 @SuppressWarnings({"SpellCheckingInspection"})
-public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritable {
+public class TrapezoidalMotionProfile1D extends MotionProfile implements MetricsWritable {
     /**
      * initialized: Has this profile been initialized?
      */
-    private boolean   initialized = false;
+    private           boolean                    initialized = false;
     /**
      * FTC Dashboard Telemetry
      */
-    private Telemetry telemetryDash;
+    private transient Telemetry                  telemetryDash;
     /**
      * Lead-in Profile. To be used if:
      *   1- signum(Vi) == -signum(dist) or
      *   2- Vi will overshoot distance even if maximum deceleration was applied immediately
      */
-    private TrapezoidalMotionProfile1D leadInProfile = null;
+    private           TrapezoidalMotionProfile1D leadInProfile = null;
     /**
      * Distance to travel
      */
-    private double    dist;
+    private           double                     dist;
     /**
      * Initial Position
      */
-    private double    Pi;
+    private           double                     Pi;
     /**
      * Initial Velocity
      */
-    private double    Vi;
+    private           double                     Vi;
     /**
      * Is Vi so high that the object will overshoot the target despite
      * the application of immediate max deceleration
      */
-    private boolean   overshoot;
+    private           boolean                    overshoot;
     /**
      * Maximum Velocity
      */
-    private double    Vmax;
+    private           double                     Vmax;
     /**
      * Initial brake phase - Tb time to brake speed down to Vmax
      */
-    private double    Tb;
+    private           double                     Tb;
     /**
      * Initial brake phase - Sb distance to brake speed down to Vmax
      */
-    private double    Sb;
+    private           double                     Sb;
     /**
      * Maximum Acceleration
      */
-    private double    Amax;
+    private           double                     Amax;
     /**
      * Acceleration Time
      */
-    private double    Ta;
+    private           double                     Ta;
     /**
      * Span (distance) while accelerating
      */
-    private double    Sa;
+    private           double                     Sa;
     /**
      * Top Velocity for the triangular case
      */
-    private double    Vt;
+    private           double                     Vt;
     /**
      * Cruise Velocity
      */
-    private double    Vc;
+    private           double                     Vc;
     /**
      * Cruise Time
      */
-    private double    Tc;
+    private           double                     Tc;
     /**
      * Span (distance) cruising
      */
-    private double    Sc;
+    private           double                     Sc;
     /**
      * Max Deceleration
      */
-    private double    Dmax;
+    private           double                     Dmax;
     /**
      * Deceleration Time
      */
-    private double    Td;
+    private           double                     Td;
     /**
      * Span (distance) decelerating
      */
-    private double    Sd;
+    private           double                     Sd;
     /**
      * Total Time
      */
-    private double    Tt;
+    private           double                     Tt;
+
+    public              TrapezoidalMotionProfile1D() {
+        super(MotionProfileEnum.TRAPEZOIDAL);
+    }
 
     public TrapezoidalMotionProfile1D getLeadInProfile() {
         if(leadInProfile == null)
             leadInProfile = new TrapezoidalMotionProfile1D();
         return leadInProfile;
     }
-
-    public boolean isInitialized() {
-        return initialized;
-    }
-    public void setInitialized() { initialized = true; }
-
     public TrapezoidalMotionProfile1D reset() {
         initialized             = false;
         telemetryDash           = null;
@@ -175,6 +173,10 @@ public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritabl
         return this;
     }
 
+    public    boolean   isInitialized() {
+        return initialized;
+    }
+    public    void      setInitialized() { initialized = true; }
     protected Telemetry getTelemetryDash() {
         if(telemetryDash == null)
             telemetryDash = FtcDashboard.getInstance().getTelemetry();
@@ -192,13 +194,12 @@ public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritabl
      * @param dist_in  Distance to travel
      * @param Pi_in Initial Position
      */
-    public void calcProfile(double dist_in,
-                            double Pi_in,
-                            double Vi_in,
-                            double Vmax_in,
-                            double Amax_in,
-                            double Dmax_in)
-    {
+    public    void      calcProfile(double dist_in,
+                                    double Pi_in,
+                                    double Vi_in,
+                                    double Vmax_in,
+                                    double Amax_in,
+                                    double Dmax_in) {
         initialized             = true;
         dist                    = dist_in;
         Pi                      = Pi_in;
@@ -292,14 +293,13 @@ public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritabl
         telemetryDash.update();
          */
     }
-
     // Run this method in a loop
-    public int runProfile(double t) {
+    public    int       getPosition(double t) {
         if(leadInProfile == null)
             throw new CalculationException("TrapezoidalMotionProfile1D not initialized");
 
         if(t < leadInProfile.Tt) {
-            return leadInProfile.runProfile(t);
+            return leadInProfile.getPosition(t);
         } if(t < leadInProfile.Tt+Tb) {
             double tInB         = t-leadInProfile.Tt;
             return (int) round(Pi + Vi * tInB + 0.5 * Dmax*tInB*tInB);
@@ -316,16 +316,13 @@ public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritabl
             return (int) round(Pi + dist);
         }
     }
-
-    public String getMetricsFileId() {
+    public    String    getMetricsFileId() {
         return String.format(Locale.US,"%1$.2f-%2$.2f-%3$.2f-%4$.2f-%5$.2f-",Pi,Vi,Vmax,Amax,Dmax);
     }
-
-    public String getMetricsTableType() {
+    public    String    getMetricsTableType() {
         return "TrapezoidalMotionProfile1D";
     }
-
-    public boolean approxEqual(TrapezoidalMotionProfile1D other) {
+    public    boolean   approxEqual(TrapezoidalMotionProfile1D other) {
         if(other == null)
             throw new CalculationException("TrapezoidalMotionProfile1D.approxEqual: other is null");
 
@@ -403,10 +400,9 @@ public class TrapezoidalMotionProfile1D implements MotionProfile, MetricsWritabl
                 VcTest     && TcTest        && ScTest   && DmaxTest && TdTest && SdTest   &&
                 TtTest;
     }
-
     @NonNull
     @Override
-    public String toString() {
+    public    String    toString() {
         String formatString =
                 "    dist      = %1$.5f%n"  +
                 "    Pi        = %2$.5f%n"  +

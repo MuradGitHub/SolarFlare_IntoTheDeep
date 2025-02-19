@@ -42,24 +42,11 @@ public class MotorProfileConstP extends MotorProfile {
      * Constructor requires information about the motor
      * @param motorConfig: The configuration of the motor being calibrated
      */
-    public             MotorProfileConstP(MotorConfig motorConfig) {
-        super(motorConfig);
-    }
-
-    public void        preCalcProfile(int Pi_in, int Pf_in) {
-        super.preCalcProfile(Pi_in, Pf_in);
-    }
-
-    public void        calcProfile(double power_in, int Pi_in, int Ptarget_in) {
-        // This will set Pi and Pf based on Ptarget_in and other parameters
-        preCalcProfile(Pi_in, Ptarget_in);
-
-        MotorPowerStrategyConst startPS   = new MotorPowerStrategyConst(1.0, Pi, Pf);
-        MotorPowerStrategyConst profilePS = new MotorPowerStrategyConst(power_in, Pi, Pf);
-
-        profilePS.setBreakInc(1.0);
-
-        super.calcProfile(startPS, profilePS, Pi_in, Ptarget_in);
+    public             MotorProfileConstP(MotorConfig motorConfig, double power) {
+        super(motorConfig,
+                new MotorPowerStrategyConst(motorConfig,1.0),
+                new MotorPowerStrategyConst(motorConfig, power));
+        ((MotorPowerStrategyConst) profilePowerStrategy).setBreakInc(1.0);
     }
 
     @NonNull

@@ -33,30 +33,40 @@ import static java.lang.Math.ceil;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorControlConfig;
 import org.firstinspires.ftc.teamcode.base.error.BadInputException;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FeedbackControllers {
+    public static Logger logger  = RobotLogger.getInstance().getConfigLogger();
+    
     public static FeedbackController makeFeedbackController(
             FeedbackControllerEnum FBCEnum,
             MotorControlConfig config) {
         switch(FBCEnum) {
             case PID:
                 HashMap<String,Double> params = config.feedback.get(FBCEnum);
+                logger.logp(
+                        Level.INFO,
+                        "FeedbackControllers",
+                        "makeFeedbackController",
+                        params != null ? params.toString() : "FBC Params=null"
+                        );
                 if(params == null)
                     throw new BadInputException("No Control Params for " + FBCEnum);
-                Double Kp        = params.get("Kp");
-                Double Ki        = params.get("Ki");
-                Double Kd        = params.get("Kd");
-                Double Plookback = params.get("Plookback");
-                Double Dlookback = params.get("Dlookback");
+                Double Kp            = params.get("Kp");
+                Double Ki            = params.get("Ki");
+                Double Kd            = params.get("Kd");
+                Double ErrLookback   = params.get("ErrLookback");
+                Double DerLookback   = params.get("DerLookback");
                 return new PIDController(
-                        Kp        != null ? Kp : 0.0,
-                        Ki        != null ? Ki : 0.0,
-                        Kd        != null ? Kd : 0.0,
-                        Plookback != null ? (int) ceil(Plookback) : 1,
-                        Dlookback != null ? (int) ceil(Dlookback) : 1);
-
+                        Kp          != null ? Kp : 0.0,
+                        Ki          != null ? Ki : 0.0,
+                        Kd          != null ? Kd : 0.0,
+                        ErrLookback != null ? (int) ceil(ErrLookback) : 1,
+                        DerLookback != null ? (int) ceil(DerLookback) : 1);
             default:
                 throw new BadInputException("FeedbackControllerEnum: " + FBCEnum + " not supported");
             }

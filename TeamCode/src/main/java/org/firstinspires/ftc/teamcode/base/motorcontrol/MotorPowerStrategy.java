@@ -29,27 +29,81 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+import static java.lang.Math.signum;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-public abstract class MotorPowerStrategy {
-    public Direction direction;
-    public boolean   isTargetReached   = false;
-    public boolean   stopped           = false;
+import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
+import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
+import org.firstinspires.ftc.teamcode.base.logging.DescriptiveIdProvider;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
+import org.firstinspires.ftc.teamcode.base.utils.HashMapUtils;
 
+import java.util.logging.Logger;
+
+public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
+    public transient Logger      logger = RobotLogger.getInstance().getConfigLogger();
+    public transient MotorConfig motorConfig;
+    public transient DcMotorEx   motor;
+    public transient ElapsedTime timer;
+    public           int         Pi;
+    /**
+     * Final target
+     */
+    public           int         ultimateTarget;
+    /**
+     * Possibly intermediate target
+     */
+    public           int         immediateTarget;
+    public           Direction   direction;
+    public           double      nominalPower;
+    public           double      signPower;
+    public           double      power;
+    public           int         posTol;
+    public           boolean     isTargetReached   = false;
+    public           boolean     isStopped         = false;
+
+    public                  MotorPowerStrategy(MotorConfig motorConfig_in,
+                                               double      nominalPower_in) {
+        motorConfig     = motorConfig_in;
+        motor           = motorConfig.motor;
+        posTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "posTol", 0);
+        nominalPower    = nominalPower_in;
+    }
+    public          void    init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
+        timer           = timer_in;
+        Pi              = Pi_in;
+        ultimateTarget  = Ptarget_in;
+        immediateTarget = Ptarget_in;
+        setDirection(Pi, ultimateTarget);
+    }
+    public          double  limitPower(double power_in) {
+        double absPower = min(abs(power_in),abs(motorConfig.maxPower));
+        return signum(power_in) * absPower;
+    }
     public          boolean isTargetReached() {
         return isTargetReached;
     }
     public          boolean isStopped() {
-        return stopped;
+        return isStopped;
     }
     public          void    setDirection(int Pi, int Pf) {
         direction = Pi < Pf ? Direction.FORWARD : Direction.REVERSE;
     }
-    public abstract double  applyPower(DcMotorEx motor, int target);
-    public abstract String  getId();
+    public abstract void    applyPower(int target);
+    public          void    updateProfileDataPoint(MotorProfileDataPoint p) {
+        p.isTargetReached   = isTargetReached;
+        p.isStrategyStopped = isStopped;
+        p.ultimateTarget    = ultimateTarget;
+        p.immediateTarget   = immediateTarget;
+        p.power             = power;
+    }
     @Override
     @NonNull
     public          String  toString() {
@@ -57,7 +111,7 @@ public abstract class MotorPowerStrategy {
         sb.append("MotorPowerStrategy\n");
         sb.append("  direction=")      .append(direction)      .append("\n");
         sb.append("  isTargetReached=").append(isTargetReached).append("\n");
-        sb.append("  stopped=")        .append(stopped)        .append("\n");
+        sb.append("  isStopped=")      .append(isStopped)        .append("\n");
 
         return sb.toString();
     }

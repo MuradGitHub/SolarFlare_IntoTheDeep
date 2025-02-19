@@ -30,29 +30,27 @@
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
-import static java.lang.Math.signum;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 
 import java.util.Locale;
+import java.util.logging.Level;
 
 public class MotorPowerStrategyMP extends MotorPowerStrategy {
     public MotionProfile      motionProfile;
     public FeedbackController fbc;
-    public double             maxPower;
 
     public        MotorPowerStrategyMP(MotorConfig            motorConfig,
                                        MotionProfileEnum      motionProfileEnum,
                                        FeedbackControllerEnum FBCEnum,
-                                       double                 power) {
-        super(motorConfig, power);
+                                       double                 nominalPower) {
+        super(motorConfig, nominalPower);
         motionProfile = MotionProfiles.makeMotionProfile(motionProfileEnum);
         fbc           = FeedbackControllers.makeFeedbackController(FBCEnum, motorConfig.controlParams);
     }
@@ -60,46 +58,75 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     /**
      * Set up the MotionProfile to get us from Pi to Pf
      * @param Pi: Initial position
-     * @param Pf: Final position
+     * @param Ptarget: Final position
      */
     @Override
-    public void   init(DcMotorEx motor, ElapsedTime timer, int Pi, int Pf) {
-        super.init(motor, timer, Pi, Pf);
+    public void   init(ElapsedTime timer, int Pi, int Ptarget) {
+        super.init(timer, Pi, Ptarget);
 
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         double Vi   = motor.getVelocity() / 1000;
-        double Vmax = motorConfig.calibResult.getVss(direction, maxPower);
-        double Amax = motorConfig.calibResult.getAccelByLut(direction,maxPower, Vi);
+        double Vmax = motorConfig.calibResult.getVss(direction, motorConfig.maxPower);
+        double Amax = motorConfig.calibResult.getAccelByLut(direction, motorConfig.maxPower, Vi);
 
-        motionProfile.calcProfile(Pf-Pi, Pi, Vi, Vmax, Amax, Amax);
+        // calibResult is returning Vmax with the wrong units and 0 for the given parameters
+        // so overriding for now
+        Vmax        = 2.8;
+        Amax        = 0.06;
+
+        logger.logp(
+                Level.INFO,
+                "MotorPowerStrategyMP",
+                "init",
+                String.format(Locale.US,"Vi=%1$.3f Vmax=%2$.3f Amax=%3$.3f", Vi, Vmax, Amax));
+
+        motionProfile.calcProfile(Ptarget-Pi, Pi, Vi, Vmax, Amax, Amax);
+
         fbc.init(timer);
     }
+
     @Override
-    public String getId() {
-        return String.format(Locale.US, "Power=%1$s", "What is this now");
+    public String getDescriptiveId() {
+        return String.format(
+                Locale.US,
+                "MotionProfileMP:motor=%1$s MP=%2$s FBC=%3$s",
+                motorConfig.motorEnum.name(),
+                motionProfile.motionProfileEnum.name(),
+                fbc.FBCEnum.name());
     }
     @Override
-    public void   applyPower(DcMotorEx motor, int target) {
-        int currentPosition = motor.getCurrentPosition();
+    public void   applyPower(int target_in) {
+        int    curPosition     = motor.getCurrentPosition();
+        double curTime         = timer.milliseconds();
+        double fbcPower        = 0;
+
+        if(target_in!=ultimateTarget)
+            init(timer, curPosition, target_in);
 
         if(isStopped) {
             // return exactly 0.0 power
             power = 0.0;
         } else {
-            target          = motionProfile.getPosition(timer.milliseconds());
-            power           = limitPower(fbc.getPower(target - currentPosition));
+            immediateTarget    = motionProfile.getPosition(curTime);
+            fbcPower           = fbc.getPower(immediateTarget - curPosition);
+            power              = limitPower(fbcPower);
         }
 
-        if(abs(currentPosition - Pf) < posTol)
-            isTargetReached = true;
+        if(abs(curPosition - ultimateTarget) < posTol) {
+            isTargetReached    = true;
+            isStopped          = true;
+        }
+
+        logger.logp(Level.INFO,
+                "MotorPowerStrategyMP",
+                "applyPower",
+                String.format(Locale.US,
+                        "t=%1$.3f P=%2$d uTarget=%3$d iTarget=%4$d fbcPower=%5$.3f power=%6$.3f isStopped=%7$b%nfbc=%8$s",
+                        curTime, curPosition, ultimateTarget, immediateTarget, fbcPower, power, isStopped, fbc.toString()));
 
         motor.setPower(power);
-    }
-    public double limitPower(double power_in) {
-        double absPower = min(abs(power_in),abs(maxPower));
-        return signum(power_in) * absPower;
     }
 
     @NonNull

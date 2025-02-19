@@ -29,38 +29,41 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Arrays;
 
-public class PIDController implements FeedbackController {
-    public ElapsedTime timer;
-    public double      Kp;
-    public double      Ki;
-    public double      Kd;
-    public int         prevError;
-    public double      prevTime;
-    public double[]    Ehistory;
-    public double[]    Dhistory;
-    public int         EIdx = 0;
-    public int         DIdx = 0;
+public class PIDController extends FeedbackController {
+    public transient ElapsedTime timer;
+    public           double      Kp;
+    public           double      Ki;
+    public           double      Kd;
+    public           int         prevError;
+    public           double      prevTime;
+    public           double[]    ErrHistory;
+    public           double[]    DerHistory;
+    public           int         EIdx = 0;
+    public           int         DIdx = 0;
 
     public        PIDController(double Kp_in,
                                 double Ki_in,
                                 double Kd_in,
-                                int    Elookback,
-                                int    Dlookback) {
+                                int    ErrLookback,
+                                int    DerLookback) {
+        super(FeedbackControllerEnum.PID);
         Kp                  = Kp_in;
         Ki                  = Ki_in;
         Kd                  = Kd_in;
-        Ehistory            = new double[Elookback];
-        Dhistory            = new double[Dlookback];
+        ErrHistory          = new double[ErrLookback];
+        DerHistory          = new double[DerLookback];
 
         reset();
     }
     public void   reset() {
-        Arrays.fill(Ehistory, 0.0);
-        Arrays.fill(Dhistory, 0.0);
+        Arrays.fill(ErrHistory, 0.0);
+        Arrays.fill(DerHistory, 0.0);
         prevError      = 0;
         EIdx           = 0;
         DIdx           = 0;
@@ -71,20 +74,39 @@ public class PIDController implements FeedbackController {
         prevTime       = timer.milliseconds();
     }
     public double getPower(int error) {
-        EIdx           = (EIdx + 1) % Ehistory.length;
-        DIdx           = (DIdx + 1) % Dhistory.length;
-        double D       = (error - prevError) / (timer.milliseconds() - prevTime);
+        EIdx                = (EIdx + 1) % ErrHistory.length;
+        DIdx                = (DIdx + 1) % DerHistory.length;
+        double D            = (error - prevError) / (timer.milliseconds() - prevTime);
 
-        Ehistory[EIdx] = error;
-        Dhistory[DIdx] = D;
+        ErrHistory[EIdx]    = error;
+        DerHistory[DIdx]    = D;
 
-        double Esum    = 0;
-        for(double e: Ehistory)
-            Esum      += e;
-        double Dsum    = 0;
-        for(double d: Dhistory)
-            Dsum      += d;
+        double Esum         = 0;
+        for(double e: ErrHistory)
+            Esum           += e;
+        double Dsum         = 0;
+        for(double d: DerHistory)
+            Dsum           += d;
 
         return Kp * error + Ki * Esum + Kd * Dsum;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("PIDController\n");
+        sb.append("  time=")                       .append(timer.milliseconds())       .append("\n");
+        sb.append("  Kp=")                         .append(Kp)                         .append("\n");
+        sb.append("  Ki=")                         .append(Ki)                         .append("\n");
+        sb.append("  Kd=")                         .append(Kd)                         .append("\n");
+        sb.append("  prevError=")                  .append(prevError)                  .append("\n");
+        sb.append("  prevTime=")                   .append(prevTime)                   .append("\n");
+        sb.append("  ErrHistory=")                 .append(Arrays.toString(ErrHistory)).append("\n");
+        sb.append("  DerHistory=")                 .append(Arrays.toString(DerHistory)).append("\n");
+        sb.append("  EIdx=")                       .append(EIdx)                       .append("\n");
+        sb.append("  DIdx=")                       .append(DIdx)                       .append("\n");
+
+        return sb.toString();
     }
 }

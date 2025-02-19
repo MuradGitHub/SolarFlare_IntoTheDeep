@@ -27,15 +27,49 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.motorcontrol;
+package org.firstinspires.ftc.teamcode.base.calibration;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
+import androidx.annotation.NonNull;
 
-public abstract class FeedbackController {
+import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyConst;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyMP;
+
+public class MotorProfileMP extends MotorProfile {
+    MotionProfileEnum      MPEnum;
     FeedbackControllerEnum FBCEnum;
-    public                 FeedbackController(FeedbackControllerEnum FBCEnum_in) {
+
+    /**
+     * Constructor requires information about the motor
+     * @param motorConfig: The configuration of the motor being calibrated
+     */
+    public             MotorProfileMP(MotorConfig            motorConfig,
+                                      MotionProfileEnum      MPEnum_in,
+                                      FeedbackControllerEnum FBCEnum_in) {
+        super(motorConfig,
+                new MotorPowerStrategyConst(motorConfig,1.0),
+                new MotorPowerStrategyMP(motorConfig, MPEnum_in, FBCEnum_in,1.0)
+        );
+        MPEnum  = MPEnum_in;
         FBCEnum = FBCEnum_in;
     }
-    public abstract void   init(ElapsedTime timer);
-    public abstract double getPower(int error);
+
+    @NonNull
+    @Override
+    public String      toString() {
+        var sb = new StringBuilder();
+        sb.append(super.toString());
+        sb.append("MotorProfileConstP\n");
+
+        return sb.toString();
+    }
+    @Override
+    public boolean     isValid() {
+        return super.isValid();
+    }
+
+    public static void main(String[] args) {
+    }
 }

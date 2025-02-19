@@ -41,39 +41,35 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
+
 import java.util.Locale;
 
 public class MotorPowerStrategyConst extends MotorPowerStrategy {
-    public double    nominalPower;
-    public double    signPower;
-    public double    power;
-
     public double    brakeInc   = 0.05;
 
-    public        MotorPowerStrategyConst(double power_in, int Pi, int Pf) {
-        nominalPower    = power_in;
-        setDirection(Pi, Pf);
+    public        MotorPowerStrategyConst(MotorConfig motorConfig_in,
+                                          double      power_in) {
+        super(motorConfig_in, power_in);
     }
-
-    public String getId() {
+    public String getDescriptiveId() {
         return String.format(Locale.US, "Power=%1$.2f", getSignedNominalPower());
     }
-
     public double getSignedNominalPower() {
         return signPower * abs(nominalPower);
     }
-
+    @Override
     public void   setDirection(int Pi, int Pf) {
         super.setDirection(Pi, Pf);
         signPower               = direction == Direction.FORWARD ? 1.0 : -1.0;
         power                   = signPower * abs(nominalPower);
     }
-
-    public double applyPower(DcMotorEx motor, int target) {
-        if(stopped) {
+    @Override
+    public void   applyPower(int target) {
+        if(isStopped) {
             // return exactly 0.0 power
-            motor.setPower(0.0);
-            return 0.0;
+            power = 0.0;
+            motor.setPower(power);
         } else {
             int P               = motor.getCurrentPosition();
 
@@ -86,21 +82,16 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
                 power           = signPower * max(abs(power) - brakeInc, 0.0);
                 motor.setPower(power);
                 if (approxEquals(power, 0.0)) {
-                    stopped = true;
-                    return 0.0;
+                    isStopped   = true;
                 }
-                return power;
             } else {
                 motor.setPower(power);
-                return power;
             }
         }
     }
-
     public void   setBreakInc(double brakeInc_in) {
         brakeInc = max(min(brakeInc_in, 1.0), 0.0);
     }
-
     @NonNull
     @Override
     public String toString() {

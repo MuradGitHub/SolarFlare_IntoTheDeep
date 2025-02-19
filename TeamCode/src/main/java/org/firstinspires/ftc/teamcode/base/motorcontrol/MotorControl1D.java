@@ -134,7 +134,7 @@ public class MotorControl1D implements MetricsWritable {
         }
 
         Double now                   = timer.milliseconds();
-        Integer targetMotorPosition  = profile.runProfile(now);
+        Integer targetMotorPosition  = profile.getPosition(now);
 
         // targetMotorPower             = pid.getPIDOutput(motorEnum, targetMotorPosition, hw.getMotorConfig(motorEnum).kP,hw.getMotorConfig(motorEnum).kI,hw.getMotorConfig(motorEnum).kD);
         motor.setPower(targetMotorPower);

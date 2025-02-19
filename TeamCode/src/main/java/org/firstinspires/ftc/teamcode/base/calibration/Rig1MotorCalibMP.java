@@ -36,45 +36,46 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.base.config.Application;
 import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
 
 
 import java.util.logging.Logger;
 
 @Autonomous
-public class Rig1MotorCalibConstP extends LinearOpMode {
-    String             className  = "Rig1MotorCalibConstP";
-    String             methodName = "runOpMode";
-    String             robotName  = "Rig1Motor";
-    MotorEnum          motorEnum  = MotorEnum.TESTING_MOTOR;
+public class Rig1MotorCalibMP extends LinearOpMode {
+    String                 robotName  = "Rig1Motor";
+    MotorEnum              motorEnum  = MotorEnum.TESTING_MOTOR;
 
-    Logger             logger;
-    HardwareConfig     hardwareConfig;
-    MotorConfig        motorConfig;
-    DcMotorEx          motor;
-    MotorProfileConstP motorProfileF;
-    MotorProfileConstP motorProfileR;
+    Logger                 logger;
+    HardwareConfig         hardwareConfig;
+    MotorConfig            motorConfig;
+    DcMotorEx              motor;
+    MotionProfileEnum      MPEnum;
+    FeedbackControllerEnum FBCEnum;
+    MotorProfileMP         motorProfileF;
+    MotorProfileMP         motorProfileR;
 
     public void runOpMode(){
-        int    Pi    = 0;
-        int    Pf    = 10 * (int) motorConfig.motorSpec.encoderResolution;
-        double power = 0.5;
+        Application.init(this);
+
+        MPEnum                  = MotionProfileEnum.TRAPEZOIDAL;
+        FBCEnum                 = FeedbackControllerEnum.PID;
 
         sleep(3000);
         try {
             logger         = RobotLogger.getInstance().getConfigLogger();
-            logger.logp(INFO, className, methodName, "Created configLogger");
             hardwareConfig = HardwareConfig.makeInstance(hardwareMap, robotName);
-            logger.logp(INFO, className, methodName, "Created hardwareConfig");
             motorConfig    = hardwareConfig.getMotorConfig(motorEnum);
-            logger.logp(INFO, className, methodName, "got motorConfig: " + motorEnum);
             motor          = motorConfig.motor;
 
-            motorProfileF  = new MotorProfileConstP(motorConfig, power);
-            motorProfileR  = new MotorProfileConstP(motorConfig, power);
+            motorProfileF  = new MotorProfileMP(motorConfig,MPEnum,FBCEnum);
+            motorProfileR  = new MotorProfileMP(motorConfig,MPEnum,FBCEnum);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -82,6 +83,16 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         telemetry.addData("Done with initialization", "");
+
+
+        int    Pi    = 0;
+        int    Pf    = 10 * (int) motorConfig.motorSpec.encoderResolution;
+        double power = 0.5;
+
+        logger.logp(INFO,
+                "Rig1MotorCalibMP",
+                "runOpMOde",
+                motorProfileF.getBaseMetricsFileId() + ".calcProfile");
         telemetry.addData("Starting Forward Profile", "");
         telemetry.update();
         motorProfileF.calcProfile(Pi, Pf);
@@ -90,12 +101,17 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         telemetry.update();
         motorProfileF.writeJSON();
 
+
         telemetry.addData("Starting to write Metrics for Forward Profile", "");
         telemetry.update();
         motorProfileF.writeMetrics();
 
         sleep(2000);
 
+        logger.logp(INFO,
+                "Rig1MotorCalibMP",
+                "runOpMOde",
+                motorProfileR.getBaseMetricsFileId() + ".calcProfile");
         telemetry.addData("Starting Reverse Profile", "");
         telemetry.update();
         motorProfileR.calcProfile(Pf, Pi);
@@ -155,6 +171,8 @@ public class Rig1MotorCalibConstP extends LinearOpMode {
         telemetry.addData("R_Ass",                ssPointAR.Aavg);
         telemetry.addData("R_Amax",               motorProfileR.Amax);
         telemetry.addData("R_Dmax",               motorProfileR.Dmax);
+
+        telemetry.addData("Waiting For Start", "");
         telemetry.update();
 
         waitForStart();

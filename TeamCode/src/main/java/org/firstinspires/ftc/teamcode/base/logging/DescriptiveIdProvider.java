@@ -27,15 +27,8 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.motorcontrol;
+package org.firstinspires.ftc.teamcode.base.logging;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-public abstract class FeedbackController {
-    FeedbackControllerEnum FBCEnum;
-    public                 FeedbackController(FeedbackControllerEnum FBCEnum_in) {
-        FBCEnum = FBCEnum_in;
-    }
-    public abstract void   init(ElapsedTime timer);
-    public abstract double getPower(int error);
+public interface DescriptiveIdProvider {
+    String getDescriptiveId();
 }

@@ -36,8 +36,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -81,8 +81,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -126,8 +126,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -171,8 +171,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -216,8 +216,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -261,8 +261,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
@@ -306,8 +306,8 @@
             "Kp": 0.005,
             "Ki": 0.0,
             "Kd": 0.0003,
-            "Plookback": 10,
-            "Dlookback": 5
+            "ErrLookback": 10,
+            "DerLookback": 5
           }
         }
       },
