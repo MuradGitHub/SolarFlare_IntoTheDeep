@@ -37,19 +37,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MetricsFile {
-    private final MetricsSpec robotMetricsSpec;
-    private       Formatter        formatter;
-    private final String           fileId;
-    private final String           fullFileName;
+    private final MetricsSpec metricsSpec;
+    private       Formatter   formatter;
+    private final String      fileId;
+    private final String      fullFileName;
 
-    public MetricsFile(MetricsSpec robotMetricsSpec_in, String fileId_in) {
-        robotMetricsSpec = robotMetricsSpec_in;
+    public             MetricsFile(MetricsSpec metricsSpec_in, String fileId_in) {
+        metricsSpec      = metricsSpec_in;
         fileId           = fileId_in;
-        fullFileName     = robotMetricsSpec.getFullFileName(fileId);
+        fullFileName     = metricsSpec.getFullFileName(fileId);
         open();
     }
-
-    public void open() {
+    public     void    open() {
         if(isActive())
             close();
 
@@ -65,51 +64,45 @@ public class MetricsFile {
             return;
         }
 
-        formatter.format("%1$s", robotMetricsSpec.getHeader() + "\n");
+        formatter.format("%1$s", metricsSpec.getHeader() + "\n");
     }
-
-    public <T> void addDataItem(String format, T dataItem) {
+    public <T> void    addDataItem(String format, T dataItem) {
         if(!isActive()) {
-            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + metricsSpec.tableType + " not open. Skipping...");
             return;
         }
         formatter.format(format, dataItem);
     }
-
-    public void addData(Object... data) {
+    public     void    addData(Object... data) {
         if(!isActive()) {
-            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + metricsSpec.tableType + " not open. Skipping...");
             return;
         }
-        formatter.format(robotMetricsSpec.format, data);
+        formatter.format(metricsSpec.format, data);
     }
-
-    public void addData(double[] data) {
+    public     void    addData(double[] data) {
         if(!isActive()) {
-            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + metricsSpec.tableType + " not open. Skipping...");
             return;
         }
 
-        String formatWithSep = robotMetricsSpec.itemFormat + ",";
+        String formatWithSep = metricsSpec.itemFormat + ",";
         int    dIdx          = 0;
         for(dIdx=0; dIdx<data.length-1; dIdx++)
             formatter.format(formatWithSep, data[dIdx]);
-        formatter.format(robotMetricsSpec.itemFormat, data[dIdx]).format("%n");
+        formatter.format(metricsSpec.itemFormat, data[dIdx]).format("%n");
     }
-
-    public void addData(MetricsDataPoint dataPoint) {
+    public     void    addData(MetricsDataPoint dataPoint) {
         if(!isActive()) {
-            Logger.getGlobal().severe("MetricsFile " + robotMetricsSpec.tableType + " not open. Skipping...");
+            Logger.getGlobal().severe("MetricsFile " + metricsSpec.tableType + " not open. Skipping...");
             return;
         }
         dataPoint.writeMetrics(formatter);
     }
-
-    public boolean isActive() {
+    public     boolean isActive() {
         return formatter != null;
     }
-
-    public void close() {
+    public     void    close() {
         if(isActive()) {
             formatter.flush();
             formatter.close();
@@ -122,7 +115,7 @@ public class MetricsFile {
     public String toString() {
         var sb = new StringBuilder();
         sb.append("MetricsFile\n");
-        sb.append("  robotMetricsSpec=\n").append(robotMetricsSpec);
+        sb.append("  robotMetricsSpec=\n").append(metricsSpec);
         sb.append("  formatter=")         .append(formatter)   .append("\n");
         sb.append("  fileId=")            .append(fileId)      .append("\n");
         sb.append("  fullFileName=")      .append(fullFileName).append("\n");

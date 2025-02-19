@@ -49,15 +49,17 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
     public        String[] fieldNames;
     public        String   header;
 
-    public MetricsSpec(String   tableType_in,
-                       String   format_in,
-                       String[] fieldNames_in) {
+    public        MetricsSpec(String   tableType_in,
+                              String   format_in,
+                              String[] fieldNames_in) {
         tableType      = tableType_in;
         numberOfFields = fieldNames_in.length;
         itemFormat     = format_in.split(",")[0];
         format         = format_in;
         fieldNames     = fieldNames_in.clone();
         header         = String.join(",", fieldNames);
+
+        /*
         logger.logp(
                 Level.INFO,
                 "MetricsSpec",
@@ -65,12 +67,12 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
                 String.format(Locale.US,
                         "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
                         tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
+         */
     }
-
-    public MetricsSpec(String   tableType_in,
-                       String   itemFormat_in,
-                       int      numberOfFields_in,
-                       String[] fieldNames_in) {
+    public        MetricsSpec(String   tableType_in,
+                              String   itemFormat_in,
+                              int      numberOfFields_in,
+                              String[] fieldNames_in) {
         tableType      = tableType_in;
         numberOfFields = numberOfFields_in;
         itemFormat     = itemFormat_in;
@@ -85,10 +87,9 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
                         "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
                         tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
     }
-
-    public MetricsSpec(String tableType_in,
-                       String format_in,
-                       String header_in) {
+    public        MetricsSpec(String tableType_in,
+                              String format_in,
+                              String header_in) {
         tableType      = tableType_in;
         itemFormat     = format_in.split(",")[0];
         format         = format_in;
@@ -103,11 +104,10 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
                         "tableType=%1$s itemFormat=\"%2$s\" #fields=%3$d%nfields=%4$s%nheader=%5$s%nformat=\"%6$s\"%n",
                         tableType,itemFormat,numberOfFields,Arrays.toString(fieldNames),header,format));
     }
-
-    public MetricsSpec(String tableType_in,
-                       String itemFormat_in,
-                       int    numberOfFields_in,
-                       String header_in) {
+    public        MetricsSpec(String tableType_in,
+                              String itemFormat_in,
+                              int    numberOfFields_in,
+                              String header_in) {
         tableType      = tableType_in;
         numberOfFields = numberOfFields_in;
         itemFormat     = itemFormat_in;
@@ -125,23 +125,18 @@ public class MetricsSpec implements Comparable<MetricsSpec> {
          */
 
     }
-
-    public int compareTo(MetricsSpec other) {
+    public int    compareTo(MetricsSpec other) {
         return tableType.compareTo(other.tableType);
     }
-
     public String getTableType() {
         return tableType;
     }
-
     public String getHeader() {
         return header;
     }
-
-    public String getFileName(String id) {
-        return String.format(Locale.US, "%1$s-%2$s.csv", tableType, id);
+    public String getFileName(String fileId) {
+        return String.format(Locale.US, "%1$s.csv", fileId);
     }
-
     public String getFullFileName(String id) {
         return Application.getMetricsDirName() + "/" + getFileName(id);
     }
