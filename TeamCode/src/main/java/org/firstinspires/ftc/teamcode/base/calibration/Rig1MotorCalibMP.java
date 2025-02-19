@@ -101,7 +101,6 @@ public class Rig1MotorCalibMP extends LinearOpMode {
         telemetry.update();
         motorProfileF.writeJSON();
 
-
         telemetry.addData("Starting to write Metrics for Forward Profile", "");
         telemetry.update();
         motorProfileF.writeMetrics();
