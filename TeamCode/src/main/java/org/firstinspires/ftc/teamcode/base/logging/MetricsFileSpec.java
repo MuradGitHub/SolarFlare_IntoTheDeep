@@ -34,75 +34,66 @@ import androidx.annotation.NonNull;
 public class MetricsFileSpec extends MetricsSpec {
     public String fileId;
 
-    public MetricsFileSpec(String   tableType_in,
-                           String   format_in,
-                           String[] fieldNames_in,
-                           String   fileId_in) {
+    public        MetricsFileSpec(String   tableType_in,
+                                  String   format_in,
+                                  String[] fieldNames_in,
+                                  String   fileId_in) {
         super(tableType_in, format_in, fieldNames_in);
         fileId        = fileId_in;
     }
-
-    public MetricsFileSpec(String   tableType_in,
-                           String   itemFormat_in,
-                           int      numberOfFields_in,
-                           String[] fieldNames_in,
-                           String   fileId_in) {
+    public        MetricsFileSpec(String   tableType_in,
+                                  String   itemFormat_in,
+                                  int      numberOfFields_in,
+                                  String[] fieldNames_in,
+                                  String   fileId_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
         fileId        = fileId_in;
     }
-
-    public MetricsFileSpec(String   tableType_in,
-                           String   format_in,
-                           String[] fieldNames_in) {
+    public        MetricsFileSpec(String   tableType_in,
+                                  String   format_in,
+                                  String[] fieldNames_in) {
         super(tableType_in, format_in, fieldNames_in);
         fileId        = null;
     }
-
-    public MetricsFileSpec(String   tableType_in,
-                           String   itemFormat_in,
-                           int      numberOfFields_in,
-                           String[] fieldNames_in) {
+    public        MetricsFileSpec(String   tableType_in,
+                                  String   itemFormat_in,
+                                  int      numberOfFields_in,
+                                  String[] fieldNames_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, fieldNames_in);
         fileId        = null;
     }
-
-    public MetricsFileSpec(String tableType_in,
-                           String format_in,
-                           String header_in,
-                           String fileId_in) {
+    public        MetricsFileSpec(String tableType_in,
+                                  String format_in,
+                                  String header_in,
+                                  String fileId_in) {
         super(tableType_in, format_in, header_in);
         fileId        = fileId_in;
     }
-
-    public MetricsFileSpec(String tableType_in,
-                           String itemFormat_in,
-                           int    numberOfFields_in,
-                           String header_in,
-                           String fileId_in) {
+    public        MetricsFileSpec(String tableType_in,
+                                  String itemFormat_in,
+                                  int    numberOfFields_in,
+                                  String header_in,
+                                  String fileId_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
         fileId        = fileId_in;
     }
-
-    public MetricsFileSpec(String tableType_in,
-                           String format_in,
-                           String header_in) {
+    public        MetricsFileSpec(String tableType_in,
+                                  String format_in,
+                                  String header_in) {
         super(tableType_in, format_in, header_in);
         fileId        = null;
     }
-
-    public MetricsFileSpec(String tableType_in,
-                           String itemFormat_in,
-                           int    numberOfFields_in,
-                           String header_in) {
+    public        MetricsFileSpec(String tableType_in,
+                                  String itemFormat_in,
+                                  int    numberOfFields_in,
+                                  String header_in) {
         super(tableType_in, itemFormat_in, numberOfFields_in, header_in);
         fileId        = null;
     }
-
     public String getMetricsFileId() {
         return fileId;
     }
-
-    public void setMetricsFileId(String fileId_in) {
+    public void   setMetricsFileId(String fileId_in) {
         fileId = fileId_in;
     }
 

@@ -36,18 +36,17 @@ public abstract class MetricsDataPoint {
     public static String   format     = null;
     public static String[] fieldNames = null;
 
-    public static String          getTableType() {
+    public static   String          getTableType() {
         return tableType;
     }
-    public static String          getFormat() {
+    public static   String          getFormat() {
         return format;
     }
-    public static String[]        getFieldNames() {
+    public static   String[]        getFieldNames() {
         return fieldNames;
     }
-    public static MetricsFileSpec makeMetricsFileSpec(String metricsFileId) {
+    public static   MetricsFileSpec makeMetricsFileSpec(String metricsFileId) {
         return new MetricsFileSpec(tableType, format, fieldNames, tableType + "-" + metricsFileId);
     }
-
-    public abstract void writeMetrics(Formatter formatter);
+    public abstract void            writeMetrics(Formatter formatter);
 }
