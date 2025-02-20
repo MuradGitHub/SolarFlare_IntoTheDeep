@@ -31,9 +31,9 @@
         },
         "feedback": {
           "PID": {
-            "Kp": 0.005,
+            "Kp": 0.015,
             "Ki": 0.0,
-            "Kd": 0.0003,
+            "Kd": 0.0,
             "ErrLookback": 10,
             "DerLookback": 5
           }

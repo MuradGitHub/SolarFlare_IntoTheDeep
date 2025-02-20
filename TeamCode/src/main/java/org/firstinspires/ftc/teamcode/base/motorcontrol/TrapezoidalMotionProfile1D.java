@@ -316,6 +316,9 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
             return (int) round(Pi + dist);
         }
     }
+    public    double    getEndTime() {
+        return Tt;
+    }
     public    String    getMetricsFileId() {
         return String.format(Locale.US,"%1$.2f-%2$.2f-%3$.2f-%4$.2f-%5$.2f-",Pi,Vi,Vmax,Amax,Dmax);
     }

@@ -52,20 +52,21 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
                 "%1$s,%2$s,%3$d,%4$b,%5$b,%6$b,%7$.3f,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f,%13$.3f," +
-                        "%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,%21$d,%22$d," +
-                        "%23$d,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,%30$.5f,%31$.5f%n";
+                        "%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,%21$.3f,%22$d,%23$d," +
+                        "%24$d,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,%30$.5f,%31$.5f,%32$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "ProfileId",       "Direction",         "PosTol",          "isBusy",
-                "isTargetReached", "isStrategyStopped",
-                "RUE.Kp",          "RUE.Ki",            "RUE.Kd",          "RUE.Kf",
-                "RTP.Kp",          "RTP.Ki",            "RTP.Kd",          "RTP.Kf",
-                "Time",
-                "TimePExtract",    "TimeVextract",      "TimeCExtract",    "TimeOtherExtract", "TimeCycle",
-                "Position",        "UltimateTarget",    "ImmediateTarget",
-                "Power",           "Velocity",          "Vavg",
-                "A",               "Aavg",              "ApredFun",        "ApredLut",
-                "C"
+                "ProfileId",        "Direction",         "PosTol",          "isBusy",   // 1-4
+                "isTargetReached",  "isStrategyStopped",                                // 5-6
+                "RUE.Kp",           "RUE.Ki",            "RUE.Kd",          "RUE.Kf",   // 7-10
+                "RTP.Kp",           "RTP.Ki",            "RTP.Kd",          "RTP.Kf",   // 11-14
+                "Time",             "TimeEndMP",                                        // 15-16
+                "TimePExtract",     "TimeVextract",      "TimeCExtract",                // 17-19
+                "TimeOtherExtract", "TimeCycle",                                        // 20-21
+                "Position",         "UltimateTarget",    "ImmediateTarget",             // 22-24
+                "Power",            "Velocity",          "Vavg",                        // 25-27
+                "A",                "Aavg",              "ApredFun",        "ApredLut", // 28-31
+                "C"                                                                     // 32
         };
     }
 
@@ -76,6 +77,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        boolean          isTargetReached;
     public        boolean          isStrategyStopped;
     public        double           t;
+    public        double           tEndMP;
     public        double           tPextract;
     public        double           tVextract;
     public        double           tCextract;
@@ -191,7 +193,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                 isTargetReached, isStrategyStopped,
                 pidfRUE.p,       pidfRUE.i,         pidfRUE.d,       pidfRUE.f,
                 pidfRTP.p,       pidfRTP.i,         pidfRTP.d,       pidfRTP.f,
-                t,               tPextract,         tVextract,       tCextract, tOtherExtract, tCycle,
+                t,               tEndMP,
+                tPextract,       tVextract,         tCextract,       tOtherExtract, tCycle,
                 P,               ultimateTarget,    immediateTarget, power,
                 V,               Vavg,              A,               Aavg,
                 ApredFun,        ApredLut,          C
@@ -210,6 +213,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         sb.append("  isTargetReached=")  .append(isTargetReached)  .append("\n");
         sb.append("  isStrategyStopped=").append(isStrategyStopped).append("\n");
         sb.append("  t=")                .append(t)                .append("\n");
+        sb.append("  tEndMP=")           .append(tEndMP)           .append("\n");
         sb.append("  tPextract=")        .append(tPextract)        .append("\n");
         sb.append("  tVextract=")        .append(tVextract)        .append("\n");
         sb.append("  tCextract=")        .append(tCextract)        .append("\n");

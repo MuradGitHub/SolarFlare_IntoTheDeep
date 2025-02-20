@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 
 import java.util.Locale;
@@ -87,12 +88,18 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         fbc.init(timer);
     }
 
+    // Data
+    public void   updateProfileDataPoint(MotorProfileDataPoint p) {
+        super.updateProfileDataPoint(p);
+
+        p.tEndMP    = motionProfile.getEndTime();
+    }
+
     @Override
     public String getDescriptiveId() {
         return String.format(
                 Locale.US,
-                "MotionProfileMP:motor=%1$s MP=%2$s FBC=%3$s",
-                motorConfig.motorEnum.name(),
+                "MotionProfileMP-MP=%1$s,FBC=%2$s",
                 motionProfile.motionProfileEnum.name(),
                 fbc.FBCEnum.name());
     }

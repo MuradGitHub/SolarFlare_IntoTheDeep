@@ -258,11 +258,9 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
     public static String getJSONFileName(MotorEnum motorEnum) {
         return MotorCalibResult.class.getSimpleName() + "-" + getJSONFileId(motorEnum) + ".json";
     }
-
     public static String getJSONFileId(MotorEnum motorEnum) {
         return String.format(Locale.US, "%1$s", motorEnum.name());
     }
-
     public String getJSONFileId() {
         return getJSONFileId(motorEnum);
     }

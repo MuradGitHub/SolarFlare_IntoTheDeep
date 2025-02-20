@@ -36,6 +36,7 @@ import static java.lang.Math.max;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import androidx.annotation.NonNull;
@@ -425,12 +426,21 @@ public class MotorProfile
     }
 
     public        String  getDescriptiveId() {
-        return String.format(
+        String descriptiveId = String.format(
                 Locale.US,
                 "%1$s-%2$s-%3$s",
                 motorEnum.name(),
                 calibDirection.name(),
                 profilePowerStrategy.getDescriptiveId());
+
+        logger.logp(
+                Level.INFO,
+                "MotorProfile",
+                "getDescriptiveId",
+                String.format(Locale.US, "descriptiveId=%1$s", descriptiveId)
+        );
+
+        return descriptiveId;
     }
     public        String  getJSONFileId() {
         return getDescriptiveId();
