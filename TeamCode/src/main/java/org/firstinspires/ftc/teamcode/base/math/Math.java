@@ -44,7 +44,14 @@ import java.util.function.BiPredicate;
 public class Math {
     public static double NUMERICAL_TOLERANCE_RATIO = 1E-3;
 
-    public static ComplexNumberPair solveQuadraticEquation(double a, double b, double c) {
+    /**
+     * Solve a quadratic equation aX^2 + bX + c = 0
+     * @param a: a coefficient
+     * @param b: b coefficiennt
+     * @param c: c coefficient
+     * @return The two complex roots solving the quadratic equation
+     */
+    public static     ComplexNumberPair solveQuadraticEquation(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c;
         if (discriminant > 0) {
             double root1 = (-b + sqrt(discriminant)) / (2 * a);
@@ -71,32 +78,55 @@ public class Math {
             );
         }
     }
-
-    public static boolean     approxEquals(double n1, double n2, double tolerance) {
+    /**
+     * Determine whether two numbers are approximately equal
+     * @param n1: First number
+     * @param n2: Second number
+     * @param tolerance: the relative tolerance of differences to establish approximate equality
+     * @return True if n1 approximately equals n2
+     */
+    public static     boolean           approxEquals(double n1, double n2, double tolerance) {
         if(n1 == 0.0 && n2 == 0.0)
             return true;
         double errorRatio = abs(n1-n2)/(abs(n1)+abs(n2));
         return errorRatio < tolerance;
     }
-
-    public static boolean     approxEquals(double n1, double n2) {
+    /**
+     * Determine whether two numbers are approximately equal
+     * @param n1: First number
+     * @param n2: Second number
+     * @return True if n1 approximately equals n2
+     */
+    public static     boolean           approxEquals(double n1, double n2) {
         return approxEquals(n1, n2, NUMERICAL_TOLERANCE_RATIO);
     }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    public static boolean     isSteadyState(double[] data, int eIdx, int lookback, double tolerance) {
+    /**
+     * Determine whether the time series is at steady state at a certain index
+     * @param data: Time series
+     * @param eIdx: Index at which the time series might be in steady state
+     * @param lookback: Number of indices looking back to determine steady state
+     * @return True if the time series is at steady state at eIdx
+     */
+    public static     boolean           isSteadyState(double[] data, int eIdx, int lookback, double tolerance) {
         return isSteadyStatePredicate(
                 data,
                 eIdx,
                 lookback,
                 (Double n1, Double n2) -> approxEquals(n1, n2, tolerance));
     }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    public static boolean     isSteadyStatePredicate(double[] data,
-                                                     int      eIdx,
-                                                     int      lookback,
-                                                     BiPredicate<Double, Double> predicate) {
+    /**
+     * Determine whether the time series is at steady state at a certain index
+     * @param data: Time series
+     * @param eIdx: Index at which the time series might be in steady state
+     * @param lookback: Number of indices looking back to determine steady state
+     * @param predicate: The predicate determining the similarly between data points in the time
+     *                 series
+     * @return True if the time series is at steady state at eIdx
+     */
+    public static     boolean           isSteadyStatePredicate(double[]                    data,
+                                                               int                         eIdx,
+                                                               int                         lookback,
+                                                               BiPredicate<Double, Double> predicate) {
         int    sIdx        = eIdx-lookback+1;
         /// need at least lookback data points to determine steady state
         if(sIdx<0)
@@ -109,11 +139,20 @@ public class Math {
         }
         return true;
     }
-
-    public static <T> boolean isSteadyStatePredicate(ArrayList<T>      data,
-                                                     int               eIdx,
-                                                     int               lookback,
-                                                     BiPredicate<T, T> predicate) {
+    /**
+     * Determine whether the time series is at steady state at a certain index
+     * @param data: Time series
+     * @param eIdx: Index at which the time series might be in steady state
+     * @param lookback: Number of indices looking back to determine steady state
+     * @param predicate: The predicate determining the similarly between data points in the time
+     *                 series
+     * @return True if the time series is at steady state at eIdx
+     * @param <T> The type of time series data
+     */
+    public static <T> boolean           isSteadyStatePredicate(ArrayList<T>      data,
+                                                               int               eIdx,
+                                                               int               lookback,
+                                                               BiPredicate<T, T> predicate) {
         int    sIdx        = eIdx-lookback+1;
         /// need at least lookback data points to determine steady state
         if(sIdx<0)
@@ -126,29 +165,40 @@ public class Math {
         }
         return true;
     }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    public static Integer     getSteadyStateStartPredicate(double[]                    data,
-                                                           int                         lookback,
-                                                           BiPredicate<Double, Double> predicate) {
+    /**
+     * Get the index of the start of steady state in the time series
+     * @param data: Time series
+     * @param lookback: Number of indices looking back to determine steady state
+     * @param predicate: The predicate determining the similarity between data points in the time
+     *                 series
+     * @return The index of the start of steady state data in the time series
+     */
+    public static     Integer           getSteadyStateStartPredicate(double[]                    data,
+                                                                     int                         lookback,
+                                                                     BiPredicate<Double, Double> predicate) {
         for(int idx=lookback-1; idx<data.length; idx++)
             if(isSteadyStatePredicate(data, idx, lookback, predicate))
                 return idx;
 
         return null;
     }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    public static <T> Integer getSteadyStateStartPredicate(ArrayList<T>      data,
-                                                           int               lookback,
-                                                           BiPredicate<T, T> predicate) {
+    /**
+     * Get the index of the start of steady state in the time series
+     * @param data: Time series
+     * @param lookback: Number of indices looking back to determine steady state
+     * @param predicate: The predicate determining similarity between data points in the time series
+     * @return The index of the start of steady state data in the time series
+     * @param <T> The type of time series data
+     */
+    public static <T> Integer           getSteadyStateStartPredicate(ArrayList<T>      data,
+                                                                      int               lookback,
+                                                                      BiPredicate<T, T> predicate) {
         for(int idx=lookback-1; idx<data.size(); idx++)
             if(isSteadyStatePredicate(data, idx, lookback, predicate))
                 return idx;
 
         return null;
     }
-
     /**
      * Returns the index at which target can be inserted while preserving the order of the
      * array values
@@ -157,7 +207,7 @@ public class Math {
      * @param values: A sorted array of values
      * @return insertion index. The index of the first element greater than target in values
      */
-    public static int         findInsertionIndex(double target, double[] values) {
+    public static     int               findInsertionIndex(double target, double[] values) {
         int low  = 0;
         int high = values.length - 1;
 
@@ -175,16 +225,30 @@ public class Math {
 
         return low; // Target not found, return the insertion index
     }
-
-    public static double      regularizeDown(double n, int order) {
+    /**
+     * Remove significant figures at the level of 10^order specified and return the floor
+     * @param n: The number
+     * @param order: 10^order
+     * @return The number of with number of significant figures reduced
+     */
+    public static     double            regularizeDown(double n, int order) {
         return floor(n / pow(10,order)) * pow(10,order);
     }
-
-    public static double      regularizeUp(double n, int order) {
+    /**
+     * Remove significant figures at the level of 10^order specified and return the ceiling
+     * @param n: The number
+     * @param order: 10^order
+     * @return The number with number of significant figures reduced
+     */
+    public static     double            regularizeUp(double n, int order) {
         return ceil(n / pow(10,order)) * pow(10,order);
     }
 
-    public static void         main(String[] args) {
+    /**
+     * Testing main
+     * @param args: Not used
+     */
+    public static void                  main(String[] args) {
         /// findInsertionPoint
         double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
         String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
@@ -201,6 +265,9 @@ public class Math {
         /// regularizeDown
         format              = "Regularize n=%1$.2f order=%2$.0f result=%3$.3f match=%4$b%n";
         double[][] casesD   = new double[][] {
+                {124.3,  1, regularizeDown(124.3,  1), 120},
+                {124.3,  2, regularizeDown(124.3,  2), 100},
+                {124.3,  3, regularizeDown(124.3,  3), 0},
                 {1247.3, 1, regularizeDown(1247.3, 1), 1240},
                 {1247.3, 2, regularizeDown(1247.3, 2), 1200},
                 {1247.3, 3, regularizeDown(1247.3, 3), 1000},
