@@ -52,7 +52,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -97,7 +97,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -142,7 +142,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -187,7 +187,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -232,7 +232,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -277,7 +277,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
@@ -322,7 +322,7 @@
         "targetBuffer": 100,
         "minDistance": 200,
         "positionTolerance": 2,
-        "velocityResolution": 40,
+        "velocityResolution": 41,
         "velocityTolerance": 0.020,
         "maxProfileTime": 10000
       }
