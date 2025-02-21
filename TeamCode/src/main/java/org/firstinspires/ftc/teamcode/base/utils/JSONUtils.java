@@ -55,7 +55,7 @@ String jsonString = gson.toJson(object);
  */
 
 public class JSONUtils {
-    public static <T> T parseJSON(Reader input, Class<T> contentsClass) {
+    public static <T>                      T    parseJSON(Reader input, Class<T> contentsClass) {
         Gson gson              = new GsonBuilder()
                 .serializeSpecialFloatingPointValues()
                 .create();
