@@ -242,14 +242,13 @@ public class Math {
         // magnitude to retain
         double magnitude = pow(10, power10);
         double nFloor    = floor(n / magnitude);
-        double nReg      = nFloor * magnitude;
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
                 n, order, power10, magnitude, nFloor, nReg);
         */
 
-        return nReg;
+        return nFloor * magnitude;
     }
     /**
      * Restrict the number of significant figures in a number to the level of 10^order specified
@@ -266,15 +265,14 @@ public class Math {
 
         // magnitude to retain
         double magnitude = pow(10, power10);
-        double nFloor    = floor(n / magnitude);
-        double nReg      = nFloor * magnitude;
+        double nRound    = round(n / magnitude);
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
                 n, order, power10, magnitude, nFloor, nReg);
         */
 
-        return nReg;
+        return nRound * magnitude;
     }
     /**
      * Restrict the number of significant figures in a number to the level of 10^order specified
@@ -292,15 +290,14 @@ public class Math {
 
         // magnitude to retain
         double magnitude = pow(10, power10);
-        double nFloor    = ceil(n / magnitude);
-        double nReg      = nFloor * magnitude;
+        double nCeil     = ceil(n / magnitude);
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
                 n, order, power10, magnitude, nFloor, nReg);
         */
 
-        return nReg;
+        return nCeil * magnitude;
     }
 
     /**
