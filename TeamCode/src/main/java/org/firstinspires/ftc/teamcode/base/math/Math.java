@@ -32,7 +32,8 @@ package org.firstinspires.ftc.teamcode.base.math;
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static java.lang.Math.ceil;
-import static java.lang.Math.max;
+import static java.lang.Math.log10;
+import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.pow;
 
@@ -190,7 +191,7 @@ public class Math {
      * @return The index of the start of steady state data in the time series
      * @param <T> The type of time series data
      */
-    public static <T> Integer           getSteadyStateStartPredicate(ArrayList<T>      data,
+    public static <T> Integer           getSteadyStateStartPredicate(ArrayList<T>       data,
                                                                       int               lookback,
                                                                       BiPredicate<T, T> predicate) {
         for(int idx=lookback-1; idx<data.size(); idx++)
@@ -226,22 +227,61 @@ public class Math {
         return low; // Target not found, return the insertion index
     }
     /**
-     * Remove significant figures at the level of 10^order specified and return the floor
+     * Restrict the number of significant figures in a number to the level of 10^order specified
+     * and return the floor
      * @param n: The number
-     * @param order: 10^order
-     * @return The number of with number of significant figures reduced
+     * @param order: 10^order. Magnitude of the units to retain as > 0 powers of 10
+     * @return The number of with number of significant figures 'order' retained then floored
      */
     public static     double            regularizeDown(double n, int order) {
-        return floor(n / pow(10,order)) * pow(10,order);
+        if(order <= 0.0)
+            return n;
+
+        int power10      = (int) log10(abs(n)) - order + 1;
+
+        if(power10 < 0)
+            return n;
+
+        // magnitude to retain
+        double magnitude = pow(10, power10);
+        double nFloor    = floor(n / magnitude);
+        double nReg      = nFloor * magnitude;
+
+        /*
+        System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
+                n, order, power10, magnitude, nFloor, nReg);
+        */
+
+        return nReg;
     }
     /**
-     * Remove significant figures at the level of 10^order specified and return the ceiling
+     * Restrict the number of significant figures in a number to the level of 10^order specified
+     * and return the ceiling
      * @param n: The number
-     * @param order: 10^order
-     * @return The number with number of significant figures reduced
+     * @param order: 10^order. Magnitude of the units to retain as > 0 powers of 10
+     * @return The number of with number of significant figures 'order' retained then the ceiling
+     * is taken
      */
     public static     double            regularizeUp(double n, int order) {
-        return ceil(n / pow(10,order)) * pow(10,order);
+        if(order <= 0.0)
+            return n;
+
+        int power10      = (int) log10(abs(n)) - order + 1;
+
+        if(power10 < 0)
+            return n;
+
+        // magnitude to retain
+        double magnitude = pow(10, power10);
+        double nFloor    = ceil(n / magnitude);
+        double nReg      = nFloor * magnitude;
+
+        /*
+        System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
+                n, order, power10, magnitude, nFloor, nReg);
+        */
+
+        return nReg;
     }
 
     /**
@@ -262,21 +302,39 @@ public class Math {
         for(int[] c: casesI)
             System.out.printf(Locale.US, format, c[0], c[1], c[2], c[1]==c[2]);
 
+        System.out.println("log10(2.4)=" + log10(2.4));
+
         /// regularizeDown
-        format              = "Regularize n=%1$.2f order=%2$.0f result=%3$.3f match=%4$b%n";
-        double[][] casesD   = new double[][] {
-                {124.3,  1, regularizeDown(124.3,  1), 120},
-                {124.3,  2, regularizeDown(124.3,  2), 100},
-                {124.3,  3, regularizeDown(124.3,  3), 0},
-                {1247.3, 1, regularizeDown(1247.3, 1), 1240},
-                {1247.3, 2, regularizeDown(1247.3, 2), 1200},
-                {1247.3, 3, regularizeDown(1247.3, 3), 1000},
-                {1247.3, 1, regularizeUp  (1247.3, 1), 1250},
-                {1247.3, 2, regularizeUp  (1247.3, 2), 1300},
-                {1247.3, 3, regularizeUp  (1247.3, 3), 2000}
+        format              = "Regularize Down n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
+        double[][] casesD   = new double[][]{
+                {   2.3, 0, regularizeDown(   2.3, 0),    2.3},
+                {   2.3, 1, regularizeDown(   2.3, 1),    2.0},
+                {   2.3, 2, regularizeDown(   2.3, 2),    2.3},
+                {   2.3, 3, regularizeDown(   2.3, 3),    2.3},
+                { 124.3, 0, regularizeDown( 124.3, 0),  124.3},
+                { 124.3, 1, regularizeDown( 124.3, 1),  100.0},
+                { 124.3, 2, regularizeDown( 124.3, 2),  120.0},
+                { 124.3, 3, regularizeDown( 124.3, 3),  124.0},
+                {1247.3, 1, regularizeDown(1247.3, 1), 1000.0},
+                {1247.3, 2, regularizeDown(1247.3, 2), 1200.0},
+                {1247.3, 3, regularizeDown(1247.3, 3), 1240.0},
         };
         for(var c: casesD) {
-            System.out.printf(Locale.US, format, c[0], c[1], c[2], c[2]==c[3]);
+            System.out.printf(Locale.US, format, c[0], c[1], c[2], approxEquals(c[2],c[3]));
+        }
+
+        format              = "Regularize Up   n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
+        double[][] casesU   = new double[][]{
+                { 124.3, 0, regularizeUp  ( 124.3,0),  124.3},
+                { 124.3, 1, regularizeUp  ( 124.3,1),  200.0},
+                { 124.3, 2, regularizeUp  ( 124.3,2),  130.0},
+                { 124.3, 3, regularizeUp  ( 124.3,3),  125.0},
+                {1247.3, 1, regularizeUp  (1247.3,1), 2000.0},
+                {1247.3, 2, regularizeUp  (1247.3,2), 1300.0},
+                {1247.3, 3, regularizeUp  (1247.3,3), 1250.0}
+        };
+        for(var c: casesU) {
+            System.out.printf(Locale.US, format, c[0], c[1], c[2], approxEquals(c[2],c[3]));
         }
     }
 }
