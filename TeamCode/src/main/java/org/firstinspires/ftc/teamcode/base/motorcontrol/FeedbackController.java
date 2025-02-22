@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
+
 public abstract class FeedbackController {
     FeedbackControllerEnum FBCEnum;
     public                 FeedbackController(FeedbackControllerEnum FBCEnum_in) {
@@ -38,4 +40,5 @@ public abstract class FeedbackController {
     }
     public abstract void   init(ElapsedTime timer);
     public abstract double getPower(int error);
+    public abstract void   updateProfileDataPoint(MotorProfileDataPoint p);
 }

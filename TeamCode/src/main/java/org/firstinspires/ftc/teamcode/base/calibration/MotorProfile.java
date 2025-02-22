@@ -181,8 +181,10 @@ public class MotorProfile
 
     // Calculations
     protected     void    gotoStart() {
+        /*
         Application.telemetry.addData("Entering gotoStart", startPowerStrategy.toString());
         Application.telemetry.update();
+         */
 
         String msg;
         String format;
@@ -199,10 +201,6 @@ public class MotorProfile
         MotorProfileDataPoint pp;
 
         startPowerStrategy.init(timer, motor.getCurrentPosition(), Pi);
-
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor.setMode(RunMode.RUN_TO_POSITION);
-        motor.setTargetPosition(Pi);
 
         do {
             startPowerStrategy.applyPower(Pi);
@@ -367,6 +365,12 @@ public class MotorProfile
     }
 
     // Data access
+    public        double  getNominalPower() {
+        return profilePowerStrategy.getNominalPower();
+    }
+    public        double  getSignedNominalPower() {
+        return profilePowerStrategy.getSignedNominalPower();
+    }
     public        boolean hasReachedTarget() {
         return isTargetReached;
     }
@@ -376,6 +380,9 @@ public class MotorProfile
      */
     public        Double  getTimeToTarget() {
         return hasReachedTarget()? getTargetDataPoint().t : null;
+    }
+    public        boolean hasMoved() {
+        return getFirstDataPoint().P != getLastDataPoint().P;
     }
     public        boolean hasSteadyStateV() {
         return ssIdxVavg != null;
@@ -433,12 +440,14 @@ public class MotorProfile
                 calibDirection.name(),
                 profilePowerStrategy.getDescriptiveId());
 
+        /*
         logger.logp(
                 Level.INFO,
                 "MotorProfile",
                 "getDescriptiveId",
                 String.format(Locale.US, "descriptiveId=%1$s", descriptiveId)
         );
+        */
 
         return descriptiveId;
     }

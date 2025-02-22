@@ -41,39 +41,38 @@ public class MotorProfiles implements Validatable {
     public  transient final MotorConfig          motorConfig;
     private transient final Logger               logger;
     private           final int                  powerResolution;
-    public            final double               minPower;
-    public            final double               maxPower;
-    private           final double               dP;
     public                  int                  Pi;
     public                  int                  Ptarget;
     public            final MotorProfileConstP[] motorProfilesF;
     public            final MotorProfileConstP[] motorProfilesR;
 
-    public MotorProfiles(MotorConfig motorConfig_in) {
-        logger               = RobotLogger.getInstance().getConfigLogger();
-        motorConfig          = motorConfig_in;
-        powerResolution      = motorConfig.calibParams.powerResolution;
-        minPower             = motorConfig.calibParams.minPower;
-        maxPower             = motorConfig.calibParams.maxPower;
-        dP                   = (maxPower-minPower)/(powerResolution-1);
-        motorProfilesF = new MotorProfileConstP[powerResolution];
-        motorProfilesR = new MotorProfileConstP[powerResolution];
+    public                  MotorProfiles(MotorConfig motorConfig_in) {
+        logger                = RobotLogger.getInstance().getConfigLogger();
+        motorConfig           = motorConfig_in;
+        powerResolution       = motorConfig.calibParams.powerResolution;
+
+        motorProfilesF        = new MotorProfileConstP[powerResolution];
+        motorProfilesR        = new MotorProfileConstP[powerResolution];
+
+        double minPower       = motorConfig.calibParams.minPower;
+        double maxPower       = motorConfig.calibParams.maxPower;
+        double dP             = (maxPower-minPower)/(powerResolution-1);
         for(int i=0; i<powerResolution; i++) {
             double power      = minPower + i*dP;
             motorProfilesF[i] = new MotorProfileConstP(motorConfig, power);
             motorProfilesR[i] = new MotorProfileConstP(motorConfig, power);
         }
     }
-
-    public void calcProfiles(int Pi_in, int Ptarget_in) {
+    public void             calcProfiles(int Pi_in, int Ptarget_in) {
         Pi                   = Pi_in;
         Ptarget              = Ptarget_in;
         for(int pIdx=0; pIdx<powerResolution; pIdx++) {
-            double power     = motorProfilesF[pIdx].power;
-            String logMsg    = "Profile=" + pIdx + " power=" + power + " Pi=" + Pi + " Ptarget=" + Ptarget;
+            double power     = motorProfilesF[pIdx].getNominalPower();
+            String logMsg    = "Profile=" + pIdx + " signedNominalPower=" + power + " Pi=" + Pi + " Ptarget=" + Ptarget;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
             motorProfilesF[pIdx].calcProfile(Pi,      Ptarget);
-            logMsg           = "Profile=" + pIdx + " power=" + power + " Pi=" + Ptarget + " Ptarget=" + Pi;
+            power            = motorProfilesR[pIdx].getNominalPower();
+            logMsg           = "Profile=" + pIdx + " signedNominalPower=" + power + " Pi=" + Ptarget + " Ptarget=" + Pi;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
             motorProfilesR[pIdx].calcProfile(Ptarget, Pi);
         }
@@ -86,7 +85,6 @@ public class MotorProfiles implements Validatable {
         }
         return data;
     }
-
     public ArrayList<MotorProfileDataPoint> getDataReverse() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesR) {
@@ -94,7 +92,6 @@ public class MotorProfiles implements Validatable {
         }
         return data;
     }
-
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataForward() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesF) {
@@ -105,7 +102,6 @@ public class MotorProfiles implements Validatable {
         }
         return data;
     }
-
     public ArrayList<MotorProfileDataPoint> getSteadyStateDataReverse() {
         ArrayList<MotorProfileDataPoint> data = new ArrayList<>();
         for (var profile : motorProfilesR) {
@@ -117,34 +113,42 @@ public class MotorProfiles implements Validatable {
         return data;
     }
 
+    public Double           getMinMovingPower(MotorProfileConstP[] motorProfiles) {
+        Double minMovePower  = null;
+        for(var profile: motorProfiles) {
+            if(profile.hasMoved())
+                return minMovePower;
+            else
+                minMovePower = profile.getSignedNominalPower();
+        }
+        return minMovePower;
+    }
     public MotorCalibResult getCalibResult(boolean writeMetrics, boolean writeMetricsLUT) {
-        MotorCalibResult result = new MotorCalibResult(
+        return new MotorCalibResult(
                 motorConfig,
                 getSteadyStateDataForward(),
                 getDataForward(),
                 getSteadyStateDataReverse(),
                 getDataReverse(),
+                getMinMovingPower(motorProfilesF),
+                getMinMovingPower(motorProfilesR),
                 writeMetrics,
                 writeMetricsLUT
         );
-        return result;
     }
-
-    public void writeMetrics() {
+    public void             writeMetrics() {
         for(int pIdx=0; pIdx<powerResolution; pIdx++) {
             motorProfilesF[pIdx].writeMetrics();
             motorProfilesR[pIdx].writeMetrics();
         }
     }
-
-    public void writeJSONs() {
+    public void             writeJSONs() {
         for(int pIdx=0; pIdx<powerResolution; pIdx++) {
             motorProfilesF[pIdx].writeJSON();
             motorProfilesR[pIdx].writeJSON();
         }
     }
-
-    public boolean isValid() {
+    public boolean          isValid() {
         return true;
     }
 }

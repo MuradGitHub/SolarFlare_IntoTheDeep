@@ -45,6 +45,9 @@ import org.firstinspires.ftc.teamcode.base.logging.DescriptiveIdProvider;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.utils.HashMapUtils;
 
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
@@ -64,7 +67,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
     public           Direction   direction;
     public           double      nominalPower;
     public           double      signPower;
-    public           double      power;
+    public           double      curPower;
     public           int         posTol;
     public           boolean     isTargetReached   = false;
     public           boolean     isStopped         = false;
@@ -75,6 +78,12 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         motor           = motorConfig.motor;
         posTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "posTol", 0);
         nominalPower    = nominalPower_in;
+
+        logger.logp(
+                Level.INFO,
+                "MotorPowerStrategy",
+                "()",
+                String.format(Locale.US,"postTol=%1$d nominalPower=%2$.3f",posTol,nominalPower));
     }
     public          void    init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
         timer           = timer_in;
@@ -87,6 +96,26 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         double absPower = min(abs(power_in),abs(motorConfig.maxPower));
         return signum(power_in) * absPower;
     }
+    public          double  getNominalPower() {
+        return nominalPower;
+    }
+    public          double  getSignedNominalPower() {
+        double signedNominalPower = signPower * abs(nominalPower);
+        logger.logp(
+                Level.INFO,
+                "MotorPowerStrategy",
+                "getSignedNominalPower",
+                String.format(
+                        Locale.US,
+                        "signedNominalPower=%1$.3f%nStackTrace%2$s",
+                        signedNominalPower,
+                        Arrays.toString(Thread.currentThread().getStackTrace())));
+
+        return signedNominalPower;
+    }
+    public          double  getCurPower() {
+        return curPower;
+    }
     public          boolean isTargetReached() {
         return isTargetReached;
     }
@@ -94,7 +123,8 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         return isStopped;
     }
     public          void    setDirection(int Pi, int Pf) {
-        direction = Pi < Pf ? Direction.FORWARD : Direction.REVERSE;
+        direction           = Pi < Pf ? Direction.FORWARD : Direction.REVERSE;
+        signPower           = direction == Direction.FORWARD ? 1.0 : -1.0;
     }
     public abstract void    applyPower(int target);
     public          void    updateProfileDataPoint(MotorProfileDataPoint p) {
@@ -102,7 +132,6 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         p.isStrategyStopped = isStopped;
         p.ultimateTarget    = ultimateTarget;
         p.immediateTarget   = immediateTarget;
-        p.power             = power;
     }
     @Override
     @NonNull

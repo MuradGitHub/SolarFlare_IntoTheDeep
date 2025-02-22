@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyConst;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyMP;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyRTP;
 
 public class MotorProfileMP extends MotorProfile {
     MotionProfileEnum      MPEnum;
@@ -49,8 +50,8 @@ public class MotorProfileMP extends MotorProfile {
                                       MotionProfileEnum      MPEnum_in,
                                       FeedbackControllerEnum FBCEnum_in) {
         super(motorConfig,
-                new MotorPowerStrategyConst(motorConfig,1.0),
-                new MotorPowerStrategyMP(motorConfig, MPEnum_in, FBCEnum_in,1.0)
+                new MotorPowerStrategyRTP(motorConfig,1.0),
+                new MotorPowerStrategyMP( motorConfig, MPEnum_in, FBCEnum_in,1.0)
         );
         MPEnum  = MPEnum_in;
         FBCEnum = FBCEnum_in;

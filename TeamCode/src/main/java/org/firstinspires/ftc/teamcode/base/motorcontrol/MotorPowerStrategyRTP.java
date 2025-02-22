@@ -27,52 +27,53 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.calibration;
+package org.firstinspires.ftc.teamcode.base.motorcontrol;
+
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+
+import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyConst;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyRTP;
 
 import java.util.Locale;
 import java.util.logging.Level;
 
-public class MotorProfileConstP extends MotorProfile {
-    /**
-     * Constructor requires information about the motor
-     * @param motorConfig: The configuration of the motor being calibrated
-     */
-    public             MotorProfileConstP(MotorConfig motorConfig, double nominalPower_in) {
-        super(
-                motorConfig,
-                new MotorPowerStrategyRTP(  motorConfig,1.0),
-                new MotorPowerStrategyConst(motorConfig, nominalPower_in));
-
-        ((MotorPowerStrategyConst) profilePowerStrategy).setBreakInc(1.0);
-
+public class MotorPowerStrategyRTP extends MotorPowerStrategyConst {
+    public        MotorPowerStrategyRTP(MotorConfig motorConfig_in,
+                                        double      nominalPower_in) {
+        super(motorConfig_in, nominalPower_in);
         logger.logp(
                 Level.INFO,
-                "MotorProfileConstP",
+                "MotorPowerStrategyRTP",
                 "()",
-                String.format(Locale.US,
-                        "startPower=%1$.3f profilePower=%2$.3f",
-                        startPowerStrategy.getSignedNominalPower(),
-                        profilePowerStrategy.getSignedNominalPower()));
+                String.format(Locale.US,"nominalPower=%1$.3f", nominalPower));
     }
+    public void   init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
+        super.init(timer_in, Pi_in, Ptarget_in);
+
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor.setMode(RunMode.RUN_TO_POSITION);
+        motor.setTargetPosition(ultimateTarget);
+    }
+
     @NonNull
     @Override
-    public String      toString() {
-        var sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append("MotorProfileConstP\n");
-
-        return sb.toString();
-    }
-    public boolean     isValid() {
-        return super.isValid();
-    }
-
-    public static void main(String[] args) {
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MotorPowerStrategyRTP");
+        return super.toString() + sb;
     }
 }

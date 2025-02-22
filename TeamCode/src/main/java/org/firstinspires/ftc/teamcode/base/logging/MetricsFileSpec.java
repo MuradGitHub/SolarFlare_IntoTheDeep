@@ -91,7 +91,7 @@ public class MetricsFileSpec extends MetricsSpec {
         fileId        = null;
     }
     public String getMetricsFileId() {
-        return fileId;
+        return tableType + "-" + (fileId != null ? fileId : "");
     }
     public void   setMetricsFileId(String fileId_in) {
         fileId = fileId_in;

@@ -333,8 +333,8 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
     public    void   addDataPoint(double x, double y, double z) {
         // First find the xIdx-yIdx square where the new data point falls
-        int xIdx2              = findInsertionIndex(x, xValues);
-        int yIdx2              = findInsertionIndex(y, yValues);
+        int xIdx2              = min(findInsertionIndex(x, xValues), xIdxMax);
+        int yIdx2              = min(findInsertionIndex(y, yValues), yIdxMax);
         int xIdx1              = max(xIdx2-1, 0);
         int yIdx1              = max(yIdx2-1, 0);
 

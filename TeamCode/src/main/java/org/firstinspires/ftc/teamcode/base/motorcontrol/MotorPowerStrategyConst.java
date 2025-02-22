@@ -39,37 +39,48 @@ import static java.lang.Math.min;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 
 import java.util.Locale;
+import java.util.logging.Level;
 
 public class MotorPowerStrategyConst extends MotorPowerStrategy {
     public double    brakeInc   = 0.05;
 
     public        MotorPowerStrategyConst(MotorConfig motorConfig_in,
-                                          double      power_in) {
-        super(motorConfig_in, power_in);
+                                          double      nominalPower_in) {
+        super(motorConfig_in, nominalPower_in);
+        logger.logp(
+                Level.INFO,
+                "MotorPowerStrategyConst",
+                "()",
+                String.format(Locale.US,"nominalPower=%1$.3f", nominalPower));
     }
     public String getDescriptiveId() {
         return String.format(Locale.US, "Power=%1$.2f", getSignedNominalPower());
     }
-    public double getSignedNominalPower() {
-        return signPower * abs(nominalPower);
-    }
     @Override
     public void   setDirection(int Pi, int Pf) {
         super.setDirection(Pi, Pf);
-        signPower               = direction == Direction.FORWARD ? 1.0 : -1.0;
-        power                   = signPower * abs(nominalPower);
+        curPower                = getSignedNominalPower();
+    }
+    @Override
+    public void   init(ElapsedTime timer, int Pi, int Ptarget) {
+        super.init(timer, Pi, Ptarget);
+
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     @Override
     public void   applyPower(int target) {
         if(isStopped) {
             // return exactly 0.0 power
-            power = 0.0;
-            motor.setPower(power);
+            curPower = 0.0;
+            motor.setPower(curPower);
         } else {
             int P               = motor.getCurrentPosition();
 
@@ -79,13 +90,13 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
 
             if(isTargetReached) {
                 // start reducing power
-                power           = signPower * max(abs(power) - brakeInc, 0.0);
-                motor.setPower(power);
-                if (approxEquals(power, 0.0)) {
+                curPower        = signPower * max(abs(curPower) - abs(brakeInc), 0.0);
+                motor.setPower(curPower);
+                if (approxEquals(curPower, 0.0)) {
                     isStopped   = true;
                 }
             } else {
-                motor.setPower(power);
+                motor.setPower(curPower);
             }
         }
     }
@@ -99,7 +110,7 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
         sb.append("MotorPowerStrategyConst\n");
         sb.append("  nominalPower=").append(nominalPower).append("\n");
         sb.append("  signPower=")   .append(signPower)   .append("\n");
-        sb.append("  power=")       .append(power)       .append("\n");
+        sb.append("  curPower=")    .append(curPower)    .append("\n");
         sb.append("  brakeInc=")    .append(brakeInc)    .append("\n");
 
         return super.toString() + sb;

@@ -33,6 +33,8 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
+
 import java.util.Arrays;
 
 public class PIDController extends FeedbackController {
@@ -44,8 +46,11 @@ public class PIDController extends FeedbackController {
     public           double      prevTime;
     public           double[]    ErrHistory;
     public           double[]    DerHistory;
-    public           int         EIdx = 0;
-    public           int         DIdx = 0;
+    public           int         EIdx   = 0;
+    public           int         DIdx   = 0;
+    public           double      powerP = 0;
+    public           double      powerI = 0;
+    public           double      powerD = 0;
 
     public        PIDController(double Kp_in,
                                 double Ki_in,
@@ -67,6 +72,9 @@ public class PIDController extends FeedbackController {
         prevError      = 0;
         EIdx           = 0;
         DIdx           = 0;
+        powerP         = 0;
+        powerI         = 0;
+        powerD         = 0;
     }
     public void   init(ElapsedTime timer_in) {
         reset();
@@ -88,7 +96,19 @@ public class PIDController extends FeedbackController {
         for(double d: DerHistory)
             Dsum           += d;
 
-        return Kp * error + Ki * Esum + Kd * Dsum;
+        powerP              = Kp * error;
+        powerI              = Ki * Esum;
+        powerD              = Kd * Dsum;
+
+        return powerP + powerI + powerD;
+    }
+    public void   updateProfileDataPoint(MotorProfileDataPoint p) {
+        p.Kp           = Kp;
+        p.Ki           = Ki;
+        p.Kd           = Kd;
+        p.powerP       = powerP;
+        p.powerI       = powerI;
+        p.powerD       = powerD;
     }
 
     @NonNull
@@ -106,6 +126,9 @@ public class PIDController extends FeedbackController {
         sb.append("  DerHistory=")                 .append(Arrays.toString(DerHistory)).append("\n");
         sb.append("  EIdx=")                       .append(EIdx)                       .append("\n");
         sb.append("  DIdx=")                       .append(DIdx)                       .append("\n");
+        sb.append("  powerP=")                     .append(powerP)                     .append("\n");
+        sb.append("  powerI=")                     .append(powerI)                     .append("\n");
+        sb.append("  powerD=")                     .append(powerD)                     .append("\n");
 
         return sb.toString();
     }

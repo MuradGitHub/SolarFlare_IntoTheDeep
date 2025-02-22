@@ -47,11 +47,12 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     public MotionProfile      motionProfile;
     public FeedbackController fbc;
 
+
     public        MotorPowerStrategyMP(MotorConfig            motorConfig,
                                        MotionProfileEnum      motionProfileEnum,
                                        FeedbackControllerEnum FBCEnum,
-                                       double                 nominalPower) {
-        super(motorConfig, nominalPower);
+                                       double                 nominalPower_in) {
+        super(motorConfig, nominalPower_in);
         motionProfile = MotionProfiles.makeMotionProfile(motionProfileEnum);
         fbc           = FeedbackControllers.makeFeedbackController(FBCEnum, motorConfig.controlParams);
     }
@@ -69,7 +70,7 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         double Vi   = motor.getVelocity() / 1000;
-        double Vmax = motorConfig.calibResult.getVss(direction, motorConfig.maxPower);
+        double Vmax = motorConfig.calibResult.getVss(motorConfig.maxPower);
         double Amax = motorConfig.calibResult.getAccelByLut(direction, motorConfig.maxPower, Vi);
 
         // calibResult is returning Vmax with the wrong units and 0 for the given parameters
@@ -91,6 +92,8 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     // Data
     public void   updateProfileDataPoint(MotorProfileDataPoint p) {
         super.updateProfileDataPoint(p);
+
+        fbc.updateProfileDataPoint(p);
 
         p.tEndMP    = motionProfile.getEndTime();
     }
@@ -114,11 +117,11 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
 
         if(isStopped) {
             // return exactly 0.0 power
-            power = 0.0;
+            curPower           = 0.0;
         } else {
             immediateTarget    = motionProfile.getPosition(curTime);
             fbcPower           = fbc.getPower(immediateTarget - curPosition);
-            power              = limitPower(fbcPower);
+            curPower           = limitPower(fbcPower);
         }
 
         if(abs(curPosition - ultimateTarget) < posTol) {
@@ -131,9 +134,9 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
                 "applyPower",
                 String.format(Locale.US,
                         "t=%1$.3f P=%2$d uTarget=%3$d iTarget=%4$d fbcPower=%5$.3f power=%6$.3f isStopped=%7$b%nfbc=%8$s",
-                        curTime, curPosition, ultimateTarget, immediateTarget, fbcPower, power, isStopped, fbc.toString()));
+                        curTime, curPosition, ultimateTarget, immediateTarget, fbcPower, curPower, isStopped, fbc.toString()));
 
-        motor.setPower(power);
+        motor.setPower(curPower);
     }
 
     @NonNull

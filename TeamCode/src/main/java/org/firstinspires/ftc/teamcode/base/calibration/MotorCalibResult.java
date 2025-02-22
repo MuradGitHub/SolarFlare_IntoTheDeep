@@ -49,8 +49,8 @@ import org.firstinspires.ftc.teamcode.base.math.LookupTable2D;
 import org.firstinspires.ftc.teamcode.base.math.Range;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 
-import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeUp;
-import static org.firstinspires.ftc.teamcode.base.math.Math.regularizeDown;
+import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantDown;
+import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantUp;
 
 
 public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable {
@@ -68,6 +68,8 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
     public LookupTable2D                        PVALutR;
     public Range                                VssRangeF       = new Range();
     public Range                                VssRangeR       = new Range();
+    public Double                               minMovePowerF;
+    public Double                               minMovePowerR;
     public MotorPVAFunction                     PVAFunctionF;
     public MotorPVAFunction                     PVAFunctionR;
     public boolean                              writeMetrics;
@@ -82,14 +84,15 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
      * @param ssDataR_in     steady state data for reverse profiles
      * @param dataR_in       timed data up to steady state for reverse profiles
      */
-    public MotorCalibResult(MotorConfig                      motorConfig_in,
-                            ArrayList<MotorProfileDataPoint> ssDataF_in,
-                            ArrayList<MotorProfileDataPoint> dataF_in,
-                            ArrayList<MotorProfileDataPoint> ssDataR_in,
-                            ArrayList<MotorProfileDataPoint> dataR_in,
-                            boolean                          writeMetrics_in,
-                            boolean                          writeMetricsLUT_in
-                            ) {
+    public               MotorCalibResult(MotorConfig                      motorConfig_in,
+                                          ArrayList<MotorProfileDataPoint> ssDataF_in,
+                                          ArrayList<MotorProfileDataPoint> dataF_in,
+                                          ArrayList<MotorProfileDataPoint> ssDataR_in,
+                                          ArrayList<MotorProfileDataPoint> dataR_in,
+                                          Double                           minMovePowerF_in,
+                                          Double                           minMovePowerR_in,
+                                          boolean                          writeMetrics_in,
+                                          boolean                          writeMetricsLUT_in) {
         motorEnum             = motorConfig_in.motorEnum;
         powerResolution       = motorConfig_in.calibParams.powerResolution;
         velocityResolution    = motorConfig_in.calibParams.velocityResolution;
@@ -97,6 +100,8 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         dataF                 = dataF_in;
         ssDataR               = ssDataR_in;
         dataR                 = dataR_in;
+        minMovePowerF         = minMovePowerF_in;
+        minMovePowerR         = minMovePowerR_in;
         writeMetrics          = writeMetrics_in;
         writeMetricsLUT       = writeMetricsLUT_in;
 
@@ -105,17 +110,16 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         calcPredictions();
     }
 
-    public void initMetricsSpecs() {
+    public        void   initMetricsSpecs() {
         addMetricsSpec(metricsSpecId,MotorProfileDataPoint.makeMetricsSpec(motorEnum.name()));
     }
-
     /**
      *  Motor Dynamic Equation a = k1 * (power - k2*v - k3)
      *      - First fit when a=0
      *        power = k2*v + k3
      *      - Then, k1 is the fit to the equation a = k1*(power - k2*v - k3)
      */
-    public void fitFunctions() {
+    public        void   fitFunctions() {
         WeightedObservedPoints obs     = new WeightedObservedPoints();
         PolynomialCurveFitter  fitter  = PolynomialCurveFitter.create(1);
         double[]               coeff;
@@ -173,16 +177,16 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         PVALutF                        = new LookupTable2D(
                 powerResolution, 0.0, 1.0,
                 velocityResolution,
-                regularizeDown(VssRangeF.min,2),
-                regularizeUp(VssRangeF.max,2));
+                retainSignificantDown(VssRangeF.min,2),
+                retainSignificantUp(VssRangeF.max,2));
 
         PVALutF.setBaseMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
         PVALutR = new LookupTable2D(
                 powerResolution, -1.0, 0.0,
                 velocityResolution,
-                regularizeDown(VssRangeR.min,2),
-                regularizeUp(VssRangeR.max,2));
+                retainSignificantDown(VssRangeR.min,2),
+                retainSignificantUp(VssRangeR.max,2));
 
         PVALutR.setBaseMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
 
@@ -201,8 +205,7 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
 
         calcPredictions();
     }
-
-    public void calcPredictions() {
+    public        void   calcPredictions() {
         for(MotorProfileDataPoint Pt: dataF) {
             Pt.ApredFun = getAccelByFunction(Pt.direction, Pt.power, Pt.Vavg);
             Pt.ApredLut = getAccelByLut(Pt.direction, Pt.power, Pt.Vavg);
@@ -213,30 +216,25 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
             Pt.ApredLut = getAccelByLut(Pt.direction, Pt.power, Pt.Vavg);
         }
     }
-
-    public double getAccelByFunction(DcMotorSimple.Direction direction, double power, double velocity) {
+    public        double getAccelByFunction(DcMotorSimple.Direction direction, double power, double velocity) {
         if(direction == DcMotorSimple.Direction.FORWARD)
             return PVAFunctionF.getAccel(power, velocity);
         else
             return PVAFunctionR.getAccel(power, velocity);
     }
-
-    public double getAccelByLut(DcMotorSimple.Direction direction, double power, double velocity) {
+    public        double getAccelByLut(DcMotorSimple.Direction direction, double power, double velocity) {
         if(direction == DcMotorSimple.Direction.FORWARD)
             return PVALutF.interpolate(power, velocity);
         else
             return PVALutR.interpolate(power, velocity);
     }
-
-    public double getVss(DcMotorSimple.Direction direction, double power) {
+    public        double getVss(double power) {
         return Vss.apply(power);
     }
-
-    public void setWriteMetricsLUT(boolean writeMetricsLUT_in) {
+    public        void   setWriteMetricsLUT(boolean writeMetricsLUT_in) {
         writeMetricsLUT = writeMetricsLUT_in;
     }
-
-    public void writeMetrics() {
+    public        void   writeMetrics() {
         if(writeMetricsLUT) {
             PVALutF.writeMetrics();
             PVALutR.writeMetrics();
@@ -254,26 +252,25 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
 
         metricsFile.close();
     }
-
     public static String getJSONFileName(MotorEnum motorEnum) {
         return MotorCalibResult.class.getSimpleName() + "-" + getJSONFileId(motorEnum) + ".json";
     }
     public static String getJSONFileId(MotorEnum motorEnum) {
         return String.format(Locale.US, "%1$s", motorEnum.name());
     }
-    public String getJSONFileId() {
+    public        String getJSONFileId() {
         return getJSONFileId(motorEnum);
     }
-
-    public void writeJSON() {
+    public        void   writeJSON() {
         JSONUtils.writeJSON(this);
     }
-
-    public static void main(String[] args) {
+    public static void   main(String[] args) {
         RobotConfig robotConfig = RobotConfig.makeInstance("Rig1Motor");
         MotorConfig motorConfig = robotConfig.motors.get(MotorEnum.TESTING_MOTOR);
         MotorCalibResult result = new MotorCalibResult(
                 motorConfig,
+                null,
+                null,
                 null,
                 null,
                 null,

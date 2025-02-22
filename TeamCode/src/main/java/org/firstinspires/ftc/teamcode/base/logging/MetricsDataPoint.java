@@ -46,7 +46,7 @@ public abstract class MetricsDataPoint {
         return fieldNames;
     }
     public static   MetricsFileSpec makeMetricsFileSpec(String metricsFileId) {
-        return new MetricsFileSpec(tableType, format, fieldNames, tableType + "-" + metricsFileId);
+        return new MetricsFileSpec(tableType, format, fieldNames, metricsFileId);
     }
     public abstract void            writeMetrics(Formatter formatter);
 }
