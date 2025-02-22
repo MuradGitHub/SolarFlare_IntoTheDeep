@@ -117,11 +117,14 @@ public class Rig1MotorCalibAll extends LinearOpMode {
             sleep(60000);
 
             telemetry.addData("Finished writing metrics for CalibResult", motorEnum);
+
+            /*
             telemetry.addData("Starting to write JSONs for Profiles", motorEnum);
             telemetry.update();
             motorProfiles.writeJSONs();
-
             telemetry.addData("Finished writing JSONs for Profiles", "");
+            */
+
             telemetry.addData("Starting to write Metrics for Profiles", "");
             telemetry.update();
             motorProfiles.writeMetrics();
