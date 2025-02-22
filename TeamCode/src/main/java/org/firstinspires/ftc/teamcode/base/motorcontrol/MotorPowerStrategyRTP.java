@@ -29,21 +29,11 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
-import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
@@ -55,11 +45,13 @@ public class MotorPowerStrategyRTP extends MotorPowerStrategyConst {
     public        MotorPowerStrategyRTP(MotorConfig motorConfig_in,
                                         double      nominalPower_in) {
         super(motorConfig_in, nominalPower_in);
+        /*
         logger.logp(
                 Level.INFO,
                 "MotorPowerStrategyRTP",
                 "()",
                 String.format(Locale.US,"nominalPower=%1$.3f", nominalPower));
+        */
     }
     public void   init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
         super.init(timer_in, Pi_in, Ptarget_in);

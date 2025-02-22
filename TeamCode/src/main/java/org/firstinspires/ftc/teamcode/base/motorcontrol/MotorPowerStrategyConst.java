@@ -54,11 +54,13 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
     public        MotorPowerStrategyConst(MotorConfig motorConfig_in,
                                           double      nominalPower_in) {
         super(motorConfig_in, nominalPower_in);
+        /*
         logger.logp(
                 Level.INFO,
                 "MotorPowerStrategyConst",
                 "()",
                 String.format(Locale.US,"nominalPower=%1$.3f", nominalPower));
+        */
     }
     public String getDescriptiveId() {
         return String.format(Locale.US, "Power=%1$.2f", getSignedNominalPower());
