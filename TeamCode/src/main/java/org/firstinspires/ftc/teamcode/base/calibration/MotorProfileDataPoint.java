@@ -51,27 +51,29 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$s,%3$d,%4$.5f,%5$b,%6$b,%7$b,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f," +
-                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$d,%19$d,%20$d,%21$.3f,"  +
-                        "%22$.3f,%23$.5f,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,"    +
-                        "%30$.5f,%31$.5f,%32$.5f%n";
+                "%1$s,%2$s,%3$s,%4$d,%5$.5f,%6$b,%7$b,%8$b,%9$.3f,%10$.3f,%11$.3f,%12$.3f,%13$.3f," +
+                        "%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$d,%20$d,%21$d,%22$.3f,"  +
+                        "%23$.3f,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,%30$.5f,"    +
+                        "%31$.5f,%32$.5f,%33$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "MotorProfileStage", "Direction",         "PosTol",          "VelTol",   // 1-4
-                "isBusy",            "isTargetReached",  "isStrategyStopped",            // 5-7
-                "Kp",                "Ki",                "Kd",                          // 8-10
-                "Time",              "TimeEndMP",                                        // 11-12
-                "TimePExtract",      "TimeVextract",      "TimeCExtract",                // 13-15
-                "TimeOtherExtract",  "TimeCycle",                                        // 16-17
-                "Position",          "UltimateTarget",    "ImmediateTarget",             // 18-20
-                "minMovingPower",    "powerP",            "powerI",          "powerD",   // 21-24
-                "Power",             "Velocity",          "Vavg",                        // 25-27
-                "A",                 "Aavg",              "ApredFun",        "ApredLut", // 28-31
-                "C"                                                                      // 32
+                "MotorProfileStage", "MotionProfileStage", "Direction",                    // 1-3
+                "PosTol",            "VelTol",                                             // 4-5
+                "isBusy",            "isTargetReached",    "isStrategyStopped",            // 6-8
+                "Kp",                "Ki",                 "Kd",                           // 9-11
+                "Time",              "TimeEndMP",                                          // 12-13
+                "TimePExtract",      "TimeVextract",       "TimeCExtract",                 // 14-16
+                "TimeOtherExtract",  "TimeCycle",                                          // 17-18
+                "Position",          "UltimateTarget",     "ImmediateTarget",              // 19-21
+                "minMovingPower",    "powerP",             "powerI",          "powerD",    // 22-25
+                "Power",             "Velocity",           "Vavg",                         // 26-28
+                "A",                 "Aavg",               "ApredFun",        "ApredLut",  // 29-32
+                "C"                                                                        // 33
         };
     }
 
     public        String           motorProfileStage;
+    public        String           motionProfileStage;
     public        Direction        direction;
     public        int              posTol;
     public        double           velTol;
@@ -107,24 +109,23 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        PIDFCoefficients pidfRUE;
     public        PIDFCoefficients pidfRTP;
 
-    public         MotorProfileDataPoint(
-            String    motorProfileStage_in,
-            Direction direction_in,
-            double    t_in,
-            double    tPextract_in,
-            double    tVextract_in,
-            double    tCextract_in,
-            double    tOtherExtract_in,
-            double    tCycle_in,
-            int       P_in,
-            int       ultimateTarget_in,
-            int       immediateTarget_in,
-            double    V_in,
-            double    power_in,
-            double    C_in,
-            boolean   isBusy_in,
-            int       posTol_in,
-            double    velTol_in) {
+    public         MotorProfileDataPoint(String    motorProfileStage_in,
+                                         Direction direction_in,
+                                         double    t_in,
+                                         double    tPextract_in,
+                                         double    tVextract_in,
+                                         double    tCextract_in,
+                                         double    tOtherExtract_in,
+                                         double    tCycle_in,
+                                         int       P_in,
+                                         int       ultimateTarget_in,
+                                         int       immediateTarget_in,
+                                         double    V_in,
+                                         double    power_in,
+                                         double    C_in,
+                                         boolean   isBusy_in,
+                                         int       posTol_in,
+                                         double    velTol_in) {
         motorProfileStage = motorProfileStage_in;
         direction         = direction_in;
         t                 = t_in;
@@ -143,7 +144,6 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         posTol            = posTol_in;
         velTol            = velTol_in;
     }
-
     public         MotorProfileDataPoint(DcMotorEx   motor,
                                          String      motorProfileStage_in,
                                          Direction   direction_in,
@@ -172,7 +172,16 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tCycle        = timer.milliseconds() - t;
     }
     public void    setMotorProfileStage(String motorProfileStage_in) {
-        motorProfileStage = motorProfileStage_in;
+        motorProfileStage   = motorProfileStage_in;
+    }
+    public void    appendMotorProfileStage(String appendStage) {
+        motorProfileStage  += "-" + appendStage;
+    }
+    public void    setMotionProfileStage(String motionProfileStage_in) {
+        motionProfileStage  = motionProfileStage_in;
+    }
+    public void    appendMotionProfileStage(String appendStage) {
+        motionProfileStage += "-" + appendStage;
     }
     public boolean isTargetReached() {
         return isTargetReached;
@@ -200,15 +209,15 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
-                motorProfileStage, direction,         posTol,            velTol,
-                isBusy,            isTargetReached,   isStrategyStopped,
-                Kp,                Ki,                Kd,
+                motorProfileStage, motionProfileStage, direction,         posTol,        velTol,
+                isBusy,            isTargetReached,    isStrategyStopped,
+                Kp,                Ki,                 Kd,
                 t,                 tEndMP,
-                tPextract,         tVextract,         tCextract,         tOtherExtract, tCycle,
-                P,                 ultimateTarget,    immediateTarget,
-                minMovingPower,    powerP,            powerI,            powerD,
-                power,             V,                 Vavg,
-                A,                 Aavg,              ApredFun,          ApredLut,
+                tPextract,         tVextract,          tCextract,         tOtherExtract, tCycle,
+                P,                 ultimateTarget,     immediateTarget,
+                minMovingPower,    powerP,             powerI,            powerD,
+                power,             V,                  Vavg,
+                A,                 Aavg,               ApredFun,          ApredLut,
                 C
         );
     }
@@ -218,38 +227,39 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         StringBuilder sb = new StringBuilder();
         sb.append("MotorProfileDataPoint\n");
 
-        sb.append("  motorProfileStage=").append(motorProfileStage).append("\n");
-        sb.append("  direction=")        .append(direction)        .append("\n");
-        sb.append("  posTol=")           .append(posTol)           .append("\n");
-        sb.append("  velTol=")           .append(velTol)           .append("\n");
-        sb.append("  isBusy=")           .append(isBusy)           .append("\n");
-        sb.append("  isTargetReached=")  .append(isTargetReached)  .append("\n");
-        sb.append("  isStrategyStopped=").append(isStrategyStopped).append("\n");
-        sb.append("  Kp=")               .append(Kp)               .append("\n");
-        sb.append("  Ki=")               .append(Ki)               .append("\n");
-        sb.append("  Kd=")               .append(Kd)               .append("\n");
-        sb.append("  t=")                .append(t)                .append("\n");
-        sb.append("  tEndMP=")           .append(tEndMP)           .append("\n");
-        sb.append("  tPextract=")        .append(tPextract)        .append("\n");
-        sb.append("  tVextract=")        .append(tVextract)        .append("\n");
-        sb.append("  tCextract=")        .append(tCextract)        .append("\n");
-        sb.append("  tOtherExtract=")    .append(tOtherExtract)    .append("\n");
-        sb.append("  tCycle=")           .append(tCycle)           .append("\n");
-        sb.append("  P=")                .append(P)                .append("\n");
-        sb.append("  ultimateTarget=")   .append(ultimateTarget)   .append("\n");
-        sb.append("  immediateTarget=")  .append(immediateTarget)  .append("\n");
-        sb.append("  minMovingPower=")   .append(minMovingPower)   .append("\n");
-        sb.append("  powerP=")           .append(powerP)           .append("\n");
-        sb.append("  powerI=")           .append(powerI)           .append("\n");
-        sb.append("  powerD=")           .append(powerD)           .append("\n");
-        sb.append("  power=")            .append(power)            .append("\n");
-        sb.append("  V=")                .append(V)                .append("\n");
-        sb.append("  Vavg=")             .append(Vavg)             .append("\n");
-        sb.append("  A=")                .append(A)                .append("\n");
-        sb.append("  Aavg=")             .append(Aavg)             .append("\n");
-        sb.append("  ApredFun=")         .append(ApredFun)         .append("\n");
-        sb.append("  ApredLut=")         .append(ApredLut)         .append("\n");
-        sb.append("  C=")                .append(C)                .append("\n");
+        sb.append("  motorProfileStage=") .append(motorProfileStage).append("\n");
+        sb.append("  motionProfileStage=").append(motionProfileStage).append("\n");
+        sb.append("  direction=")         .append(direction)        .append("\n");
+        sb.append("  posTol=")            .append(posTol)           .append("\n");
+        sb.append("  velTol=")            .append(velTol)           .append("\n");
+        sb.append("  isBusy=")            .append(isBusy)           .append("\n");
+        sb.append("  isTargetReached=")   .append(isTargetReached)  .append("\n");
+        sb.append("  isStrategyStopped=") .append(isStrategyStopped).append("\n");
+        sb.append("  Kp=")                .append(Kp)               .append("\n");
+        sb.append("  Ki=")                .append(Ki)               .append("\n");
+        sb.append("  Kd=")                .append(Kd)               .append("\n");
+        sb.append("  t=")                 .append(t)                .append("\n");
+        sb.append("  tEndMP=")            .append(tEndMP)           .append("\n");
+        sb.append("  tPextract=")         .append(tPextract)        .append("\n");
+        sb.append("  tVextract=")         .append(tVextract)        .append("\n");
+        sb.append("  tCextract=")         .append(tCextract)        .append("\n");
+        sb.append("  tOtherExtract=")     .append(tOtherExtract)    .append("\n");
+        sb.append("  tCycle=")            .append(tCycle)           .append("\n");
+        sb.append("  P=")                 .append(P)                .append("\n");
+        sb.append("  ultimateTarget=")    .append(ultimateTarget)   .append("\n");
+        sb.append("  immediateTarget=")   .append(immediateTarget)  .append("\n");
+        sb.append("  minMovingPower=")    .append(minMovingPower)   .append("\n");
+        sb.append("  powerP=")            .append(powerP)           .append("\n");
+        sb.append("  powerI=")            .append(powerI)           .append("\n");
+        sb.append("  powerD=")            .append(powerD)           .append("\n");
+        sb.append("  power=")             .append(power)            .append("\n");
+        sb.append("  V=")                 .append(V)                .append("\n");
+        sb.append("  Vavg=")              .append(Vavg)             .append("\n");
+        sb.append("  A=")                 .append(A)                .append("\n");
+        sb.append("  Aavg=")              .append(Aavg)             .append("\n");
+        sb.append("  ApredFun=")          .append(ApredFun)         .append("\n");
+        sb.append("  ApredLut=")          .append(ApredLut)         .append("\n");
+        sb.append("  C=")                 .append(C)                .append("\n");
 
         return sb.toString();
     }
