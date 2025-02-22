@@ -217,7 +217,7 @@ public class MotorProfile
             startData.add(pp);
 
             if(startPowerStrategy.isStopped) {
-                pp.setProfileId("Start-EndSamples");
+                pp.setMotorProfileStage("Start-EndSamples");
                 endSamples--;
             }
 
@@ -345,7 +345,7 @@ public class MotorProfile
                 // if the target has been reached, likely exceeded, then set power to zero and
                 // start counting backwards the number of required endSamples
             if (isStrategyStopped) {
-                pp.setProfileId("Profile-EndSamples");
+                pp.setMotorProfileStage("Profile-EndSamples");
                 endSamples--;
                 if (tIdxTarget == null)
                     tIdxTarget       = tIdx++ - 1;

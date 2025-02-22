@@ -57,21 +57,21 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                         "%30$.5f,%31$.5f,%32$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "ProfileId",        "Direction",         "PosTol",          "VelTol",   // 1-4
-                "isBusy",           "isTargetReached",  "isStrategyStopped",            // 5-7
-                "Kp",               "Ki",                "Kd",                          // 8-10
-                "Time",             "TimeEndMP",                                        // 11-12
-                "TimePExtract",     "TimeVextract",      "TimeCExtract",                // 13-15
-                "TimeOtherExtract", "TimeCycle",                                        // 16-17
-                "Position",         "UltimateTarget",    "ImmediateTarget",             // 18-20
-                "minMovingPower",   "powerP",            "powerI",          "powerD",   // 21-24
-                "Power",            "Velocity",          "Vavg",                        // 25-27
-                "A",                "Aavg",              "ApredFun",        "ApredLut", // 28-31
-                "C"                                                                     // 32
+                "MotorProfileStage", "Direction",         "PosTol",          "VelTol",   // 1-4
+                "isBusy",            "isTargetReached",  "isStrategyStopped",            // 5-7
+                "Kp",                "Ki",                "Kd",                          // 8-10
+                "Time",              "TimeEndMP",                                        // 11-12
+                "TimePExtract",      "TimeVextract",      "TimeCExtract",                // 13-15
+                "TimeOtherExtract",  "TimeCycle",                                        // 16-17
+                "Position",          "UltimateTarget",    "ImmediateTarget",             // 18-20
+                "minMovingPower",    "powerP",            "powerI",          "powerD",   // 21-24
+                "Power",             "Velocity",          "Vavg",                        // 25-27
+                "A",                 "Aavg",              "ApredFun",        "ApredLut", // 28-31
+                "C"                                                                      // 32
         };
     }
 
-    public        String           profileId;
+    public        String           motorProfileStage;
     public        Direction        direction;
     public        int              posTol;
     public        double           velTol;
@@ -108,7 +108,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        PIDFCoefficients pidfRTP;
 
     public         MotorProfileDataPoint(
-            String    profileId_in,
+            String    motorProfileStage_in,
             Direction direction_in,
             double    t_in,
             double    tPextract_in,
@@ -125,7 +125,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
             boolean   isBusy_in,
             int       posTol_in,
             double    velTol_in) {
-        profileId         = profileId_in;
+        motorProfileStage = motorProfileStage_in;
         direction         = direction_in;
         t                 = t_in;
         tPextract         = tPextract_in;
@@ -145,24 +145,24 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
 
     public         MotorProfileDataPoint(DcMotorEx   motor,
-                                         String      profileId_in,
+                                         String      motorProfileStage_in,
                                          Direction   direction_in,
                                          ElapsedTime timer,
                                          boolean     extractOther) {
         // Because of the time it takes to pull data from the motor, there measurements
         // unfortunately are not exactly synchronous
-        profileId       = profileId_in;
-        direction       = direction_in;
-        t               = timer.milliseconds();
-        P               = motor.getCurrentPosition();
-        tPextract       = timer.milliseconds() - t;
+        motorProfileStage = motorProfileStage_in;
+        direction         = direction_in;
+        t                 = timer.milliseconds();
+        P                 = motor.getCurrentPosition();
+        tPextract         = timer.milliseconds() - t;
         // Pull velocity info
         // With no arguments getVelocity() returns Ticks Per Second
-        V               = motor.getVelocity() / 1000.0;
-        tVextract       = timer.milliseconds() - tPextract - t;
-        C               = motor.getCurrent(CurrentUnit.AMPS);
-        power           = motor.getPower();
-        tCextract       = timer.milliseconds() - tVextract - tPextract - t;
+        V                 = motor.getVelocity() / 1000.0;
+        tVextract         = timer.milliseconds() - tPextract - t;
+        C                 = motor.getCurrent(CurrentUnit.AMPS);
+        power             = motor.getPower();
+        tCextract         = timer.milliseconds() - tVextract - tPextract - t;
         if(extractOther) {
             pidfRTP   = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
             pidfRUE   = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -171,8 +171,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tOtherExtract = timer.milliseconds() - tCextract - tVextract - tPextract - t;
         tCycle        = timer.milliseconds() - t;
     }
-    public void    setProfileId(String profileId_in) {
-        profileId = profileId_in;
+    public void    setMotorProfileStage(String motorProfileStage_in) {
+        motorProfileStage = motorProfileStage_in;
     }
     public boolean isTargetReached() {
         return isTargetReached;
@@ -200,15 +200,15 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
-                profileId,       direction,         posTol,            velTol,
-                isBusy,          isTargetReached,   isStrategyStopped,
-                Kp,              Ki,                Kd,
-                t,               tEndMP,
-                tPextract,       tVextract,         tCextract,         tOtherExtract, tCycle,
-                P,               ultimateTarget,    immediateTarget,
-                minMovingPower,  powerP,            powerI,            powerD,
-                power,           V,                 Vavg,
-                A,               Aavg,              ApredFun,          ApredLut,
+                motorProfileStage, direction,         posTol,            velTol,
+                isBusy,            isTargetReached,   isStrategyStopped,
+                Kp,                Ki,                Kd,
+                t,                 tEndMP,
+                tPextract,         tVextract,         tCextract,         tOtherExtract, tCycle,
+                P,                 ultimateTarget,    immediateTarget,
+                minMovingPower,    powerP,            powerI,            powerD,
+                power,             V,                 Vavg,
+                A,                 Aavg,              ApredFun,          ApredLut,
                 C
         );
     }
@@ -218,7 +218,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         StringBuilder sb = new StringBuilder();
         sb.append("MotorProfileDataPoint\n");
 
-        sb.append("  profileId=")        .append(profileId)        .append("\n");
+        sb.append("  motorProfileStage=").append(motorProfileStage).append("\n");
         sb.append("  direction=")        .append(direction)        .append("\n");
         sb.append("  posTol=")           .append(posTol)           .append("\n");
         sb.append("  velTol=")           .append(velTol)           .append("\n");
