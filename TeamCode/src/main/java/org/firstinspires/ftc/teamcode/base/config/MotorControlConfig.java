@@ -34,14 +34,14 @@ import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
 import java.util.HashMap;
 
 public class MotorControlConfig {
-    public static class MotorTolerances {
+    public static class Tolerances {
         public int    posTol;
         public double velTol;
-        public MotorTolerances(int posTol_in, double velTol_in) {
+        public Tolerances(int posTol_in, double velTol_in) {
             posTol  = posTol_in;
             velTol  = velTol_in;
         }
     }
     public HashMap<FeedbackControllerEnum,HashMap<String,Double>> feedback;
-    public MotorTolerances                                        tolerances;
+    public Tolerances                                             tolerances;
 }
