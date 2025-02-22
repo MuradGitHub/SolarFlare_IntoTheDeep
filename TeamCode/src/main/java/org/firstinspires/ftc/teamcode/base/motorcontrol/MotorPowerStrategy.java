@@ -77,17 +77,18 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
                                                double      nominalPower_in) {
         motorConfig     = motorConfig_in;
         motor           = motorConfig.motor;
-        posTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "posTol", 0);
-        velTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "velTol", 0);
+        posTol          = motorConfig.controlParams.tolerances.posTol;
+        velTol          = motorConfig.controlParams.tolerances.velTol;
         nominalPower    = nominalPower_in;
 
-        /*
         logger.logp(
                 Level.INFO,
                 "MotorPowerStrategy",
                 "()",
-                String.format(Locale.US,"postTol=%1$d nominalPower=%2$.3f",posTol,nominalPower));
-        */
+                String.format(
+                        Locale.US,
+                        "posTol=%1$d velTol=%2$.3f nominalPower=%3$.3f",
+                        posTol, velTol, nominalPower));
     }
     public          void    init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
         timer           = timer_in;
