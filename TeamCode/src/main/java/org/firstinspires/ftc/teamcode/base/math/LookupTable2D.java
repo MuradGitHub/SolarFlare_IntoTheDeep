@@ -86,7 +86,6 @@ public class LookupTable2D extends MultiMetricsWriter {
 
         }
     }
-
     public static class Point {
         int xIdx;
         int yIdx;
@@ -100,7 +99,6 @@ public class LookupTable2D extends MultiMetricsWriter {
             return String.format(Locale.US, "Point(%1$d, %2$d)", xIdx, yIdx);
         }
     }
-
     public static class NeighborIterator {
         int     xIdx;
         int     yIdx;
@@ -108,7 +106,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         int     yIdxMax;
         Point[] neighbors  = new Point[8];
         int     currentIdx = 0;
-        public NeighborIterator(int xIdx_in, int yIx_in, int xIdxMax_in, int yIdxMax_in) {
+        public         NeighborIterator(int xIdx_in, int yIx_in, int xIdxMax_in, int yIdxMax_in) {
             xIdx        = xIdx_in;
             yIdx        = yIx_in;
             xIdxMax     = xIdxMax_in;
@@ -125,11 +123,9 @@ public class LookupTable2D extends MultiMetricsWriter {
         public boolean hasMorePoints() {
             return (currentIdx < neighbors.length) && neighbors[currentIdx] != null;
         }
-
-        public Point getNextPoint() {
+        public Point   getNextPoint() {
             return neighbors[currentIdx++];
         }
-
         @NonNull
         @Override
         public String toString() {
@@ -147,7 +143,7 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     // Constructor to initialize the table with data, x, and y values
-    public LookupTable2D(double[][] data_in, double[] xValues_in, double[] yValues_in) {
+    public           LookupTable2D(double[][] data_in, double[] xValues_in, double[] yValues_in) {
         data         = data_in;
         rawData      = data_in;
         xValues      = xValues_in;
@@ -166,9 +162,8 @@ public class LookupTable2D extends MultiMetricsWriter {
         xRange       = new Range(xValues);
         yRange       = new Range(yValues);
     }
-
-    public LookupTable2D(int xResolution_in, double xMin_in, double xMax_in,
-                         int yResolution_in, double yMin_in, double yMax_in) {
+    public           LookupTable2D(int xResolution_in, double xMin_in, double xMax_in,
+                                   int yResolution_in, double yMin_in, double yMax_in) {
         xResolution = xResolution_in;
         yResolution = yResolution_in;
         xIdxMax     = xResolution-1;
@@ -179,8 +174,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         initArrays();
         initMetricsSpecs();
     }
-
-    private void initArrays() {
+    private   void   initArrays() {
         // xValues
         if(xValues == null) {
             xValues           = new double[xResolution];
@@ -218,7 +212,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 Arrays.fill(r, 0.0);
         }
     }
-    protected void initMetricsSpecs() {
+    protected void   initMetricsSpecs() {
         // Header labeled columns. the elements of each row. These are velocities
         //   first column is the power labels
         String header      = "," + join(yValues, "%1$.4f", ",");
@@ -266,8 +260,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 header,
                 getBaseMetricsFileId());
     }
-
-    private void fillEmptyCells() {
+    private   void   fillEmptyCells() {
         PriorityQueue<EmptyPoint> ePoints          = new PriorityQueue<>();
         for(int xIdx=0; xIdx<xResolution; xIdx++) {
             for(int yIdx=0; yIdx<yResolution; yIdx++) {
@@ -329,8 +322,7 @@ public class LookupTable2D extends MultiMetricsWriter {
             pIdx                               = 0;
         } while(hasEmptyPoints && iIdx++<maxIIdx);
     }
-
-    public void update() {
+    public    void   update() {
         fillEmptyCells();
 
         for (int xIdx = 0; xIdx < xResolution; xIdx++)
@@ -339,8 +331,7 @@ public class LookupTable2D extends MultiMetricsWriter {
                 data[xIdx][yIdx] = weight != 0.0 ? rawData[xIdx][yIdx] / weight : 0.0;
             }
     }
-
-    public void addDataPoint(double x, double y, double z) {
+    public    void   addDataPoint(double x, double y, double z) {
         // First find the xIdx-yIdx square where the new data point falls
         int xIdx2              = findInsertionIndex(x, xValues);
         int yIdx2              = findInsertionIndex(y, yValues);
@@ -374,14 +365,13 @@ public class LookupTable2D extends MultiMetricsWriter {
         weights[xIdx2][yIdx1] += w21;
         weights[xIdx2][yIdx2] += w22;
     }
-
     /**
      * Method to perform bilinear interpolation. get z using interpolation on theLUT
      * @param x: x value of the point to interpolate
      * @param y: y value of the point to interpolate
      * @return interpolated z value
      */
-    public double interpolate(double x, double y) {
+    public    double interpolate(double x, double y) {
 
         // System.out.printf(Locale.US, "%ninterpolate%nx=%1$.3f y=%2$.3f%n",x,y);
 
@@ -425,7 +415,7 @@ public class LookupTable2D extends MultiMetricsWriter {
          */
     }
 
-    public double getWeight11(double x, double y, double x1, double y1, double x2, double y2) {
+    public    double getWeight11(double x, double y, double x1, double y1, double x2, double y2) {
         x     = min(max(x,x1),x2);
         y     = min(max(y,y1),y2);
         if(x1 == x2 || y1 == y2) {
@@ -442,8 +432,7 @@ public class LookupTable2D extends MultiMetricsWriter {
             return (x2 - x) * (y2 - y) / ((x2 - x1) * (y2 - y1));
         }
     }
-
-    public double getWeight21(double x, double y, double x1, double y1, double x2, double y2) {
+    public    double getWeight21(double x, double y, double x1, double y1, double x2, double y2) {
         x     = min(max(x,x1),x2);
         y     = min(max(y,y1),y2);
         if(x1 == x2 || y1 == y2) {
@@ -458,8 +447,7 @@ public class LookupTable2D extends MultiMetricsWriter {
             return (x - x1) * (y2 - y) / ((x2 - x1) * (y2 - y1));
         }
     }
-
-    public double getWeight12(double x, double y, double x1, double y1, double x2, double y2) {
+    public    double getWeight12(double x, double y, double x1, double y1, double x2, double y2) {
         x     = min(max(x,x1),x2);
         y     = min(max(y,y1),y2);
         if(x1 == x2 || y1 == y2) {
@@ -474,8 +462,7 @@ public class LookupTable2D extends MultiMetricsWriter {
             return (x2 - x) * (y - y1) / ((x2 - x1) * (y2 - y1));
         }
     }
-
-    public double getWeight22(double x, double y, double x1, double y1, double x2, double y2) {
+    public    double getWeight22(double x, double y, double x1, double y1, double x2, double y2) {
         x     = min(max(x,x1),x2);
         y     = min(max(y,y1),y2);
         if(x1 == x2 || y1 == y2) {
@@ -490,8 +477,7 @@ public class LookupTable2D extends MultiMetricsWriter {
             return (x - x1) * (y - y1) / ((x2 - x1) * (y2 - y1));
         }
     }
-
-    public void writeMetricsPrefill() {
+    public    void   writeMetricsPrefill() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
         // weights - pre-fill
@@ -512,8 +498,7 @@ public class LookupTable2D extends MultiMetricsWriter {
         }
         fileRawDataPrefill.close();
     }
-
-    public void writeMetrics() {
+    public    void   writeMetrics() {
         RobotMetrics robotMetrics = RobotMetrics.getInstance();
 
         // weights
