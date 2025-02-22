@@ -27,7 +27,8 @@
       "maxVelocity": 1500,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {

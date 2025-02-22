@@ -109,11 +109,18 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     @Override
     public void   applyPower(int target_in) {
         int    curPosition     = motor.getCurrentPosition();
+        double curVelocity     = motor.getVelocity() / 1000.0;
         double curTime         = timer.milliseconds();
         double fbcPower        = 0;
 
         if(target_in!=ultimateTarget)
             init(timer, curPosition, target_in);
+
+        if(abs(curPosition - ultimateTarget) < posTol)
+            isTargetReached    = true;
+
+        if(!isStopped && isTargetReached && abs(curVelocity) <= velTol)
+            isStopped          = true;
 
         if(isStopped) {
             // return exactly 0.0 power
@@ -122,11 +129,6 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
             immediateTarget    = motionProfile.getPosition(curTime);
             fbcPower           = fbc.getPower(immediateTarget - curPosition);
             curPower           = limitPower(fbcPower);
-        }
-
-        if(abs(curPosition - ultimateTarget) < posTol) {
-            isTargetReached    = true;
-            isStopped          = true;
         }
 
         logger.logp(Level.INFO,

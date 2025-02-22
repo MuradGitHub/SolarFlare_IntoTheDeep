@@ -54,6 +54,7 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
     public        MotorPowerStrategyConst(MotorConfig motorConfig_in,
                                           double      nominalPower_in) {
         super(motorConfig_in, nominalPower_in);
+
         /*
         logger.logp(
                 Level.INFO,
@@ -84,17 +85,19 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
             curPower = 0.0;
             motor.setPower(curPower);
         } else {
-            int P               = motor.getCurrentPosition();
+            int    curPosition  = motor.getCurrentPosition();
+            double curVelocity  = motor.getVelocity() / 1000.0;
 
-            // isTargetReached is not revised once true
-            if (direction == Direction.FORWARD ? P >= target : P <= target)
+            // isTargetReached is set to true once the motor goes past the target.
+            // It is not revised once true
+            if (direction == Direction.FORWARD ? curPosition >= target : curPosition <= target)
                 isTargetReached = true;
 
             if(isTargetReached) {
                 // start reducing power
                 curPower        = signPower * max(abs(curPower) - abs(brakeInc), 0.0);
                 motor.setPower(curPower);
-                if (approxEquals(curPower, 0.0)) {
+                if (approxEquals(curPower, 0.0) && abs(curVelocity) <= velTol) {
                     isStopped   = true;
                 }
             } else {

@@ -51,28 +51,30 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$s,%3$d,%4$b,%5$b,%6$b,%7$.3f,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f,%13$.3f," +
-                        "%14$.3f,%15$.3f,%16$.3f,%17$d,%18$d,%19$d,%20$.3f,%21$.3f,%22$.5f,%23$.5f," +
-                        "%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,%30$.5f,%31$.5f%n";
+                "%1$s,%2$s,%3$d,%4$.5f,%5$b,%6$b,%7$b,%8$.3f,%9$.3f,%10$.3f,%11$.3f,%12$.3f," +
+                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$d,%19$d,%20$d,%21$.3f,"  +
+                        "%22$.3f,%23$.5f,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,"    +
+                        "%30$.5f,%31$.5f,%32$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "ProfileId",        "Direction",         "PosTol",          "isBusy",   // 1-4
-                "isTargetReached",  "isStrategyStopped",                                // 5-6
-                "Kp",               "Ki",                "Kd",                          // 7-9
-                "Time",             "TimeEndMP",                                        // 10-11
-                "TimePExtract",     "TimeVextract",      "TimeCExtract",                // 12-14
-                "TimeOtherExtract", "TimeCycle",                                        // 15-16
-                "Position",         "UltimateTarget",    "ImmediateTarget",             // 17-19
-                "minMovingPower",   "powerP",            "powerI",          "powerD",   // 20-23
-                "Power",            "Velocity",          "Vavg",                        // 24-26
-                "A",                "Aavg",              "ApredFun",        "ApredLut", // 27-30
-                "C"                                                                     // 31
+                "ProfileId",        "Direction",         "PosTol",          "VelTol",   // 1-4
+                "isBusy",           "isTargetReached",  "isStrategyStopped",            // 5-7
+                "Kp",               "Ki",                "Kd",                          // 8-10
+                "Time",             "TimeEndMP",                                        // 11-12
+                "TimePExtract",     "TimeVextract",      "TimeCExtract",                // 13-15
+                "TimeOtherExtract", "TimeCycle",                                        // 16-17
+                "Position",         "UltimateTarget",    "ImmediateTarget",             // 18-20
+                "minMovingPower",   "powerP",            "powerI",          "powerD",   // 21-24
+                "Power",            "Velocity",          "Vavg",                        // 25-27
+                "A",                "Aavg",              "ApredFun",        "ApredLut", // 28-31
+                "C"                                                                     // 32
         };
     }
 
     public        String           profileId;
     public        Direction        direction;
     public        int              posTol;
+    public        double           velTol;
     public        boolean          isBusy;
     public        boolean          isTargetReached;
     public        boolean          isStrategyStopped;
@@ -102,8 +104,6 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        double           ApredLut;
     public        double           C;
 
-
-
     public        PIDFCoefficients pidfRUE;
     public        PIDFCoefficients pidfRTP;
 
@@ -123,7 +123,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
             double    power_in,
             double    C_in,
             boolean   isBusy_in,
-            int       posTol_in) {
+            int       posTol_in,
+            double    velTol_in) {
         profileId         = profileId_in;
         direction         = direction_in;
         t                 = t_in;
@@ -140,6 +141,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         C                 = C_in;
         isBusy            = isBusy_in;
         posTol            = posTol_in;
+        velTol            = velTol_in;
     }
 
     public         MotorProfileDataPoint(DcMotorEx   motor,
@@ -187,26 +189,26 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public void    setIsStrategyStopped(boolean isStrategyStopped_in) {
         isStrategyStopped = isStrategyStopped_in;
     }
-    public boolean isSeeking(int Ptarget, int posTol, double velTol) {
-        return isBusy || !isAtTarget(Ptarget, posTol) || isMoving(velTol);
+    public boolean isSeeking(int Ptarget) {
+        return isBusy || !isAtTarget(Ptarget) || isMoving();
     }
-    public boolean isAtTarget(int Ptarget, int posTol) {
+    public boolean isAtTarget(int Ptarget) {
         return abs(P - Ptarget) <= posTol;
     }
-    public boolean isMoving(double velTol) {
+    public boolean isMoving() {
         return abs(V) > velTol;
     }
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
-                profileId,       direction,         posTol,          isBusy,
-                isTargetReached, isStrategyStopped,
+                profileId,       direction,         posTol,            velTol,
+                isBusy,          isTargetReached,   isStrategyStopped,
                 Kp,              Ki,                Kd,
                 t,               tEndMP,
-                tPextract,       tVextract,         tCextract,       tOtherExtract, tCycle,
+                tPextract,       tVextract,         tCextract,         tOtherExtract, tCycle,
                 P,               ultimateTarget,    immediateTarget,
-                minMovingPower,  powerP,            powerI,          powerD,
+                minMovingPower,  powerP,            powerI,            powerD,
                 power,           V,                 Vavg,
-                A,               Aavg,              ApredFun,        ApredLut,
+                A,               Aavg,              ApredFun,          ApredLut,
                 C
         );
     }
@@ -219,6 +221,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         sb.append("  profileId=")        .append(profileId)        .append("\n");
         sb.append("  direction=")        .append(direction)        .append("\n");
         sb.append("  posTol=")           .append(posTol)           .append("\n");
+        sb.append("  velTol=")           .append(velTol)           .append("\n");
         sb.append("  isBusy=")           .append(isBusy)           .append("\n");
         sb.append("  isTargetReached=")  .append(isTargetReached)  .append("\n");
         sb.append("  isStrategyStopped=").append(isStrategyStopped).append("\n");

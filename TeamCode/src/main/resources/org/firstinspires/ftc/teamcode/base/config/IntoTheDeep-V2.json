@@ -29,7 +29,8 @@
       "maxVelocity": 0,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -74,7 +75,8 @@
       "maxVelocity": 0,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -119,7 +121,8 @@
       "maxVelocity": 0,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -164,7 +167,8 @@
       "maxVelocity": 0,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -209,7 +213,8 @@
       "maxVelocity": 3000,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -254,7 +259,8 @@
       "maxVelocity": 3000,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {
@@ -299,7 +305,8 @@
       "maxVelocity": 3000,
       "controlParams": {
         "tolerances": {
-          "posTol": 2
+          "posTol": 2,
+          "velTol": 0.04
         },
         "feedback": {
           "PID": {

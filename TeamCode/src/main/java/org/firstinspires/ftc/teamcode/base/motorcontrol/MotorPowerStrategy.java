@@ -69,6 +69,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
     public           double      signPower;
     public           double      curPower;
     public           int         posTol;
+    public           double      velTol;
     public           boolean     isTargetReached   = false;
     public           boolean     isStopped         = false;
 
@@ -77,6 +78,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         motorConfig     = motorConfig_in;
         motor           = motorConfig.motor;
         posTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "posTol", 0);
+        velTol          = HashMapUtils.getIntOrDefault(motorConfig.controlParams.tolerances, "velTol", 0);
         nominalPower    = nominalPower_in;
 
         /*
@@ -137,6 +139,8 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         p.isStrategyStopped = isStopped;
         p.ultimateTarget    = ultimateTarget;
         p.immediateTarget   = immediateTarget;
+        p.posTol            = posTol;
+        p.velTol            = velTol;
     }
     @Override
     @NonNull
