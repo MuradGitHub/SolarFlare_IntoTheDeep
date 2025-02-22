@@ -289,11 +289,23 @@ public class MotorProfile
                 averagingPeriods,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Vavg-p2.Vavg)<Vtol);
 
+        if(ssIdxVavg != null) {
+            MotorProfileDataPoint p   = data.get(ssIdxVavg);
+            if(p != null)
+                p.appendMotorProfileStage("Vss");
+        }
+
         double Atol                   = max(abs(Amax),abs(Dmax))/250.0;
         ssIdxAavg                     = Math.getSteadyStateStartPredicate(
                 data,
                 averagingPeriods,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Aavg-p2.Aavg)<Atol);
+
+        if(ssIdxAavg != null) {
+            MotorProfileDataPoint p   = data.get(ssIdxAavg);
+            if(p != null)
+                p.appendMotorProfileStage("Ass");
+        }
     }
     protected     void    checkCalcInput() {
         if((calibDirection==Direction.FORWARD && (Pf-Pi)<motorConfig.calibParams.minDistance) ||
