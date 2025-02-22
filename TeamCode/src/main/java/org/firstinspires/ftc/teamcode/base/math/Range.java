@@ -29,33 +29,34 @@
  */
 package org.firstinspires.ftc.teamcode.base.math;
 
+import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantDown;
+import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantUp;
+
 import androidx.annotation.NonNull;
 
 import java.lang.Math;
+import java.lang.ref.Cleaner;
 import java.util.Locale;
 
-public class Range {
+public class Range implements Cloneable {
     public double min;
     public double max;
 
-    public Range() {
+    public        Range() {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
     }
-
-    public Range(double min_in, double max_in) {
+    public        Range(double min_in, double max_in) {
         min = min_in;
         max = max_in;
     }
-
-    public Range(double[] a) {
+    public        Range(double[] a) {
         super();
         for(double n: a) {
             update(n);
         }
     }
-
-    public Range update(double x) {
+    public Range  update(double x) {
         if(x<min)
             min = x;
         if(x>max)
@@ -63,11 +64,23 @@ public class Range {
 
         return this;
     }
-
+    public Range  retainSignificantDownUp(int order) {
+        return new Range(
+                retainSignificantDown(min, order),
+                retainSignificantUp(  max, order));
+    }
+    @NonNull
+    @Override
+    public Range  clone() {
+        try {
+            return (Range) super.clone();
+        } catch(CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public double getSpan() {
         return max - min;
     }
-
     public double constrain(double x) {
         return Math.min(Math.max(x,min),max);
     }

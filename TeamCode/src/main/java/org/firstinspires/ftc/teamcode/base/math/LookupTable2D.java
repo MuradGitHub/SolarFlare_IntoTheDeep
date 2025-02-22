@@ -162,14 +162,23 @@ public class LookupTable2D extends MultiMetricsWriter {
         xRange       = new Range(xValues);
         yRange       = new Range(yValues);
     }
-    public           LookupTable2D(int xResolution_in, double xMin_in, double xMax_in,
-                                   int yResolution_in, double yMin_in, double yMax_in) {
+    public           LookupTable2D(int xResolution_in, Range xRange_in,
+                                   int yResolution_in, Range yRange_in) {
         xResolution = xResolution_in;
         yResolution = yResolution_in;
         xIdxMax     = xResolution-1;
         yIdxMax     = yResolution-1;
-        xRange      = new Range(xMin_in, xMax_in);
-        yRange      = new Range(yMin_in, yMax_in);
+        xRange      = xRange_in.clone();
+        yRange      = yRange_in.clone();
+
+        logger.logp(
+                Level.INFO,
+                "LookupTable2D",
+                "()",
+                String.format(
+                        Locale.US,
+                        "xRes=%1$d yRes=%2$d xRange=%3$s yRange=%4$s",
+                        xResolution, yResolution, xRange, yRange));
 
         initArrays();
         initMetricsSpecs();
@@ -557,7 +566,7 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     public static void main(String[] args) {
-        LookupTable2D lut = new LookupTable2D(5, 0, 4, 5, 0, 4);
+        LookupTable2D lut = new LookupTable2D(5,new Range(0,4),5,new Range(0,4));
         for(int xIdx=0; xIdx<5; xIdx++) {
             for(int yIdx=0; yIdx<5; yIdx++) {
                 /// skip certain data points to assess the robustness of the LUT

@@ -234,14 +234,15 @@ public class Math {
      * @return The number of with number of significant figures 'order' retained then floored
      */
     public static     double            retainSignificantDown(double n, int order) {
-        if(order <= 0.0)
+        if(n == 0.0 || order <= 0.0)
             return n;
 
-        int power10      = (int) log10(abs(n)) - order + 1;
+        double nSign     = n > 0 ? 1 : -1;
+        int    power10   = (int) log10(abs(n)) - order + 1;
 
         // magnitude to retain
         double magnitude = pow(10, power10);
-        double nFloor    = floor(n / magnitude);
+        double nFloor    = nSign * floor(abs(n) / magnitude);
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
@@ -258,14 +259,15 @@ public class Math {
      * @return The number of with number of significant figures 'order' retained rounded
      */
     public static     double            retainSignificantRound(double n, int order) {
-        if(order <= 0.0)
+        if(n == 0.0 || order <= 0.0)
             return n;
 
-        int power10      = (int) log10(abs(n)) - order + 1;
+        double nSign     = n > 0 ? 1 : -1;
+        int    power10   = (int) log10(abs(n)) - order + 1;
 
         // magnitude to retain
         double magnitude = pow(10, power10);
-        double nRound    = round(n / magnitude);
+        double nRound    = nSign * round(abs(n) / magnitude);
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
@@ -283,14 +285,15 @@ public class Math {
      * is taken
      */
     public static     double            retainSignificantUp(double n, int order) {
-        if(order <= 0.0)
+        if(n == 0.0 || order <= 0.0)
             return n;
 
-        int power10      = (int) log10(abs(n)) - order + 1;
+        double nSign     = n > 0 ? 1 : -1;
+        int    power10   = (int) log10(abs(n)) - order + 1;
 
         // magnitude to retain
         double magnitude = pow(10, power10);
-        double nCeil     = ceil(n / magnitude);
+        double nCeil     = nSign * ceil(abs(n) / magnitude);
 
         /*
         System.out.printf("n=%1$8.3f order=%2$d power10=%3$3d magnitude=%4$8.2f nFloor=%5$8.3f nReg=%6$8.3f%n",
@@ -305,7 +308,8 @@ public class Math {
      * @param args: Not used
      */
     public static void                  main(String[] args) {
-        /// findInsertionPoint
+        // findInsertionPoint
+        System.out.println("\nfindInsertionPoint tests");
         double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
         String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
         int[][]    casesI   = new int[][] {
@@ -318,12 +322,18 @@ public class Math {
         for(int[] c: casesI)
             System.out.printf(Locale.US, format, c[0], c[1], c[2], c[1]==c[2]);
 
-        System.out.println("log10(2.4)=" + log10(2.4));
-
-        /// retainSignificantDown
-        format              = "Regularize Down n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
+        // retainSignificantDown
+        System.out.println("\nretainSignficant[Down/Round/Up] testing");
+        format              = "Regularize Down  n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
         double[][] casesD   = new double[][]{
 
+                {   0.0,   0, retainSignificantDown(   0.0,    0),    0.0  },
+                {   0.0,   1, retainSignificantDown(   0.0,    1),    0.0  },
+                {  -2.321, 0, retainSignificantDown(  -2.321,  0),   -2.321},
+                {  -2.321, 1, retainSignificantDown(  -2.321,  1),   -2.0  },
+                {  -2.321, 2, retainSignificantDown(  -2.321,  2),   -2.3  },
+                {  -2.321, 3, retainSignificantDown(  -2.321,  3),   -2.32 },
+                {  -2.321, 4, retainSignificantDown(  -2.321,  4),   -2.321},
                 {   2.321, 0, retainSignificantDown(   2.321,  0),    2.321},
                 {   2.321, 1, retainSignificantDown(   2.321,  1),    2.0  },
                 {   2.321, 2, retainSignificantDown(   2.321,  2),    2.3  },
@@ -343,15 +353,60 @@ public class Math {
             System.out.printf(Locale.US, format, c[0], c[1], c[2], approxEquals(c[2],c[3]));
         }
 
-        format              = "Regularize Up   n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
+        format              = "Regularize Round n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
+        double[][] casesR   = new double[][]{
+                {   0.0,   0, retainSignificantRound(   0.0,    0),    0.0  },
+                {   0.0,   1, retainSignificantRound(   0.0,    1),    0.0  },
+                {  -2.321, 0, retainSignificantRound(  -2.321,  0),   -2.321},
+                {  -2.321, 1, retainSignificantRound(  -2.321,  1),   -2.0  },
+                {  -2.321, 2, retainSignificantRound(  -2.321,  2),   -2.3  },
+                {  -2.321, 3, retainSignificantRound(  -2.321,  3),   -2.32 },
+                {  -2.321, 4, retainSignificantRound(  -2.321,  4),   -2.321},
+                {   2.321, 0, retainSignificantRound(   2.321,  0),    2.321},
+                {   2.321, 1, retainSignificantRound(   2.321,  1),    2.0  },
+                {   2.321, 2, retainSignificantRound(   2.321,  2),    2.3  },
+                {   2.321, 3, retainSignificantRound(   2.321,  3),    2.32 },
+                {   2.321, 4, retainSignificantRound(   2.321,  4),    2.321},
+                {   2.321, 5, retainSignificantRound(   2.321,  5),    2.321},
+                {   2.321, 6, retainSignificantRound(   2.321,  6),    2.321},
+                { 124.3,   0, retainSignificantRound( 124.3,    0),  124.3  },
+                { 124.3,   1, retainSignificantRound( 124.3,    1),  100.0  },
+                { 124.3,   2, retainSignificantRound( 124.3,    2),  120.0  },
+                { 124.3,   3, retainSignificantRound( 124.3,    3),  124.0  },
+                {1247.3,   1, retainSignificantRound(1247.3,    1), 1000.0  },
+                {1247.3,   2, retainSignificantRound(1247.3,    2), 1200.0  },
+                {1247.3,   3, retainSignificantRound(1247.3,    3), 1250.0  },
+                {1247.3,   4, retainSignificantRound(1247.3,    4), 1247.0  },
+
+        };
+        for(var c: casesR) {
+            System.out.printf(Locale.US, format, c[0], c[1], c[2], approxEquals(c[2],c[3]));
+        }
+
+        format              = "Regularize Up    n=%1$8.2f order=%2$2.0f result=%3$8.3f match=%4$b%n";
         double[][] casesU   = new double[][]{
-                { 124.3, 0, retainSignificantUp  ( 124.3,0),  124.3},
-                { 124.3, 1, retainSignificantUp  ( 124.3,1),  200.0},
-                { 124.3, 2, retainSignificantUp  ( 124.3,2),  130.0},
-                { 124.3, 3, retainSignificantUp  ( 124.3,3),  125.0},
-                {1247.3, 1, retainSignificantUp  (1247.3,1), 2000.0},
-                {1247.3, 2, retainSignificantUp  (1247.3,2), 1300.0},
-                {1247.3, 3, retainSignificantUp  (1247.3,3), 1250.0}
+                {   0.0,   0, retainSignificantUp(   0.0,    0),    0.0  },
+                {   0.0,   1, retainSignificantUp(   0.0,    1),    0.0  },
+                {  -2.321, 0, retainSignificantUp(  -2.321,  0),   -2.321},
+                {  -2.321, 1, retainSignificantUp(  -2.321,  1),   -3.0  },
+                {  -2.321, 2, retainSignificantUp(  -2.321,  2),   -2.4  },
+                {  -2.321, 3, retainSignificantUp(  -2.321,  3),   -2.33 },
+                {  -2.321, 4, retainSignificantUp(  -2.321,  4),   -2.321},
+                {   2.321, 0, retainSignificantUp(   2.321,  0),    2.321},
+                {   2.321, 1, retainSignificantUp(   2.321,  1),    3.0  },
+                {   2.321, 2, retainSignificantUp(   2.321,  2),    2.4  },
+                {   2.321, 3, retainSignificantUp(   2.321,  3),    2.33 },
+                {   2.321, 4, retainSignificantUp(   2.321,  4),    2.321},
+                {   2.321, 5, retainSignificantUp(   2.321,  5),    2.321},
+                {   2.321, 6, retainSignificantUp(   2.321,  6),    2.321},
+                { 124.3,   0, retainSignificantUp( 124.3,    0),  124.3  },
+                { 124.3,   1, retainSignificantUp( 124.3,    1),  200.0  },
+                { 124.3,   2, retainSignificantUp( 124.3,    2),  130.0  },
+                { 124.3,   3, retainSignificantUp( 124.3,    3),  125.0  },
+                {1247.3,   1, retainSignificantUp(1247.3,    1), 2000.0  },
+                {1247.3,   2, retainSignificantUp(1247.3,    2), 1300.0  },
+                {1247.3,   3, retainSignificantUp(1247.3,    3), 1250.0  },
+
         };
         for(var c: casesU) {
             System.out.printf(Locale.US, format, c[0], c[1], c[2], approxEquals(c[2],c[3]));

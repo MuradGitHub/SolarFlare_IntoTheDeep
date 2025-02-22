@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
@@ -42,6 +44,7 @@ import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
 import org.firstinspires.ftc.teamcode.base.logging.MultiMetricsWriter;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 import org.firstinspires.ftc.teamcode.base.logging.RobotMetrics;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsFile;
 import org.firstinspires.ftc.teamcode.base.math.LookupTable1D;
@@ -49,31 +52,28 @@ import org.firstinspires.ftc.teamcode.base.math.LookupTable2D;
 import org.firstinspires.ftc.teamcode.base.math.Range;
 import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 
-import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantDown;
-import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantUp;
-
-
 public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable {
-    public MotorEnum                            motorEnum;
-    public int                                  powerResolution;
-    public int                                  velocityResolution;
+    private transient Logger                               logger        = RobotLogger.getInstance().getConfigLogger();
+    public            MotorEnum                            motorEnum;
+    public            int                                  powerResolution;
+    public            int                                  velocityResolution;
 
-    public String                               metricsSpecId = "MotorProfileData";
-    public ArrayList<MotorProfileDataPoint>     ssDataF;
-    public ArrayList<MotorProfileDataPoint>     ssDataR;
-    public ArrayList<MotorProfileDataPoint>     dataF;
-    public ArrayList<MotorProfileDataPoint>     dataR;
-    public LookupTable1D                        Vss             = new LookupTable1D();
-    public LookupTable2D                        PVALutF;
-    public LookupTable2D                        PVALutR;
-    public Range                                VssRangeF       = new Range();
-    public Range                                VssRangeR       = new Range();
-    public Double                               minMovePowerF;
-    public Double                               minMovePowerR;
-    public MotorPVAFunction                     PVAFunctionF;
-    public MotorPVAFunction                     PVAFunctionR;
-    public boolean                              writeMetrics;
-    public boolean                              writeMetricsLUT;
+    public            String                               metricsSpecId = "MotorProfileData";
+    public            ArrayList<MotorProfileDataPoint>     ssDataF;
+    public            ArrayList<MotorProfileDataPoint>     ssDataR;
+    public            ArrayList<MotorProfileDataPoint>     dataF;
+    public            ArrayList<MotorProfileDataPoint>     dataR;
+    public            LookupTable1D                        Vss             = new LookupTable1D();
+    public            LookupTable2D                        PVALutF;
+    public            LookupTable2D                        PVALutR;
+    public            Range                                VssRangeF       = new Range();
+    public            Range                                VssRangeR       = new Range();
+    public            Double                               minMovePowerF;
+    public            Double                               minMovePowerR;
+    public            MotorPVAFunction                     PVAFunctionF;
+    public            MotorPVAFunction                     PVAFunctionR;
+    public            boolean                              writeMetrics;
+    public            boolean                              writeMetricsLUT;
 
     /**
      * Constructor
@@ -174,21 +174,23 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         PVAFunctionR                   = new MotorPVAFunction(k1R,k2R,k3R,kAresR);
 
         /// Fit the LUTs
+        Range pRangeF                  = new Range(0, 1);
+        Range vRangeF                  = VssRangeF.retainSignificantDownUp(2);
         PVALutF                        = new LookupTable2D(
-                powerResolution, 0.0, 1.0,
-                velocityResolution,
-                retainSignificantDown(VssRangeF.min,2),
-                retainSignificantUp(VssRangeF.max,2));
-
+                powerResolution, pRangeF, velocityResolution, vRangeF);
         PVALutF.setBaseMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
+        Range pRangeR                  = new Range(-1, 0);
+        Range vRangeR                  = VssRangeR.retainSignificantDownUp(2);
         PVALutR = new LookupTable2D(
-                powerResolution, -1.0, 0.0,
-                velocityResolution,
-                retainSignificantDown(VssRangeR.min,2),
-                retainSignificantUp(VssRangeR.max,2));
-
+                powerResolution, pRangeR, velocityResolution, vRangeR);
         PVALutR.setBaseMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
+
+        logger.logp(
+                Level.INFO,
+                "MotorCalibResult",
+                "fitFunctions",
+                String.format(Locale.US,"vRangeF=%1$s vRangeR=%2$s",VssRangeF,VssRangeR));
 
         /// add points to the LUTs
         for(var dataPoint: dataF)
