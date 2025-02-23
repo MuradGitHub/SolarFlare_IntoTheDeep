@@ -184,8 +184,9 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
     }
 
     /**
-     * All parameters are positive,
-     *  except dist, Vinit can be either negative or positive
+     * All parameters are expected to be positive. Proper signs are assigned based on the
+     *  direction of travel based on sign of dist.
+     *  dist obviously will need to have a sign, Vinit can be either negative or positive
      *  We adjust the signs of Vmax, Amax, and Dmax to direct motion towards dist
      *  Consider the possibility of Vi <= Vmax
      * @param Amax_in  Max Acceleration

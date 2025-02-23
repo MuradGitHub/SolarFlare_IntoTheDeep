@@ -35,8 +35,10 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibResult;
 import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 
@@ -69,14 +71,24 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
-        double Vi   = motor.getVelocity() / 1000;
-        double Vmax = motorConfig.calibResult.getVss(motorConfig.maxPower);
-        double Amax = motorConfig.calibResult.getAccelByLut(direction, motorConfig.maxPower, Vi);
+        MotorCalibResult calib = motorConfig.calibResult;
+
+        double           Vi    = motor.getVelocity() / 1000;
+        double           Vmax;
+        double           Amax;
+
+        if(direction == DcMotorSimple.Direction.FORWARD) {
+            Vmax               = calib.VssRangeF.getAbsMax();
+            Amax               = calib.AssRangeF.getAbsMax();
+        } else {
+            Vmax               = calib.VssRangeR.getAbsMax();
+            Amax               = calib.AssRangeR.getAbsMax();
+        }
 
         // calibResult is returning Vmax with the wrong units and 0 for the given parameters
         // so overriding for now
-        Vmax        = 2.8;
-        Amax        = 0.06;
+        //Vmax        = 2.8;
+        //Amax        = 0.06;
 
         logger.logp(
                 Level.INFO,

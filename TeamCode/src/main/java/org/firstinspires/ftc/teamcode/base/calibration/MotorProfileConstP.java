@@ -51,6 +51,7 @@ public class MotorProfileConstP extends MotorProfile {
 
         ((MotorPowerStrategyConst) profilePowerStrategy).setBreakInc(1.0);
 
+        /*
         logger.logp(
                 Level.INFO,
                 "MotorProfileConstP",
@@ -59,6 +60,7 @@ public class MotorProfileConstP extends MotorProfile {
                         "startPower=%1$.3f profilePower=%2$.3f",
                         startPowerStrategy.getSignedNominalPower(),
                         profilePowerStrategy.getSignedNominalPower()));
+         */
     }
     @NonNull
     @Override

@@ -299,12 +299,14 @@ public class LookupTable2D extends MultiMetricsWriter {
                     weight                    += weights[nPXIdx][nPYIdx];
                 }
                 if (numberOfNeighbors == 0.0) {
+                    /*
                     logger.logp(
                             Level.INFO,
                             "LookupTable2D",
                             "fillEmptyCells",
                             "Iteration=" + iIdx + " pIdx=" + pIdx++ + " " + ePoint + " has no neighbors"
                     );
+                     */
                     hasEmptyPoints             = true;
                     continue;
                 }

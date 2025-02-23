@@ -67,15 +67,18 @@ public class MotorProfiles implements Validatable {
     public void             calcProfiles(int Pi_in, int Ptarget_in) {
         Pi                   = Pi_in;
         Ptarget              = Ptarget_in;
-        for(var profile: motorProfilesF) {
-            String logMsg = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Pi + " Ptarget=" + Ptarget;
+        for(int i=0; i<powerLevels.length; i++) {
+            MotorProfileConstP profile = motorProfilesF[i];
+            /*
+            String logMsg    = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Pi + " Ptarget=" + Ptarget;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
+             */
             profile.calcProfile(Pi, Ptarget);
-        }
-
-        for(var profile: motorProfilesR) {
-            String logMsg    = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Ptarget + " Ptarget=" + Pi;
+            profile          = motorProfilesR[i];
+            /*
+            logMsg           = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Ptarget + " Ptarget=" + Pi;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
+             */
             profile.calcProfile(Ptarget, Pi);
         }
     }
@@ -117,12 +120,8 @@ public class MotorProfiles implements Validatable {
 
     public Double           getMinMovingPower(MotorProfileConstP[] motorProfiles) {
         MotorProfileConstP[] sortedProfiles = motorProfiles.clone();
-        Arrays.sort(sortedProfiles, new Comparator<MotorProfileConstP>() {
-            @Override
-            public int compare(MotorProfileConstP o1, MotorProfileConstP o2) {
-                return Double.compare(abs(o1.getNominalPower()), abs(o2.getNominalPower()));
-            }
-        });
+        Arrays.sort(sortedProfiles, (MotorProfileConstP o1, MotorProfileConstP o2) ->
+                Double.compare(abs(o1.getNominalPower()), abs(o2.getNominalPower())));
         Double minMovePower  = null;
         for(var profile: sortedProfiles) {
             if(profile.hasMoved())

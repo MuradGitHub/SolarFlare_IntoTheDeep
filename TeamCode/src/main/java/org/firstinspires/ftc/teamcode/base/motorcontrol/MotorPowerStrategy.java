@@ -43,7 +43,6 @@ import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.logging.DescriptiveIdProvider;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
-import org.firstinspires.ftc.teamcode.base.utils.HashMapUtils;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -81,6 +80,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         velTol          = motorConfig.controlParams.tolerances.velTol;
         nominalPower    = nominalPower_in;
 
+        /*
         logger.logp(
                 Level.INFO,
                 "MotorPowerStrategy",
@@ -89,6 +89,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
                         Locale.US,
                         "posTol=%1$d velTol=%2$.3f nominalPower=%3$.3f",
                         posTol, velTol, nominalPower));
+        */
     }
     public          void    init(ElapsedTime timer_in, int Pi_in, int Ptarget_in) {
         timer           = timer_in;

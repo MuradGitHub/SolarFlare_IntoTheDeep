@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode.base.math;
 import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantDown;
 import static org.firstinspires.ftc.teamcode.base.math.Math.retainSignificantUp;
 
+import static java.lang.Math.abs;
+
 import androidx.annotation.NonNull;
 
 import java.lang.Math;
@@ -92,6 +94,12 @@ public class Range implements Cloneable {
             levels[i] = min + i*eps;
 
         return levels;
+    }
+    public double   getAbsMax() {
+        return Math.max(abs(max),abs(min));
+    }
+    public double   getAbsMin() {
+        return Math.min(abs(max), abs(min));
     }
     public double   constrain(double x) {
         return Math.min(Math.max(x,min),max);
