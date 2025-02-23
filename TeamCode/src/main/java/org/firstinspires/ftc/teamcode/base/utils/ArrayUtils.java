@@ -65,6 +65,16 @@ public class ArrayUtils {
 
         return invNumbers;
     }
+    public static String   toString(   double[] numbers, String itemFormat) {
+        StringBuilder sb      = new StringBuilder();
+        int           lastIdx = numbers.length - 1;
+        sb.append("[");
+        for(int i=0; i<lastIdx; i++)
+            sb.append(String.format(Locale.US,itemFormat,numbers[i])).append(",");
+        sb.append(String.format(Locale.US,itemFormat,numbers[lastIdx])).append("]");
+
+        return sb.toString();
+    }
 
     public static void main(String[] args) {
         String     format      = "concatenate(%1$-15s) = %2$-15s matched:%3$b%n";
