@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.Math;
 import java.lang.ref.Cleaner;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class Range implements Cloneable {
@@ -81,6 +82,14 @@ public class Range implements Cloneable {
     public double getSpan() {
         return max - min;
     }
+    public double[] getLevels(int resolution) {
+        double[] levels = new double[resolution+1];
+        double   eps    = (max-min)/resolution;
+        for(int i=0; i<=resolution; i++)
+            levels[i] = min + i*eps;
+
+        return levels;
+    }
     public double constrain(double x) {
         return Math.min(Math.max(x,min),max);
     }
@@ -93,6 +102,7 @@ public class Range implements Cloneable {
 
     public static void main(String[] args) {
         // getSpan()
+        System.out.println("getSpan() testing");
         String     format      = "%1$-12s.getSpan() = %2$-6s match:%3$b%n";
         String[][] casesString = new String[][] {
                 {"Range(1,10)", Double.toString(new Range( 1,10).getSpan()),"9.0"},
@@ -103,7 +113,8 @@ public class Range implements Cloneable {
         }
 
         // update()
-        format                 = "%1$-16s.update() = %2$-30s match:%3$b%n";
+        System.out.println("\nupdate() testing");
+        format                 = "%1$-16s.update()       = %2$-30s match:%3$b%n";
         casesString            = new String[][] {
                 {"Range(1,10)", new Range(1 ,10).update(20).toString(), "Range(1.00000, 20.00000)"},
                 {"Range(-1,10)",new Range(-1,10).update(-50).toString(),"Range(-50.00000, 10.00000)"}
@@ -113,10 +124,22 @@ public class Range implements Cloneable {
         }
 
         // constrain()
-        format                 = "%1$-16s.constrain(%2$-3s) = %3$-4s match:%4$b%n";
+        System.out.println("\nconstrain() testing");
+        format                 = "%1$-16s.constrain(%2$-3s) = %3$-30s match:%4$b%n";
         casesString            = new String[][] {
                 {"Range(1,10)","20", Double.toString(new Range(1,10).constrain(20)), "10.0"},
                 {"Range(1,10)","-50",Double.toString(new Range(1,10).constrain(-50)),"1.0"}
+        };
+        for(String[] c: casesString) {
+            System.out.printf(Locale.US,format,c[0],c[1],c[2],c[2].equals(c[3]));
+        }
+
+        // getLevels()
+        System.out.println("\ngetLevels() testing");
+        format                 = "%1$-16s.getLevels(%2$-3s) = %3$-30s match:%4$b%n";
+        casesString            = new String[][] {
+                {"Range(1,9)", "4",Arrays.toString(new Range(1,9) .getLevels(4)),"[1.0, 3.0, 5.0, 7.0, 9.0]"},
+                {"Range(1,11)","2",Arrays.toString(new Range(1,11).getLevels(2)),"[1.0, 6.0, 11.0]"}
         };
         for(String[] c: casesString) {
             System.out.printf(Locale.US,format,c[0],c[1],c[2],c[2].equals(c[3]));
