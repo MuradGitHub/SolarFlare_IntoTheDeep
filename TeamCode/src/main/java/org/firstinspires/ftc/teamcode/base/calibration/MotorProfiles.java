@@ -29,11 +29,15 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
+import static java.lang.Math.abs;
+
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,8 +116,15 @@ public class MotorProfiles implements Validatable {
     }
 
     public Double           getMinMovingPower(MotorProfileConstP[] motorProfiles) {
+        MotorProfileConstP[] sortedProfiles = motorProfiles.clone();
+        Arrays.sort(sortedProfiles, new Comparator<MotorProfileConstP>() {
+            @Override
+            public int compare(MotorProfileConstP o1, MotorProfileConstP o2) {
+                return Double.compare(abs(o1.getNominalPower()), abs(o2.getNominalPower()));
+            }
+        });
         Double minMovePower  = null;
-        for(var profile: motorProfiles) {
+        for(var profile: sortedProfiles) {
             if(profile.hasMoved())
                 return minMovePower;
             else

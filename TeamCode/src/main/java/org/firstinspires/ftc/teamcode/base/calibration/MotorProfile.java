@@ -405,7 +405,7 @@ public class MotorProfile
         return hasReachedTarget()? getTargetDataPoint().t : null;
     }
     public        boolean hasMoved() {
-        return getFirstDataPoint().P != getLastDataPoint().P;
+        return abs(getFirstDataPoint().P-getLastDataPoint().P) > 0.02 * abs(Ptarget-Pi);
     }
     public        boolean hasSteadyStateV() {
         return ssIdxVavg != null;
