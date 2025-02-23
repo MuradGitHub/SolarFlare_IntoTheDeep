@@ -45,6 +45,26 @@ public class ArrayUtils {
 
         return all;
     }
+    public static double[] symmetrize( double[] numbers) {
+        int      size          = numbers.length;
+        double[] symNumbers    = new double[2*size];
+        for(int i=0; i<size; i++) {
+            symNumbers[i]      = numbers[i];
+            symNumbers[i+size] = -numbers[i];
+        }
+        Arrays.sort(symNumbers);
+
+        return symNumbers;
+    }
+    public static double[] invert(     double[] numbers) {
+        double[] invNumbers    = new double[numbers.length];
+        for(int i=0; i<numbers.length; i++) {
+            invNumbers[i]      = -numbers[i];
+        }
+        Arrays.sort(invNumbers);
+
+        return invNumbers;
+    }
 
     public static void main(String[] args) {
         String     format      = "concatenate(%1$-15s) = %2$-15s matched:%3$b%n";

@@ -43,21 +43,21 @@ public class Range implements Cloneable {
     public double min;
     public double max;
 
-    public        Range() {
+    public          Range() {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
     }
-    public        Range(double min_in, double max_in) {
+    public          Range(double min_in, double max_in) {
         min = min_in;
         max = max_in;
     }
-    public        Range(double[] a) {
+    public          Range(double[] a) {
         super();
         for(double n: a) {
             update(n);
         }
     }
-    public Range  update(double x) {
+    public Range    update(double x) {
         if(x<min)
             min = x;
         if(x>max)
@@ -65,21 +65,24 @@ public class Range implements Cloneable {
 
         return this;
     }
-    public Range  retainSignificantDownUp(int order) {
+    public Range    retainSignificantDownUp(int order) {
         return new Range(
                 retainSignificantDown(min, order),
                 retainSignificantUp(  max, order));
     }
     @NonNull
     @Override
-    public Range  clone() {
+    public Range    clone() {
         try {
             return (Range) super.clone();
         } catch(CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
-    public double getSpan() {
+    public Range    invert() {
+        return new Range(-max, -min);
+    }
+    public double   getSpan() {
         return max - min;
     }
     public double[] getLevels(int resolution) {
@@ -90,13 +93,13 @@ public class Range implements Cloneable {
 
         return levels;
     }
-    public double constrain(double x) {
+    public double   constrain(double x) {
         return Math.min(Math.max(x,min),max);
     }
 
     @NonNull
     @Override
-    public String toString() {
+    public String   toString() {
         return String.format(Locale.US, "Range(%1$.5f, %2$.5f)", min, max);
     }
 

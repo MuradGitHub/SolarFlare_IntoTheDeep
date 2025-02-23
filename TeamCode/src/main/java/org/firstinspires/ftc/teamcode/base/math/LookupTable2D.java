@@ -60,8 +60,8 @@ public class LookupTable2D extends MultiMetricsWriter {
     private                 double[][] rawData = null;
     private                 double[][] data    = null;
     private                 double[][] weights = null;
-    public                  double[]   xValues = null;
-    public                  double[]   yValues = null;
+    public                  double[]   xValues;
+    public                  double[]   yValues;
 
     public static class EmptyPoint implements Comparable<EmptyPoint> {
         public int    xIdx;
@@ -162,14 +162,15 @@ public class LookupTable2D extends MultiMetricsWriter {
         xRange       = new Range(xValues);
         yRange       = new Range(yValues);
     }
-    public           LookupTable2D(int xResolution_in, Range xRange_in,
-                                   int yResolution_in, Range yRange_in) {
-        xResolution = xResolution_in;
-        yResolution = yResolution_in;
+    public           LookupTable2D(double[] xValues_in, double[] yValues_in) {
+        xValues     = xValues_in.clone();
+        yValues     = yValues_in.clone();
+        xResolution = xValues.length;
+        yResolution = yValues.length;
         xIdxMax     = xResolution-1;
         yIdxMax     = yResolution-1;
-        xRange      = xRange_in.clone();
-        yRange      = yRange_in.clone();
+        xRange      = new Range(xValues);
+        yRange      = new Range(yValues);
 
         logger.logp(
                 Level.INFO,
@@ -184,22 +185,6 @@ public class LookupTable2D extends MultiMetricsWriter {
         initMetricsSpecs();
     }
     private   void   initArrays() {
-        // xValues
-        if(xValues == null) {
-            xValues           = new double[xResolution];
-            double dx         = xRange.getSpan() / xIdxMax;
-            for(int xIdx=0; xIdx<xResolution; xIdx++)
-                xValues[xIdx] = xRange.min + xIdx*dx;
-        }
-
-        // yValues
-        if(yValues == null) {
-            yValues           = new double[yResolution];
-            double dy         = yRange.getSpan() / yIdxMax;
-            for(int yIdx=0; yIdx<yResolution; yIdx++)
-                yValues[yIdx] = yRange.min + yIdx*dy;
-        }
-
         // data
         if(data == null) {
             data              = new double[xResolution][yResolution];
@@ -566,7 +551,9 @@ public class LookupTable2D extends MultiMetricsWriter {
     }
 
     public static void main(String[] args) {
-        LookupTable2D lut = new LookupTable2D(5,new Range(0,4),5,new Range(0,4));
+        LookupTable2D lut = new LookupTable2D(
+                new Range(0,4).getLevels(4),
+                new Range(0,4).getLevels(4));
         for(int xIdx=0; xIdx<5; xIdx++) {
             for(int yIdx=0; yIdx<5; yIdx++) {
                 /// skip certain data points to assess the robustness of the LUT
