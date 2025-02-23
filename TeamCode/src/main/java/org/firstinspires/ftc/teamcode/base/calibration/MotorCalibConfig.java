@@ -32,21 +32,25 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.config.Validatable;
+import org.firstinspires.ftc.teamcode.base.math.Range;
+
+import java.util.Arrays;
 
 public class MotorCalibConfig implements Validatable {
-    public int     minTimeInc;
-    public int     timeResolution;
-    public int     powerResolution;
-    public double  averagingTime;
-    public int     endSamples;
-    public double  minPower;
-    public double  maxPower;
-    public int     targetBuffer;
-    public int     minDistance;
-    public int     positionTolerance;
-    public double  velocityTolerance;
-    public int     velocityResolution;
-    public double  maxProfileTime;
+    public int      minTimeInc;
+    public int      timeResolution;
+    public double[] powerLevels;
+    public double   averagingTime;
+    public int      endSamples;
+    public double   minPower;
+    public double   maxPower;
+    public int      targetBuffer;
+    public int      minDistance;
+    public int      positionTolerance;
+    public double   velocityTolerance;
+    public int      velocityResolution;
+    public Range    velocityRange;
+    public double   maxProfileTime;
 
     public boolean isValid() {
         return true;
@@ -57,19 +61,20 @@ public class MotorCalibConfig implements Validatable {
     public String toString() {
         var sb = new StringBuilder();
         sb.append("MotorCalibConfig\n");
-        sb.append("  minTimeInc=")        .append(minTimeInc)        .append("\n");
-        sb.append("  timeResolution=")    .append(timeResolution)    .append("\n");
-        sb.append("  powerResolution=")   .append(powerResolution)   .append("\n");
-        sb.append("  averagingTime=")     .append(averagingTime)     .append("\n");
-        sb.append("  endSamples=")        .append(endSamples)        .append("\n");
-        sb.append("  minPower=")          .append(minPower)          .append("\n");
-        sb.append("  maxPower=")          .append(maxPower)          .append("\n");
-        sb.append("  targetBuffer=")      .append(targetBuffer)      .append("\n");
-        sb.append("  minDistance=")       .append(minDistance)       .append("\n");
-        sb.append("  positionTolerance=") .append(positionTolerance) .append("\n");
-        sb.append("  velocityTolerance=") .append(velocityTolerance) .append("\n");
-        sb.append("  velocityResolution=").append(velocityResolution).append("\n");
-        sb.append("  maxProfileTime=")    .append(maxProfileTime)    .append("\n");
+        sb.append("  minTimeInc=")        .append(minTimeInc)                  .append("\n");
+        sb.append("  timeResolution=")    .append(timeResolution)              .append("\n");
+        sb.append("  powerCalibLevels=")  .append(Arrays.toString(powerLevels)).append("\n");
+        sb.append("  averagingTime=")     .append(averagingTime)               .append("\n");
+        sb.append("  endSamples=")        .append(endSamples)                  .append("\n");
+        sb.append("  minPower=")          .append(minPower)                    .append("\n");
+        sb.append("  maxPower=")          .append(maxPower)                    .append("\n");
+        sb.append("  targetBuffer=")      .append(targetBuffer)                .append("\n");
+        sb.append("  minDistance=")       .append(minDistance)                 .append("\n");
+        sb.append("  positionTolerance=") .append(positionTolerance)           .append("\n");
+        sb.append("  velocityTolerance=") .append(velocityTolerance)           .append("\n");
+        sb.append("  velocityResolution=").append(velocityResolution)          .append("\n");
+        sb.append("  velocityRange=")     .append(velocityRange)               .append("\n");
+        sb.append("  maxProfileTime=")    .append(maxProfileTime)              .append("\n");
 
         return sb.toString();
     }

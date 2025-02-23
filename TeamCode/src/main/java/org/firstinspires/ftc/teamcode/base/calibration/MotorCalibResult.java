@@ -29,6 +29,8 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
+import static org.firstinspires.ftc.teamcode.base.utils.ArrayUtils.invert;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
@@ -55,8 +57,9 @@ import org.firstinspires.ftc.teamcode.base.utils.JSONUtils;
 public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable {
     private transient Logger                               logger        = RobotLogger.getInstance().getConfigLogger();
     public            MotorEnum                            motorEnum;
-    public            int                                  powerResolution;
+    public            double[]                             powerLevels;
     public            int                                  velocityResolution;
+    public            Range                                velocityRange;
 
     public            String                               metricsSpecId = "MotorProfileData";
     public            ArrayList<MotorProfileDataPoint>     ssDataF;
@@ -95,17 +98,19 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
                                           Double                           minMovePowerR_in,
                                           boolean                          writeMetrics_in,
                                           boolean                          writeMetricsLUT_in) {
-        motorEnum             = motorConfig_in.motorEnum;
-        powerResolution       = motorConfig_in.calibParams.powerResolution;
-        velocityResolution    = motorConfig_in.calibParams.velocityResolution;
-        ssDataF               = ssDataF_in;
-        dataF                 = dataF_in;
-        ssDataR               = ssDataR_in;
-        dataR                 = dataR_in;
-        minMovePowerF         = minMovePowerF_in;
-        minMovePowerR         = minMovePowerR_in;
-        writeMetrics          = writeMetrics_in;
-        writeMetricsLUT       = writeMetricsLUT_in;
+        MotorCalibConfig params = motorConfig_in.calibParams;
+        motorEnum               = motorConfig_in.motorEnum;
+        powerLevels             = params.powerLevels.clone();
+        velocityResolution      = params.velocityResolution;
+        velocityRange           = params.velocityRange.clone();
+        ssDataF                 = ssDataF_in;
+        dataF                   = dataF_in;
+        ssDataR                 = ssDataR_in;
+        dataR                   = dataR_in;
+        minMovePowerF           = minMovePowerF_in;
+        minMovePowerR           = minMovePowerR_in;
+        writeMetrics            = writeMetrics_in;
+        writeMetricsLUT         = writeMetricsLUT_in;
 
         initMetricsSpecs();
         fitFunctions();
@@ -178,16 +183,14 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         PVAFunctionR                   = new MotorPVAFunction(k1R,k2R,k3R,kAresR);
 
         /// Fit the LUTs
-        Range pRangeF                  = new Range(0, 1);
-        Range vRangeF                  = VssRangeF.retainSignificantDownUp(2);
         PVALutF                        = new LookupTable2D(
-                powerResolution, pRangeF, velocityResolution, vRangeF);
+                powerLevels,
+                velocityRange.getLevels(velocityResolution));
         PVALutF.setBaseMetricsFileId("MotorCalibResult-PVALutF-" + motorEnum.name());
 
-        Range pRangeR                  = new Range(-1, 0);
-        Range vRangeR                  = VssRangeR.retainSignificantDownUp(2);
-        PVALutR = new LookupTable2D(
-                powerResolution, pRangeR, velocityResolution, vRangeR);
+        PVALutR                        = new LookupTable2D(
+                invert(powerLevels),
+                velocityRange.invert().getLevels(velocityResolution));
         PVALutR.setBaseMetricsFileId("MotorCalibResult-PVALutR-" + motorEnum.name());
 
         logger.logp(

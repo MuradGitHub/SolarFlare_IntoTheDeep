@@ -29,8 +29,6 @@
  */
 package org.firstinspires.ftc.teamcode.base.calibration;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
@@ -43,7 +41,6 @@ import androidx.annotation.NonNull;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -142,16 +139,20 @@ public class MotorProfile
      * Index of steady state of Aavg
      */
     public                    Integer                          ssIdxAavg         = null;
+    /**
+     * minMovingPower fromm MotorCalibResult to be stored in the MotorProfileDataPoint(s)
+     */
+    public                    Double                           minMovePowerF;
+    public                    Double                           minMovePowerR;
 
     // Construction
     /**
      * Constructor requires information about the motor
      * @param motorConfig_in: The configuration of the motor being calibrated
      */
-    public                MotorProfile(
-            MotorConfig        motorConfig_in,
-            MotorPowerStrategy startPowerStrategy_in,
-            MotorPowerStrategy profilePowerStrategy_in) {
+    public                MotorProfile(MotorConfig        motorConfig_in,
+                                       MotorPowerStrategy startPowerStrategy_in,
+                                       MotorPowerStrategy profilePowerStrategy_in) {
         motorConfig                   = motorConfig_in;
         logger                        = RobotLogger.getInstance().getConfigLogger();
         motor                         = motorConfig.motor;
@@ -160,6 +161,8 @@ public class MotorProfile
         minTimeInc                    = motorConfig.calibParams.minTimeInc;
         timeResolution                = motorConfig.calibParams.timeResolution;
         maxProfileTime                = motorConfig.calibParams.maxProfileTime;
+        minMovePowerF                 = motorConfig.calibResult.minMovePowerF;
+        minMovePowerR                 = motorConfig.calibResult.minMovePowerR;
         startPowerStrategy            = startPowerStrategy_in;
         profilePowerStrategy          = profilePowerStrategy_in;
         startData                     = new ArrayList<>(timeResolution);
@@ -212,6 +215,7 @@ public class MotorProfile
                     "Start-Seeking",
                     calibDirection,
                     timer,
+                    calibDirection == Direction.FORWARD ? minMovePowerF : minMovePowerR,
                     true);
             startPowerStrategy.updateProfileDataPoint(pp);
             startData.add(pp);
@@ -350,6 +354,7 @@ public class MotorProfile
                     "Profile-Seeking",
                     calibDirection,
                     timer,
+                    calibDirection == Direction.FORWARD ? minMovePowerF : minMovePowerR,
                     true);
             profilePowerStrategy.updateProfileDataPoint(pp);
             data.add(pp);
@@ -359,9 +364,15 @@ public class MotorProfile
             if (isStrategyStopped) {
                 pp.setMotorProfileStage("Profile-EndSamples");
                 endSamples--;
-                if (tIdxTarget == null)
-                    tIdxTarget       = tIdx++ - 1;
             }
+
+            if(tIdxTarget == null && profilePowerStrategy.isTargetReached) {
+                tIdxTarget       = tIdx;
+                pp.appendMotorProfileStage("Target");
+            }
+
+            tIdx++;
+
         } while((endSamples>=0 || !isStrategyStopped) && timer.milliseconds() < maxProfileTime);
 
         /// you get here either because you reached the target AND observed for endSamples

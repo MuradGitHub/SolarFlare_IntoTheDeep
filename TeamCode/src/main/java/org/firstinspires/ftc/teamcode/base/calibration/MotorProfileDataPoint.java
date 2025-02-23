@@ -65,7 +65,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                 "TimePExtract",      "TimeVextract",       "TimeCExtract",                 // 14-16
                 "TimeOtherExtract",  "TimeCycle",                                          // 17-18
                 "Position",          "UltimateTarget",     "ImmediateTarget",              // 19-21
-                "minMovingPower",    "powerP",             "powerI",          "powerD",    // 22-25
+                "minMovePower",      "powerP",             "powerI",          "powerD",    // 22-25
                 "Power",             "Velocity",           "Vavg",                         // 26-28
                 "A",                 "Aavg",               "ApredFun",        "ApredLut",  // 29-32
                 "C"                                                                        // 33
@@ -93,7 +93,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        int              P;
     public        int              ultimateTarget;
     public        int              immediateTarget;
-    public        double           minMovingPower;
+    public        double           minMovePower;
     public        double           powerP;
     public        double           powerI;
     public        double           powerD;
@@ -148,6 +148,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                                          String      motorProfileStage_in,
                                          Direction   direction_in,
                                          ElapsedTime timer,
+                                         Double      minMovPower_in,
                                          boolean     extractOther) {
         // Because of the time it takes to pull data from the motor, there measurements
         // unfortunately are not exactly synchronous
@@ -164,12 +165,13 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         power             = motor.getPower();
         tCextract         = timer.milliseconds() - tVextract - tPextract - t;
         if(extractOther) {
-            pidfRTP   = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-            pidfRUE   = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-            isBusy    = motor.isBusy();
+            pidfRTP       = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            pidfRUE       = motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            isBusy        = motor.isBusy();
         }
-        tOtherExtract = timer.milliseconds() - tCextract - tVextract - tPextract - t;
-        tCycle        = timer.milliseconds() - t;
+        tOtherExtract     = timer.milliseconds() - tCextract - tVextract - tPextract - t;
+        tCycle            = timer.milliseconds() - t;
+        minMovePower      = minMovPower_in != null ? minMovPower_in : 0.0;
     }
     public void    setMotorProfileStage(String motorProfileStage_in) {
         motorProfileStage   = motorProfileStage_in;
@@ -215,7 +217,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                 t,                 tEndMP,
                 tPextract,         tVextract,          tCextract,         tOtherExtract, tCycle,
                 P,                 ultimateTarget,     immediateTarget,
-                minMovingPower,    powerP,             powerI,            powerD,
+                minMovePower,      powerP,             powerI,            powerD,
                 power,             V,                  Vavg,
                 A,                 Aavg,               ApredFun,          ApredLut,
                 C
@@ -248,7 +250,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         sb.append("  P=")                 .append(P)                .append("\n");
         sb.append("  ultimateTarget=")    .append(ultimateTarget)   .append("\n");
         sb.append("  immediateTarget=")   .append(immediateTarget)  .append("\n");
-        sb.append("  minMovingPower=")    .append(minMovingPower)   .append("\n");
+        sb.append("  minMovePower=")      .append(minMovePower)     .append("\n");
         sb.append("  powerP=")            .append(powerP)           .append("\n");
         sb.append("  powerI=")            .append(powerI)           .append("\n");
         sb.append("  powerD=")            .append(powerD)           .append("\n");

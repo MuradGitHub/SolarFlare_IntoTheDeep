@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class MotorProfiles implements Validatable {
     public  transient final MotorConfig          motorConfig;
     private transient final Logger               logger;
-    private           final int                  powerResolution;
+    private           final double[]             powerLevels;
     public                  int                  Pi;
     public                  int                  Ptarget;
     public            final MotorProfileConstP[] motorProfilesF;
@@ -49,32 +49,30 @@ public class MotorProfiles implements Validatable {
     public                  MotorProfiles(MotorConfig motorConfig_in) {
         logger                = RobotLogger.getInstance().getConfigLogger();
         motorConfig           = motorConfig_in;
-        powerResolution       = motorConfig.calibParams.powerResolution;
+        powerLevels           = motorConfig.calibParams.powerLevels.clone();
 
-        motorProfilesF        = new MotorProfileConstP[powerResolution];
-        motorProfilesR        = new MotorProfileConstP[powerResolution];
+        motorProfilesF        = new MotorProfileConstP[powerLevels.length];
+        motorProfilesR        = new MotorProfileConstP[powerLevels.length];
 
-        double minPower       = motorConfig.calibParams.minPower;
-        double maxPower       = motorConfig.calibParams.maxPower;
-        double dP             = (maxPower-minPower)/(powerResolution-1);
-        for(int i=0; i<powerResolution; i++) {
-            double power      = minPower + i*dP;
-            motorProfilesF[i] = new MotorProfileConstP(motorConfig, power);
-            motorProfilesR[i] = new MotorProfileConstP(motorConfig, power);
+        for(int i=0; i<powerLevels.length; i++) {
+            double power      = powerLevels[i];
+            motorProfilesF[i] = new MotorProfileConstP(motorConfig,  power);
+            motorProfilesR[i] = new MotorProfileConstP(motorConfig, -power);
         }
     }
     public void             calcProfiles(int Pi_in, int Ptarget_in) {
         Pi                   = Pi_in;
         Ptarget              = Ptarget_in;
-        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
-            double power     = motorProfilesF[pIdx].getNominalPower();
-            String logMsg    = "Profile=" + pIdx + " nominalPower=" + power + " Pi=" + Pi + " Ptarget=" + Ptarget;
+        for(var profile: motorProfilesF) {
+            String logMsg = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Pi + " Ptarget=" + Ptarget;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
-            motorProfilesF[pIdx].calcProfile(Pi,      Ptarget);
-            power            = motorProfilesR[pIdx].getNominalPower();
-            logMsg           = "Profile=" + pIdx + " nominalPower=" + power + " Pi=" + Ptarget + " Ptarget=" + Pi;
+            profile.calcProfile(Pi, Ptarget);
+        }
+
+        for(var profile: motorProfilesR) {
+            String logMsg    = "Profile: nominalPower=" + profile.getNominalPower() + " Pi=" + Ptarget + " Ptarget=" + Pi;
             logger.logp(Level.INFO, "MotorProfiles", "calcProfiles", logMsg);
-            motorProfilesR[pIdx].calcProfile(Ptarget, Pi);
+            profile.calcProfile(Ptarget, Pi);
         }
     }
 
@@ -137,16 +135,16 @@ public class MotorProfiles implements Validatable {
         );
     }
     public void             writeMetrics() {
-        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
-            motorProfilesF[pIdx].writeMetrics();
-            motorProfilesR[pIdx].writeMetrics();
-        }
+        for(var profile: motorProfilesF)
+            profile.writeMetrics();
+        for(var profile: motorProfilesR)
+            profile.writeMetrics();
     }
     public void             writeJSONs() {
-        for(int pIdx=0; pIdx<powerResolution; pIdx++) {
-            motorProfilesF[pIdx].writeJSON();
-            motorProfilesR[pIdx].writeJSON();
-        }
+        for(var profile: motorProfilesF)
+            profile.writeJSON();
+        for(var profile: motorProfilesR)
+            profile.writeJSON();
     }
     public boolean          isValid() {
         return true;
