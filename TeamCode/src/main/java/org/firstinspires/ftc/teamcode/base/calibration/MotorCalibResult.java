@@ -69,10 +69,10 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
     public            LookupTable1D                        Vss             = new LookupTable1D();
     public            LookupTable2D                        PVALutF;
     public            LookupTable2D                        PVALutR;
-    public            Range                                VssRangeF       = new Range();
-    public            Range                                VssRangeR       = new Range();
-    public            Range                                AssRangeF       = new Range();
-    public            Range                                AssRangeR       = new Range();
+    public            Range                                VavgRangeF       = new Range();
+    public            Range                                VavgRangeR       = new Range();
+    public            Range                                AavgRangeF      = new Range();
+    public            Range                                AavgRangeR      = new Range();
     public            Double                               minMovePowerF;
     public            Double                               minMovePowerR;
     public            MotorPVAFunction                     PVAFunctionF;
@@ -155,8 +155,8 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         /// Forward data
         obs.clear();
         for(var dataPoint: dataF) {
-            VssRangeF.update(dataPoint.Vavg);
-            AssRangeF.update(dataPoint.Aavg);
+            VavgRangeF.update(dataPoint.Vavg);
+            AavgRangeF.update(dataPoint.Aavg);
             /// x = (power - k2*v - k3)
             double x = dataPoint.power - k2F * dataPoint.Vavg - k3F;
             obs.add(x, dataPoint.Aavg);
@@ -169,8 +169,8 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
         /// Reverse data
         obs.clear();
         for(var dataPoint: dataR) {
-            VssRangeR.update(dataPoint.Vavg);
-            AssRangeR.update(dataPoint.Aavg);
+            VavgRangeR.update(dataPoint.Vavg);
+            AavgRangeR.update(dataPoint.Aavg);
             /// x = (power - k2*v - k3)
             double x = dataPoint.power - k2R * dataPoint.Vavg - k3R;
             obs.add(x, dataPoint.Aavg);
@@ -197,7 +197,7 @@ public class MotorCalibResult extends MultiMetricsWriter implements JSONWritable
                 Level.INFO,
                 "MotorCalibResult",
                 "fitFunctions",
-                String.format(Locale.US,"vRangeF=%1$s vRangeR=%2$s",VssRangeF,VssRangeR));
+                String.format(Locale.US,"vRangeF=%1$s vRangeR=%2$s",VavgRangeF,VavgRangeR));
 
         /// add points to the LUTs
         for(var dataPoint: dataF)

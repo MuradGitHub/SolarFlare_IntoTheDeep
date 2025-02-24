@@ -405,7 +405,7 @@ public class MotorProfile
         return hasReachedTarget()? getTargetDataPoint().t : null;
     }
     public        boolean hasMoved() {
-        return abs(getFirstDataPoint().P-getLastDataPoint().P) > 0.02 * abs(Ptarget-Pi);
+        return abs(getFirstDataPoint().P-getLastDataPoint().P) > 0.05 * abs(Ptarget-Pi);
     }
     public        boolean hasSteadyStateV() {
         return ssIdxVavg != null;
@@ -442,7 +442,8 @@ public class MotorProfile
 
     // Data persistence
     /**
-     * Obtains the profile data up to the point in time where steady state velocity is achieved
+     * Obtains the profile data if the profile has achieved steady state velocity
+     * otherwise return an empty container
      *
      * @return MotorProfileDataPoints up to the point in time were steady state velocity
      *  is achieved
@@ -450,8 +451,7 @@ public class MotorProfile
     public ArrayList<MotorProfileDataPoint> getProfileData() {
         ArrayList<MotorProfileDataPoint> profileData = new ArrayList<>();
         if(hasSteadyStateV())
-            for(int tIdx=0; tIdx<=ssIdxVavg; tIdx++)
-                profileData.add(data.get(tIdx));
+            profileData.addAll(data);
         return profileData;
     }
 

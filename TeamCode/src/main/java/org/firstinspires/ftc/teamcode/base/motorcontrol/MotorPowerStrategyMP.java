@@ -49,7 +49,6 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     public MotionProfile      motionProfile;
     public FeedbackController fbc;
 
-
     public        MotorPowerStrategyMP(MotorConfig            motorConfig,
                                        MotionProfileEnum      motionProfileEnum,
                                        FeedbackControllerEnum FBCEnum,
@@ -76,27 +75,28 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         double           Vi    = motor.getVelocity() / 1000;
         double           Vmax;
         double           Amax;
+        double           Dmax;
 
         if(direction == DcMotorSimple.Direction.FORWARD) {
-            Vmax               = calib.VssRangeF.getAbsMax();
-            Amax               = calib.AssRangeF.getAbsMax();
+            Vmax               = calib.VavgRangeF.getAbsMax();
+            Amax               = calib.AavgRangeF.getAbsMax();
+            Dmax               = calib.AavgRangeF.getAbsMin();
         } else {
-            Vmax               = calib.VssRangeR.getAbsMax();
-            Amax               = calib.AssRangeR.getAbsMax();
+            Vmax               = calib.VavgRangeR.getAbsMin();
+            Amax               = calib.AavgRangeR.getAbsMin();
+            Dmax               = calib.AavgRangeR.getAbsMax();
         }
-
-        // calibResult is returning Vmax with the wrong units and 0 for the given parameters
-        // so overriding for now
-        //Vmax        = 2.8;
-        //Amax        = 0.06;
 
         logger.logp(
                 Level.INFO,
                 "MotorPowerStrategyMP",
                 "init",
-                String.format(Locale.US,"Vi=%1$.3f Vmax=%2$.3f Amax=%3$.3f", Vi, Vmax, Amax));
+                String.format(
+                        Locale.US,
+                        "Vi=%1$.3f Vmax=%2$.3f Amax=%3$.3f Dmax=%4$.3f",
+                        Vi, Vmax, Amax, Dmax));
 
-        motionProfile.calcProfile(Ptarget-Pi, Pi, Vi, Vmax, Amax, Amax);
+        motionProfile.calcProfile(Ptarget-Pi, Pi, Vi, Vmax, Amax, Dmax);
 
         fbc.init(timer);
     }

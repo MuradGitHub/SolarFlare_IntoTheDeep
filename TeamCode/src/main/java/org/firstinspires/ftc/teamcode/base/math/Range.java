@@ -96,10 +96,10 @@ public class Range implements Cloneable {
         return levels;
     }
     public double   getAbsMax() {
-        return Math.max(abs(max),abs(min));
+        return abs(max);
     }
     public double   getAbsMin() {
-        return Math.min(abs(max), abs(min));
+        return abs(min);
     }
     public double   constrain(double x) {
         return Math.min(Math.max(x,min),max);
