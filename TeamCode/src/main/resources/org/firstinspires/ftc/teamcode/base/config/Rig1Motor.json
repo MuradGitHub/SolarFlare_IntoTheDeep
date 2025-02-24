@@ -9,6 +9,11 @@
       "TESTING_MOTOR"
     ]
   },
+  "motionProfiles": {
+    "TRAPEZOIDAL": {
+      "tuningFactor": 0.9
+    }
+  },
   "motors": {
     "TESTING_MOTOR": {
       "motorEnum": "TESTING_MOTOR",

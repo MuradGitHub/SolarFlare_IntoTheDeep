@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibResult;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,16 +46,17 @@ import java.util.logging.Logger;
 
 public class RobotConfig implements Validatable {
     private transient final static Logger logger = RobotLogger.getInstance().getConfigLogger();
-    private static RobotConfig                           instance   = null;
-    public         PartsSpecs                            partsSpecs = null;
-    public         String                                robotName;
-    public         RobotDimensions                       robotDimensions;
-    public         HashMap<MotorEnum, MotorConfig>       motors;
-    public         HashMap<ServoEnum, ServoConfig>       servos;
-    public         IMUConfig                             imu;
-    public         PinpointConfig                        pinpoint;
-    public         LimelightConfig                       limelight;
-    public         HashMap<String, ArrayList<MotorEnum>> calibration;
+    private static RobotConfig                                     instance   = null;
+    public         PartsSpecs                                      partsSpecs = null;
+    public         String                                          robotName;
+    public         RobotDimensions                                 robotDimensions;
+    public         HashMap<MotionProfileEnum, MotionProfileConfig> motionProfiles;
+    public         HashMap<MotorEnum, MotorConfig>                 motors;
+    public         HashMap<ServoEnum, ServoConfig>                 servos;
+    public         IMUConfig                                       imu;
+    public         PinpointConfig                                  pinpoint;
+    public         LimelightConfig                                 limelight;
+    public         HashMap<String, ArrayList<MotorEnum>>           calibration;
 
     public static RobotConfig makeInstance(String robotName) {
         try(InputStream input = Application.getResourceAsStream(robotName + ".json")) {
@@ -76,8 +78,7 @@ public class RobotConfig implements Validatable {
         }
         return instance;
     }
-
-    public boolean isValid() {
+    public        boolean     isValid() {
         boolean partsSpecValid       = partsSpecs.isValid();
         boolean robotNameValid       = !robotName.isEmpty();
         boolean robotDimensionsValid = robotDimensions.isValid();
@@ -103,7 +104,7 @@ public class RobotConfig implements Validatable {
 
     @NonNull
     @Override
-    public String toString() {
+    public        String      toString() {
         var sb = new StringBuilder();
 
         sb.append("RobotConfig\n");
@@ -146,7 +147,7 @@ public class RobotConfig implements Validatable {
         return instance;
     }
 
-    public static void main(String[] args) {
+    public static void        main(String[] args) {
 
         String[] robotNames = new String[] {"IntoTheDeep-V2", "Rig1Motor"};
         try {

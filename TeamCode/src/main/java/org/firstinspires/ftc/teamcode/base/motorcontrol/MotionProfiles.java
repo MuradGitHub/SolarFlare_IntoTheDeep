@@ -29,12 +29,35 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import org.firstinspires.ftc.teamcode.base.config.MotionProfileConfig;
+import org.firstinspires.ftc.teamcode.base.config.MotorControlConfig;
+import org.firstinspires.ftc.teamcode.base.config.RobotConfig;
 import org.firstinspires.ftc.teamcode.base.error.BadInputException;
+import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
+
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MotionProfiles {
+    private static Logger      logger      = RobotLogger.getInstance().getConfigLogger();
+    private static RobotConfig robotConfig = RobotConfig.getInstance();
     public static MotionProfile makeMotionProfile(MotionProfileEnum motionProfileEnum) {
+        MotionProfileConfig config = robotConfig.motionProfiles.get(motionProfileEnum);
+
+        logger.logp(
+                Level.INFO,
+                "MotionProfiles",
+                "makeMotionProfile",
+                config != null ? config.toString() : "No MotionProfileConfig for: " + motionProfileEnum);
+
+        if(config == null)
+            throw new BadInputException("No MotionProfileConfig for " + motionProfileEnum);
+
         switch(motionProfileEnum) {
-            case TRAPEZOIDAL -> {return new TrapezoidalMotionProfile1D();}
+            case TRAPEZOIDAL -> {
+                return new TrapezoidalMotionProfile1D(config.tuningFactor);
+            }
             default -> throw new BadInputException("No such motion profile: "+motionProfileEnum);
         }
     }

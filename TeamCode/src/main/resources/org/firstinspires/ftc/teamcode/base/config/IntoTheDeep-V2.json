@@ -11,6 +11,11 @@
       "BUCKET_SLIDES"
     ]
   },
+  "motionProfiles": {
+    "TRAPEZOIDAL": {
+      "tuningFactor": 0.9
+    }
+  },
   "motors": {
     "LEFT_BACK": {
       "motorEnum": "LEFT_BACK",

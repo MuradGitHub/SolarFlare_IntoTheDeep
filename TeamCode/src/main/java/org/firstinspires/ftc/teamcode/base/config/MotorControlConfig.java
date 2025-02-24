@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.base.config;
 
 import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
 
 import java.util.HashMap;
 
@@ -43,5 +44,6 @@ public class MotorControlConfig {
         }
     }
     public HashMap<FeedbackControllerEnum,HashMap<String,Double>> feedback;
+    public HashMap<MotionProfileEnum,     HashMap<String,Double>> motionProfiles;
     public Tolerances                                             tolerances;
 }

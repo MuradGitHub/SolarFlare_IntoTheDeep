@@ -27,29 +27,8 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.motorcontrol;
+package org.firstinspires.ftc.teamcode.base.config;
 
-import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
-
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
-    public double            tuningFactor;
-
-    public               MotionProfile(
-            MotionProfileEnum motionProfileEnum_in,
-            double            tuningFactor_in) {
-        motionProfileEnum = motionProfileEnum_in;
-        tuningFactor      = tuningFactor_in;
-    }
-    public abstract int  getPosition(double time);
-    public abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
-    public abstract double getEndTime();
-    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
+public class MotionProfileConfig {
+    public double tuningFactor = 1.0;
 }
-
-

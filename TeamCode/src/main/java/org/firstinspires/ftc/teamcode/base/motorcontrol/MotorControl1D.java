@@ -52,7 +52,7 @@ public class MotorControl1D implements MetricsWritable {
     HardwareConfig             hw;
     RobotState                 state;
     PID                        pid;
-    TrapezoidalMotionProfile1D profile;
+    MotionProfile              profile;
     Integer                    iter;
     public ElapsedTime         timer;
     /**
@@ -98,7 +98,7 @@ public class MotorControl1D implements MetricsWritable {
 
         state             = RobotState.getInstance();
         pid               = new PID();
-        profile           = new TrapezoidalMotionProfile1D();
+        profile           = MotionProfiles.makeMotionProfile(MotionProfileEnum.TRAPEZOIDAL);
         timer             = new ElapsedTime();
         Amax              = motorConfig.maxAcceleration;
         Dmax              = motorConfig.maxAcceleration;

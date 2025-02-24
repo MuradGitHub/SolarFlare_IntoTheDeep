@@ -144,19 +144,22 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      */
     private           double                     Tt;
 
-    public                               TrapezoidalMotionProfile1D() {
-        super(MotionProfileEnum.TRAPEZOIDAL);
+    public                               TrapezoidalMotionProfile1D(double tuningFactor_in) {
+        super(MotionProfileEnum.TRAPEZOIDAL, tuningFactor_in);
     }
 
     public    TrapezoidalMotionProfile1D getLeadInProfile() {
-        if(leadInProfile == null)
-            leadInProfile = new TrapezoidalMotionProfile1D();
+        if(leadInProfile == null) {
+            // no need to replicate the tuningFactor. The MotionProfile parameters have already
+            // been adjusted
+            leadInProfile = new TrapezoidalMotionProfile1D(1.0);
+        }
         return leadInProfile;
     }
     public    TrapezoidalMotionProfile1D reset() {
         initialized             = false;
         telemetryDash           = null;
-        leadInProfile           = new TrapezoidalMotionProfile1D();
+        leadInProfile           = new TrapezoidalMotionProfile1D(tuningFactor);
         dist                    = 0.0;
         Pi                      = 0.0;
         Vi                      = 0.0;
@@ -210,9 +213,9 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
         dist                    = dist_in;
         Pi                      = Pi_in;
         Vi                      = Vi_in;
-        Vmax                    = signum(dist)*abs(Vmax_in);
-        Amax                    = signum(dist)*abs(Amax_in);
-        Dmax                    = -1*signum(dist)*abs(Dmax_in);
+        Vmax                    = tuningFactor*signum(dist)*abs(Vmax_in);
+        Amax                    = tuningFactor*signum(dist)*abs(Amax_in);
+        Dmax                    = -1*tuningFactor*signum(dist)*abs(Dmax_in);
 
         // System.out.println("dist="+dist+" Pi="+Pi+" Vi="+Vi+" Vmax="+Vmax+" Amax="+Amax+" Dmax="+Dmax);
 
@@ -459,8 +462,11 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      * @param args not used
      */
     public static void main(String[] args) {
-        TrapezoidalMotionProfile1D profile = new TrapezoidalMotionProfile1D();
-        TrapezoidalMotionProfile1D test    = new TrapezoidalMotionProfile1D();
+        // All expected results have been calculated assuming a 1.0 tuningFactor. So we use
+        // that here
+        TrapezoidalMotionProfile1D profile = new TrapezoidalMotionProfile1D(1.0);
+        TrapezoidalMotionProfile1D test    = new TrapezoidalMotionProfile1D(1.0);
+
         test.reset().setInitialized();
 
         String  testDesc;

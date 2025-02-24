@@ -44,18 +44,22 @@ public class FeedbackControllers {
     
     public static FeedbackController makeFeedbackController(
             FeedbackControllerEnum FBCEnum,
-            MotorControlConfig config) {
+            MotorControlConfig     controlParams) {
+
+        HashMap<String,Double> params = controlParams.feedback.get(FBCEnum);
+
+        logger.logp(
+                Level.INFO,
+                "FeedbackControllers",
+                "makeFeedbackController",
+                params != null ? params.toString() : FBCEnum + " Params=null"
+        );
+
+        if(params == null)
+            throw new BadInputException("No Control Params for " + FBCEnum);
+
         switch(FBCEnum) {
             case PID:
-                HashMap<String,Double> params = config.feedback.get(FBCEnum);
-                logger.logp(
-                        Level.INFO,
-                        "FeedbackControllers",
-                        "makeFeedbackController",
-                        params != null ? params.toString() : "FBC Params=null"
-                        );
-                if(params == null)
-                    throw new BadInputException("No Control Params for " + FBCEnum);
                 Double  Kp           = params.get("Kp");
                 Double  Ki           = params.get("Ki");
                 Double  Kd           = params.get("Kd");
