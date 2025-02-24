@@ -378,7 +378,7 @@ public class MotorProfile
             tIdx++;
 
         // Conditions for repeating the iterations of the motor profile
-        } while((endSamples>=0 || !isStrategyStopped) && timer.milliseconds() < maxProfileTime);
+        } while((endSamples>0 || !isStrategyStopped) && timer.milliseconds() < maxProfileTime);
 
         /// you get here either because you reached the target AND observed for endSamples
         /// after that. Or, because you simply ran out of space. I.e. you can not perform

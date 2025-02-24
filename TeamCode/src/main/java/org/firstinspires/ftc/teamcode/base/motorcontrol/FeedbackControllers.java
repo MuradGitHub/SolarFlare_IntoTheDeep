@@ -56,17 +56,19 @@ public class FeedbackControllers {
                         );
                 if(params == null)
                     throw new BadInputException("No Control Params for " + FBCEnum);
-                Double Kp            = params.get("Kp");
-                Double Ki            = params.get("Ki");
-                Double Kd            = params.get("Kd");
-                Double ErrLookback   = params.get("ErrLookback");
-                Double DerLookback   = params.get("DerLookback");
+                Double  Kp           = params.get("Kp");
+                Double  Ki           = params.get("Ki");
+                Double  Kd           = params.get("Kd");
+                Double  maxErrorI    = params.get("maxErrorI");
+                Double  ErrLookback  = params.get("ErrLookback");
+                Double  DerLookback  = params.get("DerLookback");
                 return new PIDController(
-                        Kp          != null ? Kp : 0.0,
-                        Ki          != null ? Ki : 0.0,
-                        Kd          != null ? Kd : 0.0,
-                        ErrLookback != null ? (int) ceil(ErrLookback) : 1,
-                        DerLookback != null ? (int) ceil(DerLookback) : 1);
+                        Kp          != null ? Kp                         : 0.0,
+                        Ki          != null ? Ki                         : 0.0,
+                        Kd          != null ? Kd                         : 0.0,
+                        maxErrorI   != null ? (int) ((double) maxErrorI) : Integer.MAX_VALUE,
+                        ErrLookback != null ? (int) ceil(ErrLookback)    : 1,
+                        DerLookback != null ? (int) ceil(DerLookback)    : 1);
             default:
                 throw new BadInputException("FeedbackControllerEnum: " + FBCEnum + " not supported");
             }

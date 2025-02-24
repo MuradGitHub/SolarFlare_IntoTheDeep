@@ -29,6 +29,8 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import static java.lang.Math.min;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -46,6 +48,7 @@ public class PIDController extends FeedbackController {
     public           double      prevTime;
     public           double[]    ErrHistory;
     public           double[]    DerHistory;
+    public           int         maxErrorI;
     public           int         EIdx   = 0;
     public           int         DIdx   = 0;
     public           double      powerP = 0;
@@ -55,12 +58,14 @@ public class PIDController extends FeedbackController {
     public        PIDController(double Kp_in,
                                 double Ki_in,
                                 double Kd_in,
+                                int    maxErrorI_in,
                                 int    ErrLookback,
                                 int    DerLookback) {
         super(FeedbackControllerEnum.PID);
         Kp                  = Kp_in;
         Ki                  = Ki_in;
         Kd                  = Kd_in;
+        maxErrorI           = maxErrorI_in;
         ErrHistory          = new double[ErrLookback];
         DerHistory          = new double[DerLookback];
 
@@ -86,7 +91,7 @@ public class PIDController extends FeedbackController {
         DIdx                = (DIdx + 1) % DerHistory.length;
         double D            = (error - prevError) / (timer.milliseconds() - prevTime);
 
-        ErrHistory[EIdx]    = error;
+        ErrHistory[EIdx]    = min(error, maxErrorI);
         DerHistory[DIdx]    = D;
 
         double Esum         = 0;
