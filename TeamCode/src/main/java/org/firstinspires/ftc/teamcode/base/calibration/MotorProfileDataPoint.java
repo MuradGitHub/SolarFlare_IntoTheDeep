@@ -51,35 +51,39 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$s,%3$s,%4$d,%5$.5f,%6$b,%7$b,%8$b,%9$.3f,%10$.3f,%11$.3f,%12$.3f,%13$.3f," +
-                        "%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$d,%20$d,%21$d,%22$.3f,"  +
-                        "%23$.3f,%24$.5f,%25$.5f,%26$.5f,%27$.5f,%28$.5f,%29$.5f,%30$.5f,"    +
-                        "%31$.5f,%32$.5f,%33$.5f%n";
+                "%1$s,%2$s,%3$s,%4$d,%5$.5f,%6$b,%7$b,%8$b,%9$.3f,%10$.3f,%11$.3f,%12$.3f,"  +
+                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,"   +
+                        "%21$.3f,%22$d,%23$d,%24$d,%25$.3f,%26$.3f,%27$.5f,%28$.5f,%29$.5f," +
+                        "%30$.5f,%31$.5f,%32$.5f,%33$.5f,%34$.5f,%35$.5f,%36$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
                 "MotorProfileStage", "MotionProfileStage", "Direction",                    // 1-3
                 "PosTol",            "VelTol",                                             // 4-5
                 "isBusy",            "isTargetReached",    "isStrategyStopped",            // 6-8
-                "Kp",                "Ki",                 "Kd",                           // 9-11
-                "Time",              "TimeEndMP",                                          // 12-13
-                "TimePExtract",      "TimeVextract",       "TimeCExtract",                 // 14-16
-                "TimeOtherExtract",  "TimeCycle",                                          // 17-18
-                "Position",          "UltimateTarget",     "ImmediateTarget",              // 19-21
-                "minMovePower",      "powerP",             "powerI",          "powerD",    // 22-25
-                "Power",             "Velocity",           "Vavg",                         // 26-28
-                "A",                 "Aavg",               "ApredFun",        "ApredLut",  // 29-32
-                "C"                                                                        // 33
+                "mpVmax",            "mpAmax",             "mpDmax",                       // 9-11
+                "Kp",                "Ki",                 "Kd",                           // 12-14
+                "Time",              "TimeEndMP",                                          // 15-16
+                "TimePExtract",      "TimeVextract",       "TimeCExtract",                 // 17-19
+                "TimeOtherExtract",  "TimeCycle",                                          // 20-21
+                "Position",          "UltimateTarget",     "ImmediateTarget",              // 22-24
+                "minMovePower",      "powerP",             "powerI",          "powerD",    // 25-28
+                "Power",             "Velocity",           "Vavg",                         // 29-31
+                "A",                 "Aavg",               "ApredFun",        "ApredLut",  // 32-35
+                "C"                                                                        // 36
         };
     }
 
-    public        String           motorProfileStage;
-    public        String           motionProfileStage;
+    public        String           motorProfileStage  = "";
+    public        String           motionProfileStage = "";
     public        Direction        direction;
     public        int              posTol;
     public        double           velTol;
     public        boolean          isBusy;
     public        boolean          isTargetReached;
     public        boolean          isStrategyStopped;
+    public        double           mpVmax;
+    public        double           mpAmax;
+    public        double           mpDmax;
     public        double           Kp;
     public        double           Ki;
     public        double           Kd;
@@ -213,6 +217,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         formatter.format(format,
                 motorProfileStage, motionProfileStage, direction,         posTol,        velTol,
                 isBusy,            isTargetReached,    isStrategyStopped,
+                mpVmax,            mpAmax,             mpDmax,
                 Kp,                Ki,                 Kd,
                 t,                 tEndMP,
                 tPextract,         tVextract,          tCextract,         tOtherExtract, tCycle,
@@ -237,6 +242,9 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         sb.append("  isBusy=")            .append(isBusy)           .append("\n");
         sb.append("  isTargetReached=")   .append(isTargetReached)  .append("\n");
         sb.append("  isStrategyStopped=") .append(isStrategyStopped).append("\n");
+        sb.append("  mpVmax=")            .append(mpVmax)           .append("\n");
+        sb.append("  mpAmax=")            .append(mpAmax)           .append("\n");
+        sb.append("  mpDmax=")            .append(mpDmax)           .append("\n");
         sb.append("  Kp=")                .append(Kp)               .append("\n");
         sb.append("  Ki=")                .append(Ki)               .append("\n");
         sb.append("  Kd=")                .append(Kd)               .append("\n");

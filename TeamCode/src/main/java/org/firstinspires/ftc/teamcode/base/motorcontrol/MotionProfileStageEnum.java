@@ -29,23 +29,11 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
-
-public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
-
-    public               MotionProfile(MotionProfileEnum motionProfileEnum_in) {
-        motionProfileEnum = motionProfileEnum_in;
-    }
-    public abstract int  getPosition(double time);
-    public abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
-    public abstract double getEndTime();
-    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
+public enum MotionProfileStageEnum {
+    LEADING_PROFILE,
+    BRAKING,
+    ACCELERATION,
+    CRUISING,
+    DECELERATION,
+    END,
 }
-
-

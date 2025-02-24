@@ -344,11 +344,8 @@ public class MotorProfile
         timer.reset();
         profilePowerStrategy.init(timer, Pi, Ptarget);
         do {
+            // Apply power and capture data
             profilePowerStrategy.applyPower(Ptarget);
-            isStrategyStopped        = profilePowerStrategy.isStopped;
-
-            Application.sleep(minTimeInc);
-
             MotorProfileDataPoint pp = new MotorProfileDataPoint(
                     motor,
                     "Profile-Seeking",
@@ -359,20 +356,28 @@ public class MotorProfile
             profilePowerStrategy.updateProfileDataPoint(pp);
             data.add(pp);
 
-                // if the target has been reached, likely exceeded, then set power to zero and
-                // start counting backwards the number of required endSamples
-            if (isStrategyStopped) {
-                pp.setMotorProfileStage("Profile-EndSamples");
-                endSamples--;
-            }
+            // Wait minTimeInc between iterations
+            Application.sleep(minTimeInc);
 
+            // Denote the point in time where the target has been reached
             if(tIdxTarget == null && profilePowerStrategy.isTargetReached) {
                 tIdxTarget       = tIdx;
                 pp.appendMotorProfileStage("Target");
             }
 
+            // Initialize the attribute flag indicating whether the power strategy has stopped
+            // if the power strategy has stopped then start counting backwards the number
+            // of required endSamples
+            isStrategyStopped        = profilePowerStrategy.isStopped;
+            if (isStrategyStopped) {
+                pp.setMotorProfileStage("Profile-EndSamples");
+                endSamples--;
+            }
+
+            // Keep a running count of iterations to use in denoting important milestones
             tIdx++;
 
+        // Conditions for repeating the iterations of the motor profile
         } while((endSamples>=0 || !isStrategyStopped) && timer.milliseconds() < maxProfileTime);
 
         /// you get here either because you reached the target AND observed for endSamples
@@ -405,7 +410,7 @@ public class MotorProfile
         return hasReachedTarget()? getTargetDataPoint().t : null;
     }
     public        boolean hasMoved() {
-        return abs(getFirstDataPoint().P-getLastDataPoint().P) > 0.05 * abs(Ptarget-Pi);
+        return abs(getFirstDataPoint().P-getLastDataPoint().P) > 0.1 * abs(Ptarget-Pi);
     }
     public        boolean hasSteadyStateV() {
         return ssIdxVavg != null;

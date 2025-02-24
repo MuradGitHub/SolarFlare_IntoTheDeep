@@ -104,10 +104,8 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     // Data
     public void   updateProfileDataPoint(MotorProfileDataPoint p) {
         super.updateProfileDataPoint(p);
-
         fbc.updateProfileDataPoint(p);
-
-        p.tEndMP    = motionProfile.getEndTime();
+        motionProfile.updateMotorProfileDataPoint(p);
     }
 
     @Override

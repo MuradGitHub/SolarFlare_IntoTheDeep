@@ -38,7 +38,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -88,7 +89,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -138,7 +140,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -188,7 +191,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -238,7 +242,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -288,7 +293,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },
@@ -338,7 +344,8 @@
             "Ki": 0.0,
             "Kd": 0.0003,
             "ErrLookback": 10,
-            "DerLookback": 5
+            "DerLookback": 5,
+            "maxErrorI": 10
           }
         }
       },

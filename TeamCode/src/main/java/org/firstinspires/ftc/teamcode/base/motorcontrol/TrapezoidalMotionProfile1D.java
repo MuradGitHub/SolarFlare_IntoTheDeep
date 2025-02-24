@@ -43,6 +43,7 @@ import static org.firstinspires.ftc.teamcode.base.math.Math.solveQuadraticEquati
 import static org.firstinspires.ftc.teamcode.base.math.Math.approxEquals;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 import org.firstinspires.ftc.teamcode.base.error.CalculationException;
 import org.firstinspires.ftc.teamcode.base.math.ComplexNumberPair;
 import org.firstinspires.ftc.teamcode.base.logging.MetricsWritable;
@@ -64,6 +65,11 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      *   2- Vi will overshoot distance even if maximum deceleration was applied immediately
      */
     private           TrapezoidalMotionProfile1D leadInProfile = null;
+    /**
+     * Current stage labels the stage the motion profile would be in at the time getPosition
+     * was called
+     */
+    private           MotionProfileStageEnum     stage;
     /**
      * Distance to travel
      */
@@ -138,16 +144,16 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      */
     private           double                     Tt;
 
-    public              TrapezoidalMotionProfile1D() {
+    public                               TrapezoidalMotionProfile1D() {
         super(MotionProfileEnum.TRAPEZOIDAL);
     }
 
-    public TrapezoidalMotionProfile1D getLeadInProfile() {
+    public    TrapezoidalMotionProfile1D getLeadInProfile() {
         if(leadInProfile == null)
             leadInProfile = new TrapezoidalMotionProfile1D();
         return leadInProfile;
     }
-    public TrapezoidalMotionProfile1D reset() {
+    public    TrapezoidalMotionProfile1D reset() {
         initialized             = false;
         telemetryDash           = null;
         leadInProfile           = new TrapezoidalMotionProfile1D();
@@ -172,12 +178,11 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
 
         return this;
     }
-
-    public    boolean   isInitialized() {
+    public    boolean                    isInitialized() {
         return initialized;
     }
-    public    void      setInitialized() { initialized = true; }
-    protected Telemetry getTelemetryDash() {
+    public    void                       setInitialized() { initialized = true; }
+    protected Telemetry                  getTelemetryDash() {
         if(telemetryDash == null)
             telemetryDash = FtcDashboard.getInstance().getTelemetry();
         return telemetryDash;
@@ -195,12 +200,12 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      * @param dist_in  Distance to travel
      * @param Pi_in Initial Position
      */
-    public    void      calcProfile(double dist_in,
-                                    double Pi_in,
-                                    double Vi_in,
-                                    double Vmax_in,
-                                    double Amax_in,
-                                    double Dmax_in) {
+    public    void                       calcProfile(double dist_in,
+                                                     double Pi_in,
+                                                     double Vi_in,
+                                                     double Vmax_in,
+                                                     double Amax_in,
+                                                     double Dmax_in) {
         initialized             = true;
         dist                    = dist_in;
         Pi                      = Pi_in;
@@ -295,38 +300,51 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
          */
     }
     // Run this method in a loop
-    public    int       getPosition(double t) {
+    public    int                        getPosition(double t) {
         if(leadInProfile == null)
             throw new CalculationException("TrapezoidalMotionProfile1D not initialized");
 
         if(t < leadInProfile.Tt) {
+            stage               = MotionProfileStageEnum.LEADING_PROFILE;
             return leadInProfile.getPosition(t);
         } if(t < leadInProfile.Tt+Tb) {
+            stage               = MotionProfileStageEnum.BRAKING;
             double tInB         = t-leadInProfile.Tt;
             return (int) round(Pi + Vi * tInB + 0.5 * Dmax*tInB*tInB);
         } else if (t < leadInProfile.Tt+Tb+Ta) {
+            stage               = MotionProfileStageEnum.ACCELERATION;
             double tInA         = t-leadInProfile.Tt-Tb;
             return (int) round(Pi + Sb + Vi * tInA + 0.5 * Amax*tInA*tInA);
         } else if (t < leadInProfile.Tt+Tb+Ta+Tc) {
+            stage               = MotionProfileStageEnum.CRUISING;
             double tInC         = t-leadInProfile.Tt-Tb-Ta;
             return (int) round(Pi + Sb + Sa + Vc * tInC);
         } else if (t < Tt){
+            stage               = MotionProfileStageEnum.DECELERATION;
             double tInD         = t-leadInProfile.Tt-Tb-Ta-Tc;
             return (int) round(Pi + Sb + Sa + Sc + Vc*tInD + 0.5*Dmax*tInD*tInD);
         }  else {
+            stage               = MotionProfileStageEnum.END;
             return (int) round(Pi + dist);
         }
     }
-    public    double    getEndTime() {
+    public    double                     getEndTime() {
         return Tt;
     }
-    public    String    getMetricsFileId() {
+    public    void                       updateMotorProfileDataPoint(MotorProfileDataPoint p) {
+        p.tEndMP                = Tt;
+        p.mpVmax                = Vmax;
+        p.mpAmax                = Amax;
+        p.mpDmax                = Dmax;
+        p.setMotionProfileStage(stage.name());
+    }
+    public    String                     getMetricsFileId() {
         return String.format(Locale.US,"%1$.2f-%2$.2f-%3$.2f-%4$.2f-%5$.2f-",Pi,Vi,Vmax,Amax,Dmax);
     }
-    public    String    getMetricsTableType() {
+    public    String                     getMetricsTableType() {
         return "TrapezoidalMotionProfile1D";
     }
-    public    boolean   approxEqual(TrapezoidalMotionProfile1D other) {
+    public    boolean                    approxEqual(TrapezoidalMotionProfile1D other) {
         if(other == null)
             throw new CalculationException("TrapezoidalMotionProfile1D.approxEqual: other is null");
 
@@ -406,7 +424,7 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
     }
     @NonNull
     @Override
-    public    String    toString() {
+    public    String                     toString() {
         String formatString =
                 "    dist      = %1$.5f%n"  +
                 "    Pi        = %2$.5f%n"  +
