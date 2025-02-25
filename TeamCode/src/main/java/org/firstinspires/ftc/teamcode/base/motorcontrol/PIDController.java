@@ -29,7 +29,9 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.lang.Math.signum;
 
 import androidx.annotation.NonNull;
 
@@ -91,7 +93,7 @@ public class PIDController extends FeedbackController {
         DIdx                = (DIdx + 1) % DerHistory.length;
         double D            = (error - prevError) / (timer.milliseconds() - prevTime);
 
-        ErrHistory[EIdx]    = min(error, maxErrorI);
+        ErrHistory[EIdx]    = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
         DerHistory[DIdx]    = D;
 
         double Esum         = 0;
