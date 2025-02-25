@@ -98,6 +98,8 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
 
         motionProfile.calcProfile(Ptarget-Pi, Pi, Vi, Vmax, Amax, Dmax);
 
+        immediateTarget    = motionProfile.getPosition(timer.milliseconds());
+
         fbc.init(timer);
     }
 
