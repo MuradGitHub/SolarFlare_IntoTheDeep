@@ -226,7 +226,7 @@ public class MotorProfile
             startData.add(pp);
 
             if(startPowerStrategy.isStopped) {
-                pp.setMotorProfileStage("Start-EndSamples");
+                pp.setMotorProfileState("Start-EndSamples");
                 endSamples--;
             }
 
@@ -301,7 +301,7 @@ public class MotorProfile
         if(ssIdxVavg != null) {
             MotorProfileDataPoint p   = data.get(ssIdxVavg);
             if(p != null)
-                p.appendMotorProfileStage("Vss");
+                p.appendMotorProfileState("Vss");
         }
 
         double Atol                   = max(abs(Amax),abs(Dmax))/250.0;
@@ -313,7 +313,7 @@ public class MotorProfile
         if(ssIdxAavg != null) {
             MotorProfileDataPoint p   = data.get(ssIdxAavg);
             if(p != null)
-                p.appendMotorProfileStage("Ass");
+                p.appendMotorProfileState("Ass");
         }
     }
     protected     void    checkCalcInput() {
@@ -367,7 +367,7 @@ public class MotorProfile
             // Denote the point in time where the target has been reached
             if(tIdxTarget == null && profilePowerStrategy.isTargetReached) {
                 tIdxTarget       = tIdx;
-                pp.appendMotorProfileStage("Target");
+                pp.appendMotorProfileState("Target");
             }
 
             // Initialize the attribute flag indicating whether the power strategy has stopped
@@ -375,7 +375,7 @@ public class MotorProfile
             // of required endSamples
             isStrategyStopped        = profilePowerStrategy.isStopped;
             if (isStrategyStopped) {
-                pp.setMotorProfileStage("Profile-EndSamples");
+                pp.setMotorProfileState("Profile-EndSamples");
                 endSamples--;
             }
 

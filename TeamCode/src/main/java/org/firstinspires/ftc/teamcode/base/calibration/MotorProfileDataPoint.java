@@ -57,7 +57,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                         "%30$.5f,%31$.5f,%32$.5f,%33$.5f,%34$.5f,%35$.5f,%36$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "MotorProfileStage", "MotionProfileStage", "Direction",                    // 1-3
+                "MotorProfileState", "MotionProfileState", "Direction",                    // 1-3
                 "PosTol",            "VelTol",                                             // 4-5
                 "isBusy",            "isTargetReached",    "isStrategyStopped",            // 6-8
                 "mpVmax",            "mpAmax",             "mpDmax",                       // 9-11
@@ -73,8 +73,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         };
     }
 
-    public        String           motorProfileStage  = "";
-    public        String           motionProfileStage = "";
+    public        String           motorProfileState  = "";
+    public        String           motionProfileState = "";
     public        Direction        direction;
     public        int              posTol;
     public        double           velTol;
@@ -113,7 +113,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     public        PIDFCoefficients pidfRUE;
     public        PIDFCoefficients pidfRTP;
 
-    public         MotorProfileDataPoint(String    motorProfileStage_in,
+    public         MotorProfileDataPoint(String    motorProfileState_in,
                                          Direction direction_in,
                                          double    t_in,
                                          double    tPextract_in,
@@ -130,7 +130,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
                                          boolean   isBusy_in,
                                          int       posTol_in,
                                          double    velTol_in) {
-        motorProfileStage = motorProfileStage_in;
+        motorProfileState = motorProfileState_in;
         direction         = direction_in;
         t                 = t_in;
         tPextract         = tPextract_in;
@@ -149,14 +149,14 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         velTol            = velTol_in;
     }
     public         MotorProfileDataPoint(DcMotorEx   motor,
-                                         String      motorProfileStage_in,
+                                         String      motorProfileState_in,
                                          Direction   direction_in,
                                          ElapsedTime timer,
                                          Double      minMovPower_in,
                                          boolean     extractOther) {
         // Because of the time it takes to pull data from the motor, there measurements
         // unfortunately are not exactly synchronous
-        motorProfileStage = motorProfileStage_in;
+        motorProfileState = motorProfileState_in;
         direction         = direction_in;
         t                 = timer.milliseconds();
         P                 = motor.getCurrentPosition();
@@ -177,17 +177,17 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         tCycle            = timer.milliseconds() - t;
         minMovePower      = minMovPower_in != null ? minMovPower_in : 0.0;
     }
-    public void    setMotorProfileStage(String motorProfileStage_in) {
-        motorProfileStage   = motorProfileStage_in;
+    public void    setMotorProfileState(String motorProfileState_in) {
+        motorProfileState   = motorProfileState_in;
     }
-    public void    appendMotorProfileStage(String appendStage) {
-        motorProfileStage  += "-" + appendStage;
+    public void    appendMotorProfileState(String appendState) {
+        motorProfileState  += "-" + appendState;
     }
-    public void    setMotionProfileStage(String motionProfileStage_in) {
-        motionProfileStage  = motionProfileStage_in;
+    public void    setMotionProfileState(String motionProfileState_in) {
+        motionProfileState  = motionProfileState_in;
     }
-    public void    appendMotionProfileStage(String appendStage) {
-        motionProfileStage += "-" + appendStage;
+    public void    appendMotionProfileState(String appendState) {
+        motionProfileState += "-" + appendState;
     }
     public boolean isTargetReached() {
         return isTargetReached;
@@ -215,7 +215,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
-                motorProfileStage, motionProfileStage, direction,         posTol,        velTol,
+                motorProfileState, motionProfileState, direction,         posTol,        velTol,
                 isBusy,            isTargetReached,    isStrategyStopped,
                 mpVmax,            mpAmax,             mpDmax,
                 Kp,                Ki,                 Kd,
@@ -234,8 +234,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         StringBuilder sb = new StringBuilder();
         sb.append("MotorProfileDataPoint\n");
 
-        sb.append("  motorProfileStage=") .append(motorProfileStage).append("\n");
-        sb.append("  motionProfileStage=").append(motionProfileStage).append("\n");
+        sb.append("  motorProfileState=") .append(motorProfileState).append("\n");
+        sb.append("  motionProfileState=").append(motionProfileState).append("\n");
         sb.append("  direction=")         .append(direction)        .append("\n");
         sb.append("  posTol=")            .append(posTol)           .append("\n");
         sb.append("  velTol=")            .append(velTol)           .append("\n");

@@ -66,10 +66,10 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      */
     private           TrapezoidalMotionProfile1D leadInProfile = null;
     /**
-     * Current stage labels the stage the motion profile would be in at the time getPosition
+     * Current state labels the stage the motion profile would be in at the time getPosition
      * was called
      */
-    private           MotionProfileStageEnum     stage;
+    private MotionProfileStateEnum state;
     /**
      * Distance to travel
      */
@@ -308,26 +308,26 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
             throw new CalculationException("TrapezoidalMotionProfile1D not initialized");
 
         if(t < leadInProfile.Tt) {
-            stage               = MotionProfileStageEnum.LEADING_PROFILE;
+            state               = MotionProfileStateEnum.LEADING_PROFILE;
             return leadInProfile.getPosition(t);
         } if(t < leadInProfile.Tt+Tb) {
-            stage               = MotionProfileStageEnum.BRAKING;
+            state               = MotionProfileStateEnum.BRAKING;
             double tInB         = t-leadInProfile.Tt;
             return (int) round(Pi + Vi * tInB + 0.5 * Dmax*tInB*tInB);
         } else if (t < leadInProfile.Tt+Tb+Ta) {
-            stage               = MotionProfileStageEnum.ACCELERATION;
+            state               = MotionProfileStateEnum.ACCELERATION;
             double tInA         = t-leadInProfile.Tt-Tb;
             return (int) round(Pi + Sb + Vi * tInA + 0.5 * Amax*tInA*tInA);
         } else if (t < leadInProfile.Tt+Tb+Ta+Tc) {
-            stage               = MotionProfileStageEnum.CRUISING;
+            state               = MotionProfileStateEnum.CRUISING;
             double tInC         = t-leadInProfile.Tt-Tb-Ta;
             return (int) round(Pi + Sb + Sa + Vc * tInC);
         } else if (t < Tt){
-            stage               = MotionProfileStageEnum.DECELERATION;
+            state               = MotionProfileStateEnum.DECELERATION;
             double tInD         = t-leadInProfile.Tt-Tb-Ta-Tc;
             return (int) round(Pi + Sb + Sa + Sc + Vc*tInD + 0.5*Dmax*tInD*tInD);
         }  else {
-            stage               = MotionProfileStageEnum.END;
+            state               = MotionProfileStateEnum.END;
             return (int) round(Pi + dist);
         }
     }
@@ -339,7 +339,7 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
         p.mpVmax                = Vmax;
         p.mpAmax                = Amax;
         p.mpDmax                = Dmax;
-        p.setMotionProfileStage(stage.name());
+        p.setMotionProfileState(state.name());
     }
     public    String                     getMetricsFileId() {
         return String.format(Locale.US,"%1$.2f-%2$.2f-%3$.2f-%4$.2f-%5$.2f-",Pi,Vi,Vmax,Amax,Dmax);
