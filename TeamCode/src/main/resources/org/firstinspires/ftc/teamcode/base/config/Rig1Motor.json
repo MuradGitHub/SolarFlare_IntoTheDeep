@@ -35,6 +35,7 @@
           "posTol": 2,
           "velTol": 0.04
         },
+        "timeToBrake": 50,
         "feedback": {
           "PID": {
             "Kp": 0.005,

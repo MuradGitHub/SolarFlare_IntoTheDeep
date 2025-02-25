@@ -78,9 +78,6 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
             curPower = 0.0;
             motor.setPower(curPower);
         } else {
-            int    curPosition  = motor.getCurrentPosition();
-            double curVelocity  = motor.getVelocity() / 1000.0;
-
             // isTargetReached is set to true once the motor goes past the target.
             // It is not revised once true
             if (direction == Direction.FORWARD ? curPosition >= target : curPosition <= target)

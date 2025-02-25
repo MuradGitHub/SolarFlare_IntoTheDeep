@@ -47,15 +47,15 @@ import java.util.logging.Level;
 
 public class MotorPowerStrategyMP extends MotorPowerStrategy {
     public MotionProfile      motionProfile;
-    public FeedbackController fbc;
+    public FBController fbc;
 
     public        MotorPowerStrategyMP(MotorConfig            motorConfig,
                                        MotionProfileEnum      motionProfileEnum,
-                                       FeedbackControllerEnum FBCEnum,
+                                       FBControllerEnum FBCEnum,
                                        double                 nominalPower_in) {
         super(motorConfig, nominalPower_in);
         motionProfile = MotionProfiles.makeMotionProfile(motionProfileEnum);
-        fbc           = FeedbackControllers.makeFeedbackController(FBCEnum, motorConfig.controlParams);
+        fbc           = FBControllers.makeFeedbackController(FBCEnum, motorConfig.controlParams);
     }
 
     /**
@@ -118,8 +118,6 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     }
     @Override
     public void   applyPower(int target_in) {
-        int    curPosition     = motor.getCurrentPosition();
-        double curVelocity     = motor.getVelocity() / 1000.0;
         double curTime         = timer.milliseconds();
         double fbcPower        = 0;
 
@@ -137,7 +135,7 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
             curPower           = 0.0;
         } else {
             immediateTarget    = motionProfile.getPosition(curTime);
-            fbcPower           = fbc.getPower(immediateTarget - curPosition);
+            fbcPower           = fbc.getPower(curPosition, immediateTarget, ultimateTarget, curVelocity);
             curPower           = limitPower(fbcPower);
         }
 

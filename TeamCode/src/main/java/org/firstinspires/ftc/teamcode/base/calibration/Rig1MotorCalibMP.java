@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.base.config.HardwareConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.config.MotorEnum;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.FBControllerEnum;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
 
 
@@ -57,7 +57,7 @@ public class Rig1MotorCalibMP extends LinearOpMode {
     MotorConfig            motorConfig;
     DcMotorEx              motor;
     MotionProfileEnum      MPEnum;
-    FeedbackControllerEnum FBCEnum;
+    FBControllerEnum FBCEnum;
     MotorProfileMP         motorProfileF;
     MotorProfileMP         motorProfileR;
 
@@ -65,7 +65,7 @@ public class Rig1MotorCalibMP extends LinearOpMode {
         Application.init(this);
 
         MPEnum                  = MotionProfileEnum.TRAPEZOIDAL;
-        FBCEnum                 = FeedbackControllerEnum.PID;
+        FBCEnum                 = FBControllerEnum.PID;
 
         sleep(3000);
         try {

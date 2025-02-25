@@ -66,11 +66,6 @@ public class TrapezoidalMotionProfile1D extends MotionProfile implements Metrics
      */
     private           TrapezoidalMotionProfile1D leadInProfile = null;
     /**
-     * Current state labels the stage the motion profile would be in at the time getPosition
-     * was called
-     */
-    private MotionProfileStateEnum state;
-    /**
      * Distance to travel
      */
     private           double                     dist;

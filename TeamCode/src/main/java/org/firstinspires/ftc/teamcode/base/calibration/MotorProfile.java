@@ -349,8 +349,7 @@ public class MotorProfile
         timer.reset();
         profilePowerStrategy.init(timer, Pi, Ptarget);
         do {
-            // Apply power and capture data
-            profilePowerStrategy.applyPower(Ptarget);
+            // Capture status data first, then use it to apply appropriate power
             MotorProfileDataPoint pp = new MotorProfileDataPoint(
                     motor,
                     "Profile-Seeking",
@@ -358,8 +357,12 @@ public class MotorProfile
                     timer,
                     calibDirection == Direction.FORWARD ? minMovePowerF : minMovePowerR,
                     true);
+            // This syncs the MotorPowerStrategy with the ProfileDataPoint, exchanging relevant
+            // status data
             profilePowerStrategy.updateProfileDataPoint(pp);
             data.add(pp);
+
+            profilePowerStrategy.applyPower(Ptarget);
 
             // Wait minTimeInc between iterations
             Application.sleep(minTimeInc);

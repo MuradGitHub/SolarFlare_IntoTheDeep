@@ -58,6 +58,16 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
     public transient ElapsedTime timer;
     public           int         Pi;
     /**
+     * Current position. it has to be kept up to date, either by calling updateMotorProfileDataPoint
+     * with an up to date MotorProfileDataPoint or by using other means for the power strategy to work
+     */
+    public           int         curPosition;
+    /**
+     * Current velocity. It has to be kept up to date, either by calling updateMotorProfileDataPoint
+     * with an up to date MotorProfileDataPoint or by using other means
+     */
+    public           double      curVelocity;
+    /**
      * Final target
      */
     public           int         ultimateTarget;
@@ -143,6 +153,11 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
     }
     public abstract void    applyPower(int target);
     public          void    updateProfileDataPoint(MotorProfileDataPoint p) {
+        // use MotorProfileDataPoint to update self
+        curPosition         = p.P;
+        curVelocity         = p.V;
+
+        // update the MotorProfileDataPoint with status info from this MotorPowerStrategy
         p.isTargetReached   = isTargetReached;
         p.isStrategyStopped = isStopped;
         p.ultimateTarget    = ultimateTarget;

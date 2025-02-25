@@ -32,15 +32,14 @@ package org.firstinspires.ftc.teamcode.base.calibration;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.FeedbackControllerEnum;
+import org.firstinspires.ftc.teamcode.base.motorcontrol.FBControllerEnum;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyConst;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyMP;
 import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyRTP;
 
 public class MotorProfileMP extends MotorProfile {
     MotionProfileEnum      MPEnum;
-    FeedbackControllerEnum FBCEnum;
+    FBControllerEnum FBCEnum;
 
     /**
      * Constructor requires information about the motor
@@ -48,7 +47,7 @@ public class MotorProfileMP extends MotorProfile {
      */
     public             MotorProfileMP(MotorConfig            motorConfig,
                                       MotionProfileEnum      MPEnum_in,
-                                      FeedbackControllerEnum FBCEnum_in) {
+                                      FBControllerEnum FBCEnum_in) {
         super(motorConfig,
                 new MotorPowerStrategyRTP(motorConfig,1.0),
                 new MotorPowerStrategyMP( motorConfig, MPEnum_in, FBCEnum_in,1.0)

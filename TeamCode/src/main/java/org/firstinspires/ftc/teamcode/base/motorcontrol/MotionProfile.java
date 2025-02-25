@@ -32,8 +32,13 @@ package org.firstinspires.ftc.teamcode.base.motorcontrol;
 import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 
 public abstract class MotionProfile {
-    public MotionProfileEnum motionProfileEnum;
-    public double            tuningFactor;
+    public MotionProfileEnum      motionProfileEnum;
+    /**
+     * Current state labels the stage the motion profile would be in at the time getPosition
+     * was called
+     */
+    public MotionProfileStateEnum state              = MotionProfileStateEnum.STARTING;
+    public double                 tuningFactor       = 1.0;
 
     public               MotionProfile(
             MotionProfileEnum motionProfileEnum_in,

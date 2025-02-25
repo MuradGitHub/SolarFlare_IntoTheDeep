@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 public enum MotionProfileStateEnum {
+    STARTING,
     LEADING_PROFILE,
     BRAKING,
     ACCELERATION,

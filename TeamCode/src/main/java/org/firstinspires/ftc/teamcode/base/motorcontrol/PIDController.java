@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
 import static java.lang.Math.signum;
 
 import androidx.annotation.NonNull;
@@ -41,18 +40,20 @@ import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 
 import java.util.Arrays;
 
-public class PIDController extends FeedbackController {
+public class PIDController extends FBController {
     public transient ElapsedTime timer;
     public           double      Kp;
     public           double      Ki;
     public           double      Kd;
     public           int         prevError;
     public           double      prevTime;
+    public           double      timeToUltimateTarget;
+    public           double      dError;
     public           double[]    ErrHistory;
     public           double[]    DerHistory;
     public           int         maxErrorI;
-    public           int         EIdx   = 0;
-    public           int         DIdx   = 0;
+    public           int         ErrIdx   = 0;
+    public           int         DerIdx   = 0;
     public           double      powerP = 0;
     public           double      powerI = 0;
     public           double      powerD = 0;
@@ -62,8 +63,9 @@ public class PIDController extends FeedbackController {
                                 double Kd_in,
                                 int    maxErrorI_in,
                                 int    ErrLookback,
-                                int    DerLookback) {
-        super(FeedbackControllerEnum.PID);
+                                int    DerLookback,
+                                double timeToBrake) {
+        super(FBControllerEnum.PID, timeToBrake);
         Kp                  = Kp_in;
         Ki                  = Ki_in;
         Kd                  = Kd_in;
@@ -77,8 +79,8 @@ public class PIDController extends FeedbackController {
         Arrays.fill(ErrHistory, 0.0);
         Arrays.fill(DerHistory, 0.0);
         prevError      = 0;
-        EIdx           = 0;
-        DIdx           = 0;
+        ErrIdx         = 0;
+        DerIdx         = 0;
         powerP         = 0;
         powerI         = 0;
         powerD         = 0;
@@ -88,34 +90,56 @@ public class PIDController extends FeedbackController {
         timer          = timer_in;
         prevTime       = timer.milliseconds();
     }
-    public double getPower(int error) {
-        EIdx                = (EIdx + 1) % ErrHistory.length;
-        DIdx                = (DIdx + 1) % DerHistory.length;
-        double D            = (error - prevError) / (timer.milliseconds() - prevTime);
+    public double getPower(int    curPosition,
+                           int    immediateTarget,
+                           int    ultimateTarget,
+                           double velocity) {
+        int    error         = immediateTarget - curPosition;
+        ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
+        DerIdx               = (DerIdx + 1) % DerHistory.length;
+        dError               = (error - prevError) / (timer.milliseconds() - prevTime);
 
-        ErrHistory[EIdx]    = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
-        DerHistory[DIdx]    = D;
+        ErrHistory[ErrIdx]   = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
+        DerHistory[DerIdx]   = dError;
 
-        double Esum         = 0;
-        for(double e: ErrHistory)
-            Esum           += e;
-        double Dsum         = 0;
+        double Dsum          = 0;
         for(double d: DerHistory)
-            Dsum           += d;
+            Dsum            += d;
+        dError               = Dsum / DerHistory.length;
 
-        powerP              = Kp * error;
-        powerI              = Ki * Esum;
-        powerD              = Kd * Dsum;
+        timeToUltimateTarget = error / dError;
+        if(abs(timeToUltimateTarget) < timeToBrake) {
+            if(timeToUltimateTarget <= 0) {
+                state        = FBControllerStateEnum.BRAKING;
+                powerD       = Kd * dError;
+            } else {
+                state        = FBControllerStateEnum.REVERSING;
+                powerD       = -Kd * dError;
+            }
+            double Esum      = 0;
+            for(double e: ErrHistory)
+                Esum        += e;
+            powerI           = Ki * Esum;
+        } else {
+            state            = FBControllerStateEnum.CRUISING;
+            powerD           = 0.0;
+            powerI           = 0.0;
+        }
+
+        powerP               = Kp * error;
 
         return powerP + powerI + powerD;
     }
     public void   updateProfileDataPoint(MotorProfileDataPoint p) {
-        p.Kp           = Kp;
-        p.Ki           = Ki;
-        p.Kd           = Kd;
-        p.powerP       = powerP;
-        p.powerI       = powerI;
-        p.powerD       = powerD;
+        p.fbControllerState    = state.name();
+        p.Kp                   = Kp;
+        p.Ki                   = Ki;
+        p.Kd                   = Kd;
+        p.timeToUltimateTarget = timeToUltimateTarget;
+        p.dError               = dError;
+        p.powerP               = powerP;
+        p.powerI               = powerI;
+        p.powerD               = powerD;
     }
 
     @NonNull
@@ -129,10 +153,13 @@ public class PIDController extends FeedbackController {
         sb.append("  Kd=")                         .append(Kd)                         .append("\n");
         sb.append("  prevError=")                  .append(prevError)                  .append("\n");
         sb.append("  prevTime=")                   .append(prevTime)                   .append("\n");
+        sb.append("  timeToUltimateTarget=")       .append(timeToUltimateTarget)       .append("\n");
+        sb.append("  derErr=")                     .append(dError)                     .append("\n");
         sb.append("  ErrHistory=")                 .append(Arrays.toString(ErrHistory)).append("\n");
         sb.append("  DerHistory=")                 .append(Arrays.toString(DerHistory)).append("\n");
-        sb.append("  EIdx=")                       .append(EIdx)                       .append("\n");
-        sb.append("  DIdx=")                       .append(DIdx)                       .append("\n");
+        sb.append("  maxErrorI=")                  .append(maxErrorI)                  .append("\n");
+        sb.append("  EIdx=")                       .append(ErrIdx)                     .append("\n");
+        sb.append("  DIdx=")                       .append(DerIdx)                     .append("\n");
         sb.append("  powerP=")                     .append(powerP)                     .append("\n");
         sb.append("  powerI=")                     .append(powerI)                     .append("\n");
         sb.append("  powerD=")                     .append(powerD)                     .append("\n");
