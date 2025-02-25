@@ -35,6 +35,8 @@ import static java.lang.Math.signum;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -96,7 +98,11 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         Pi              = Pi_in;
         ultimateTarget  = Ptarget_in;
         immediateTarget = Ptarget_in;
+
         setDirection(Pi, ultimateTarget);
+
+        motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     }
     public          double  limitPower(double power_in) {
         double absPower = min(abs(power_in),abs(motorConfig.maxPower));

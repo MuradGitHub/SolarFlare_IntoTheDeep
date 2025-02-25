@@ -72,13 +72,6 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
         curPower                = getSignedNominalPower();
     }
     @Override
-    public void   init(ElapsedTime timer, int Pi, int Ptarget) {
-        super.init(timer, Pi, Ptarget);
-
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
-    @Override
     public void   applyPower(int target) {
         if(isStopped) {
             // return exactly 0.0 power
