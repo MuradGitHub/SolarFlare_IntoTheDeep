@@ -76,7 +76,7 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
         super.init(timer, Pi, Ptarget);
 
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     @Override
     public void   applyPower(int target) {

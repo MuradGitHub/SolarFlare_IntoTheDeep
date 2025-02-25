@@ -68,7 +68,7 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         super.init(timer, Pi, Ptarget);
 
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
 
         MotorCalibResult calib = motorConfig.calibResult;
 
