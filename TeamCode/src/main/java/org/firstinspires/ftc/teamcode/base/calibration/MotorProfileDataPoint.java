@@ -52,7 +52,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
                 "%1$s,%2$s,%3$s,%4$s,%5$d,%6$.5f,%7$b,%8$b,%9$b,%10$.3f,%11$.3f,%12$.3f,"    +
-                        "%13$.3f,%%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,"  +
+                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,"  +
                         "%21$.3f,%22$.3f,%23$.3f,%24$.3f,%25$d,%26$d,%27$d,%28$.3f,%29$.3f," +
                         "%30$.5f,%31$.5f,%32$.5f,%33$.5f,%34$.5f,%35$.5f,%36$.5f,%37$.5f,"   +
                         "%38$.5f,%39$.5f%n";
