@@ -27,11 +27,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.calibration;
+package org.firstinspires.ftc.teamcode.base.config;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.base.config.Validatable;
 import org.firstinspires.ftc.teamcode.base.math.Range;
 
 import java.util.Arrays;
@@ -50,6 +49,7 @@ public class MotorCalibConfig implements Validatable {
     public double   velocityTolerance;
     public int      velocityResolution;
     public Range    velocityRange;
+    public int      steadyStateLookback;
     public double   maxProfileTime;
 
     public boolean isValid() {

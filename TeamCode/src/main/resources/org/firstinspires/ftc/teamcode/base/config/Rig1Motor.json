@@ -65,6 +65,7 @@
           "max":  3.0
         },
         "velocityTolerance": 0.020,
+        "steadyStateLookback": 5,
         "maxProfileTime": 20000
       }
     }

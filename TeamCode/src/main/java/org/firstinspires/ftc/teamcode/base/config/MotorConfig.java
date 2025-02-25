@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibConfig;
 import org.firstinspires.ftc.teamcode.base.calibration.MotorCalibResult;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 

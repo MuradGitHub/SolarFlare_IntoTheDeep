@@ -111,6 +111,10 @@ public class MotorProfile
      */
     public                    int                              averagingPeriods;
     /**
+     * Steady State lookback
+     */
+    public                    int                              steadyStateLookback;
+    /**
      * Maximum velocity. should be close the steady state velocity
      */
     public                    double                           Vmax;
@@ -159,6 +163,7 @@ public class MotorProfile
         motorEnum                     = motorConfig.motorEnum;
         encoderResolution             = motorConfig.getEncoderResolution();
         minTimeInc                    = motorConfig.calibParams.minTimeInc;
+        steadyStateLookback           = motorConfig.calibParams.steadyStateLookback;
         timeResolution                = motorConfig.calibParams.timeResolution;
         maxProfileTime                = motorConfig.calibParams.maxProfileTime;
         minMovePowerF                 = motorConfig.calibResult.minMovePowerF;
@@ -264,7 +269,7 @@ public class MotorProfile
         /// tIdx references the original arrays
         for(int tIdx=1; tIdx<data.size(); tIdx++) {
             // tIdx0 is the index of the start of the averaging span
-            int tIdx0                 = max(tIdx-averagingPeriods, 0);
+            int tIdx0                 = max(tIdx-steadyStateLookback, 0);
             MotorProfileDataPoint p   = data.get(tIdx);
             MotorProfileDataPoint p_1 = data.get(tIdx-1);
             MotorProfileDataPoint p0  = data.get(tIdx0);
@@ -290,7 +295,7 @@ public class MotorProfile
         double Vtol                   = abs(Vmax)/250.0;
         ssIdxVavg                     = Math.getSteadyStateStartPredicate(
                 data,
-                averagingPeriods,
+                steadyStateLookback,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Vavg-p2.Vavg)<Vtol);
 
         if(ssIdxVavg != null) {
@@ -302,7 +307,7 @@ public class MotorProfile
         double Atol                   = max(abs(Amax),abs(Dmax))/250.0;
         ssIdxAavg                     = Math.getSteadyStateStartPredicate(
                 data,
-                averagingPeriods,
+                steadyStateLookback,
                 (MotorProfileDataPoint p1, MotorProfileDataPoint p2) -> abs(p1.Aavg-p2.Aavg)<Atol);
 
         if(ssIdxAavg != null) {
@@ -505,44 +510,46 @@ public class MotorProfile
         var sb = new StringBuilder();
 
         sb.append("MotorProfileConstP\n");
-        sb.append("  JSONFileId=")       .append(getJSONFileId())            .append("\n");
-        sb.append("  motorEnum=")        .append(motorEnum)                  .append("\n");
-        sb.append("  calibDirection=")   .append(calibDirection.name())      .append("\n");
-        sb.append("  minTimeInc=")       .append(minTimeInc)                 .append("\n");
-        sb.append("  encoderResolution=").append(encoderResolution)          .append("\n");
-        sb.append("  timeResolution=")   .append(timeResolution)             .append("\n");
-        sb.append("  maxProfileTime=")   .append(maxProfileTime)             .append("\n");
-        sb.append("  averagingPeriods=") .append(averagingPeriods)           .append("\n");
-        sb.append("  Pi=")               .append(Pi)                         .append("\n");
-        sb.append("  Pf=")               .append(Pf)                         .append("\n");
-        sb.append("  Vmax=")             .append(Vmax)                       .append("\n");
-        sb.append("  Amax=")             .append(Amax)                       .append("\n");
-        sb.append("  Dmax=")             .append(Dmax)                       .append("\n");
-        sb.append("  isTargetReached=")  .append(isTargetReached)            .append("\n");
-        sb.append("  isStrategyStopped=").append(isStrategyStopped)          .append("\n");
-        sb.append("  ssIdxVavg=")        .append(ssIdxVavg)                  .append("\n");
-        sb.append("  ssV=")              .append(getSteadyStateVDataPoint()) .append("\n");
-        sb.append("  ssIdxAavg=")        .append(ssIdxAavg)                  .append("\n");
-        sb.append("  ssA=")              .append(getSteadyStateADataPoint()) .append("\n");
+        sb.append("  JSONFileId=")         .append(getJSONFileId())            .append("\n");
+        sb.append("  motorEnum=")          .append(motorEnum)                  .append("\n");
+        sb.append("  calibDirection=")     .append(calibDirection.name())      .append("\n");
+        sb.append("  minTimeInc=")         .append(minTimeInc)                 .append("\n");
+        sb.append("  encoderResolution=")  .append(encoderResolution)          .append("\n");
+        sb.append("  timeResolution=")     .append(timeResolution)             .append("\n");
+        sb.append("  maxProfileTime=")     .append(maxProfileTime)             .append("\n");
+        sb.append("  averagingPeriods=")   .append(averagingPeriods)           .append("\n");
+        sb.append("  steadyStateLookback=").append(steadyStateLookback)        .append("\n");
+        sb.append("  Pi=")                 .append(Pi)                         .append("\n");
+        sb.append("  Pf=")                 .append(Pf)                         .append("\n");
+        sb.append("  Vmax=")               .append(Vmax)                       .append("\n");
+        sb.append("  Amax=")               .append(Amax)                       .append("\n");
+        sb.append("  Dmax=")               .append(Dmax)                       .append("\n");
+        sb.append("  isTargetReached=")    .append(isTargetReached)            .append("\n");
+        sb.append("  isStrategyStopped=")  .append(isStrategyStopped)          .append("\n");
+        sb.append("  ssIdxVavg=")          .append(ssIdxVavg)                  .append("\n");
+        sb.append("  ssV=")                .append(getSteadyStateVDataPoint()) .append("\n");
+        sb.append("  ssIdxAavg=")          .append(ssIdxAavg)                  .append("\n");
+        sb.append("  ssA=")                .append(getSteadyStateADataPoint()) .append("\n");
         for(var point: data)
             sb.append(point);
 
         return sb.toString();
     }
     public        boolean isValid() {
-        return Validation.validate("motorEnum",          motorEnum)                                                              &&
-                Validation.validate("motorConfig",       motorConfig)                                                            &&
-                Validation.validate("motor",             motor)                                                                  &&
-                Validation.validate("minTimeInc",        minTimeInc,        (Integer x) -> x!=null && x>0)                       &&
-                Validation.validate("encoderResolution", encoderResolution, (Double x)  -> x!=null && x>0)                       &&
-                Validation.validate("timeResolution",    timeResolution,    (Integer i) -> i!=null && i>0)                       &&
-                Validation.validate("averagingPeriods",  averagingPeriods,  (Integer i) -> i!=null && i>0   && i<timeResolution) &&
-                Validation.validate("data",              data)                                                                   &&
-                Validation.validate("Vmax",              Vmax)                                                                   &&
-                Validation.validate("Amax",              Amax)                                                                   &&
-                Validation.validate("Dmax",              Dmax)                                                                   &&
-                Validation.validate("ssIdxVavg",         ssIdxVavg,         (Integer i) -> i!=null && i>=0 && i<timeResolution)  &&
-                Validation.validate("ssIdxAavg",         ssIdxAavg,         (Integer i) -> i!=null && i>=0 && i<timeResolution);
+        return Validation.validate("motorEnum",            motorEnum)                                                                &&
+                Validation.validate("motorConfig",         motorConfig)                                                              &&
+                Validation.validate("motor",               motor)                                                                    &&
+                Validation.validate("minTimeInc",          minTimeInc,          (Integer x) -> x!=null && x>0)                       &&
+                Validation.validate("encoderResolution",   encoderResolution,   (Double x)  -> x!=null && x>0)                       &&
+                Validation.validate("timeResolution",      timeResolution,      (Integer i) -> i!=null && i>0)                       &&
+                Validation.validate("averagingPeriods",    averagingPeriods,    (Integer i) -> i!=null && i>0   && i<timeResolution) &&
+                Validation.validate("steadyStateLookback", steadyStateLookback, (Integer i) -> i!=null && i>0   && i<timeResolution) &&
+                Validation.validate("data",                data)                                                                     &&
+                Validation.validate("Vmax",                Vmax)                                                                     &&
+                Validation.validate("Amax",                Amax)                                                                     &&
+                Validation.validate("Dmax",                Dmax)                                                                     &&
+                Validation.validate("ssIdxVavg",           ssIdxVavg,           (Integer i) -> i!=null && i>=0 && i<timeResolution)  &&
+                Validation.validate("ssIdxAavg",           ssIdxAavg,           (Integer i) -> i!=null && i>=0 && i<timeResolution);
     }
 
     public static void    main(String[] args) {
