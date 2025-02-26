@@ -35,9 +35,9 @@
           "posTol": 2,
           "velTol": 0.04
         },
-        "timeToBrake": 50,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
+        "timeToBrake": 100,
+        "maxBrakePower": 0.75,
+        "brakePowerFactor": 0.35,
         "feedback": {
           "PID": {
             "Kp": 0.005,

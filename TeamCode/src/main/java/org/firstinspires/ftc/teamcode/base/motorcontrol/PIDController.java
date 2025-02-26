@@ -49,14 +49,15 @@ public class PIDController extends FBController {
     public           double      prevTime;
     public           double      timeToUltimateTarget;
     public           double      dError;
+    public           boolean     useDErrorAvg = false;
     public           double[]    ErrHistory;
     public           double[]    DerHistory;
     public           int         maxErrorI;
     public           int         ErrIdx   = 0;
     public           int         DerIdx   = 0;
-    public           double      powerP = 0;
-    public           double      powerI = 0;
-    public           double      powerD = 0;
+    public           double      powerP   = 0.0;
+    public           double      powerI   = 0.0;
+    public           double      powerD   = 0.0;
 
     public        PIDController(double Kp_in,
                                 double Ki_in,
@@ -102,27 +103,35 @@ public class PIDController extends FBController {
             powerP           = Kp * error;
             powerD           = 0.0;
             powerI           = 0.0;
+            dError           = 0.0;
             prevError        = error;
             prevTime         = time;
             return powerP;
         }
 
-        ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
-        DerIdx               = (DerIdx + 1) % DerHistory.length;
         dError               = (error - prevError) / (time - prevTime);
 
         ErrHistory[ErrIdx]   = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
         DerHistory[DerIdx]   = dError;
 
+        ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
+        DerIdx               = (DerIdx + 1) % DerHistory.length;
+
         prevTime             = time;
         prevError            = error;
 
-        double Dsum          = 0;
-        for(double d: DerHistory)
-            Dsum            += d;
-        dError               = Dsum / DerHistory.length;
+        // This means we fully loaded the DerHistory array with historical dError measurements
+        if(DerIdx == 0)
+            useDErrorAvg     = true;
 
-        timeToUltimateTarget = error / dError;
+        if(useDErrorAvg) {
+            double Dsum      = 0;
+            for (double d : DerHistory)
+                Dsum        += d;
+            dError           = Dsum / DerHistory.length;
+        }
+
+        timeToUltimateTarget = (ultimateTarget - curPosition) / dError;
         if(abs(timeToUltimateTarget) < timeToBrake) {
             if(timeToUltimateTarget <= 0) {
                 state        = FBControllerStateEnum.BRAKING;

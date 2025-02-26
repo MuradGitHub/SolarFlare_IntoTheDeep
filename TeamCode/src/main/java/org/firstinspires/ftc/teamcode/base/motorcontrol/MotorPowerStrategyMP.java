@@ -102,14 +102,12 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
 
         fbc.init(timer);
     }
-
     // Data
     public void   updateProfileDataPoint(MotorProfileDataPoint p) {
         super.updateProfileDataPoint(p);
         fbc.updateProfileDataPoint(p);
         motionProfile.updateMotorProfileDataPoint(p);
     }
-
     @Override
     public String getDescriptiveId() {
         return String.format(
