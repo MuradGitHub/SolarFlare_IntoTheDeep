@@ -46,6 +46,15 @@ public class Math {
     public static double NUMERICAL_TOLERANCE_RATIO = 1E-3;
 
     /**
+     * return the sum of an array
+     */
+    public static     double            sum(double[] numbers) {
+        double sum = 0;
+        for(double n: numbers)
+            sum   += n;
+        return sum;
+    }
+    /**
      * Solve a quadratic equation aX^2 + bX + c = 0
      * @param a: a coefficient
      * @param b: b coefficiennt
@@ -308,10 +317,16 @@ public class Math {
      * @param args: Not used
      */
     public static void                  main(String[] args) {
+        // sum
+        System.out.println("\nsum tests");
+        String     format   = "sum([1,2,3,4] = %1$.3f passed: %2$b";
+        double     result   = sum(new double[]{1,2,3,4});
+        System.out.printf(Locale.US, format, result, result == 10.0);
+
         // findInsertionPoint
         System.out.println("\nfindInsertionPoint tests");
-        double[]   values  = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
-        String     format  = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
+        double[]   values   = new double[] {1.0, 2.0, 4.0, 5.0, 7.0};
+        format              = "insertion index for %1$2d: expected %2$2d returned %3$2d passed: %4$b%n";
         int[][]    casesI   = new int[][] {
                 { 1, 0, findInsertionIndex(  1.0, values)},
                 {-4, 0, findInsertionIndex( -4.0, values)},
