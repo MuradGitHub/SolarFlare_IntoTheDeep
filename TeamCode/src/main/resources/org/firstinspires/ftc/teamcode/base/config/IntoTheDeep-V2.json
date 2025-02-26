@@ -13,7 +13,7 @@
   },
   "motionProfiles": {
     "TRAPEZOIDAL": {
-      "tuningFactor": 0.9
+      "tuningFactor": 1.0
     }
   },
   "motors": {
