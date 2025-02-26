@@ -46,46 +46,46 @@ import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.logging.DescriptiveIdProvider;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
-    public transient Logger             logger          = RobotLogger.getInstance().getConfigLogger();
-    public transient MotorConfig        motorConfig;
-    public transient DcMotorEx          motor;
-    public transient ElapsedTime        timer;
-    public           int                Pi;
+    public transient Logger                      logger       = RobotLogger.getInstance().getConfigLogger();
+    public transient MotorConfig                 motorConfig;
+    public transient DcMotorEx                   motor;
+    public transient ElapsedTime                 timer;
+    public           MotorPowerStrategyStateEnum state        = MotorPowerStrategyStateEnum.STARTING;
+    public           int                         Pi;
     /**
      * Current position. it has to be kept up to date, either by calling updateMotorProfileDataPoint
      * with an up to date MotorProfileDataPoint or by using other means for the power strategy to work
      */
-    public           int                curPosition;
+    public           int                         curPosition;
     /**
      * Current velocity. It has to be kept up to date, either by calling updateMotorProfileDataPoint
      * with an up to date MotorProfileDataPoint or by using other means
      */
-    public           double             curVelocity;
+    public           double                      curVelocity;
     /**
      * Final target
      */
-    public           int                ultimateTarget;
+    public           int                         ultimateTarget;
     /**
      * Possibly intermediate target
      */
-    public           int                immediateTarget;
-    public           Direction          direction;
-    public           double             nominalPower;
-    public           double             signPower;
-    public           double             curPower;
-    public           MotorBrakeModeEnum brakeModeEnum   = MotorBrakeModeEnum.BRAKE_POWER;
-    public           double             maxBrakePower;
-    public           double             brakePowerFactor;
-    public           int                posTol;
-    public           double             velTol;
-    public           boolean            isTargetReached = false;
-    public           boolean            isStopped       = false;
+    public           int                         immediateTarget;
+    public           Direction                   direction;
+    public           double                      nominalPower;
+    public           double                      signPower;
+    public           double                      curPower;
+    public           MotorBrakeModeEnum          brakeModeEnum   = MotorBrakeModeEnum.BRAKE_POWER;
+    public           double                      maxBrakePower;
+    public           double                      brakePowerFactor;
+    public           int                         posTol;
+    public           double                      velTol;
+    public           boolean                     isTargetReached = false;
+    public           boolean                     isStopped       = false;
 
     public                  MotorPowerStrategy(MotorConfig motorConfig_in,
                                                double      nominalPower_in) {
@@ -159,16 +159,17 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
     public abstract void    applyPower(int target);
     public          void    updateProfileDataPoint(MotorProfileDataPoint p) {
         // use MotorProfileDataPoint to update self
-        curPosition         = p.P;
-        curVelocity         = p.V;
+        curPosition          = p.P;
+        curVelocity          = p.V;
 
         // update the MotorProfileDataPoint with status info from this MotorPowerStrategy
-        p.isTargetReached   = isTargetReached;
-        p.isStrategyStopped = isStopped;
-        p.ultimateTarget    = ultimateTarget;
-        p.immediateTarget   = immediateTarget;
-        p.posTol            = posTol;
-        p.velTol            = velTol;
+        p.powerStrategyState = state.name();
+        p.isTargetReached    = isTargetReached;
+        p.isStrategyStopped  = isStopped;
+        p.ultimateTarget     = ultimateTarget;
+        p.immediateTarget    = immediateTarget;
+        p.posTol             = posTol;
+        p.velTol             = velTol;
     }
     @Override
     @NonNull

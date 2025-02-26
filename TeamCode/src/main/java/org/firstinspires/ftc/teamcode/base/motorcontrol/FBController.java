@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 
 public abstract class FBController {
     FBControllerEnum       FBCEnum;
-    FBControllerStateEnum  state  = FBControllerStateEnum.CRUISING;
+    FBControllerStateEnum  state  = FBControllerStateEnum.STARTING;
     public          double timeToBrake;
 
     public FBController(

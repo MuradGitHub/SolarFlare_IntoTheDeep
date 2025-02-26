@@ -51,33 +51,35 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     static {
         MetricsDataPoint.tableType  = "MotorProfileData";
         MetricsDataPoint.format     =
-                "%1$s,%2$s,%3$s,%4$s,%5$d,%6$.5f,%7$b,%8$b,%9$b,%10$.3f,%11$.3f,%12$.3f,"    +
-                        "%13$.3f,%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,"  +
-                        "%21$.3f,%22$.3f,%23$.3f,%24$.3f,%25$d,%26$d,%27$d,%28$.3f,%29$.3f," +
-                        "%30$.5f,%31$.5f,%32$.5f,%33$.5f,%34$.5f,%35$.5f,%36$.5f,%37$.5f,"   +
-                        "%38$.5f,%39$.5f%n";
+                "%1$s,%2$s,%3$s,%4$s,%5$s,%6$d,%7$.5f,%8$b,%9$b,%10$b,%11$.3f,%12$.3f,%13$.3f,"    +
+                        "%14$.3f,%15$.3f,%16$.3f,%17$.3f,%18$.3f,%19$.3f,%20$.3f,%21$.3f,"  +
+                        "%22$.3f,%23$.3f,%24$.3f,%25$.3f,%26$d,%27$d,%28$d,%29$.3f,%30$.3f," +
+                        "%31$.5f,%32$.5f,%33$.5f,%34$.5f,%35$.5f,%36$.5f,%37$.5f,%38$.5f,"   +
+                        "%39$.5f,%40$.5f%n";
 
         MetricsDataPoint.fieldNames = new String[] {
-                "MotorProfileState",    "MotionProfileState", "FBControllerState",            // 1-3
-                "Direction",            "PosTol",             "VelTol",                       // 4-6
-                "isBusy",               "isTargetReached",    "isStrategyStopped",            // 7-9
-                "mpVmax",               "mpAmax",             "mpDmax",                       // 10-12
-                "timeToUltimateTarget", "dError",                                             // 13-14
-                "Kp",                   "Ki",                 "Kd",                           // 13-15
-                "Time",                 "TimeEndMP",                                          // 16-17
-                "TimePExtract",         "TimeVextract",       "TimeCExtract",                 // 18-20
-                "TimeOtherExtract",     "TimeCycle",                                          // 21-22
-                "Position",             "UltimateTarget",     "ImmediateTarget",              // 23-25
-                "minMovePower",         "powerP",             "powerI",          "powerD",    // 26-29
-                "Power",                "Velocity",           "Vavg",                         // 30-32
-                "A",                    "Aavg",               "ApredFun",        "ApredLut",  // 33-36
-                "C"                                                                        // 37
+                "MotorProfileState",    "MotionProfileState",                                 // 1-2
+                "PowerStrategyState",   "FBControllerState",                                  // 3-4
+                "Direction",            "PosTol",             "VelTol",                       // 5-7
+                "isBusy",               "isTargetReached",    "isStrategyStopped",            // 8-10
+                "mpVmax",               "mpAmax",             "mpDmax",                       // 11-13
+                "timeToUltimateTarget", "dError",                                             // 14-15
+                "Kp",                   "Ki",                 "Kd",                           // 16-18
+                "Time",                 "TimeEndMP",                                          // 19-20
+                "TimePExtract",         "TimeVextract",       "TimeCExtract",                 // 21-23
+                "TimeOtherExtract",     "TimeCycle",                                          // 24-25
+                "Position",             "UltimateTarget",     "ImmediateTarget",              // 26-28
+                "minMovePower",         "powerP",             "powerI",          "powerD",    // 29-32
+                "Power",                "Velocity",           "Vavg",                         // 33-35
+                "A",                    "Aavg",               "ApredFun",        "ApredLut",  // 36-39
+                "C"                                                                           // 40
         };
     }
 
     public        String           motorProfileState  = "";
     public        String           motionProfileState = "";
-    public        String           fbControllerState;
+    public        String           powerStrategyState = "";
+    public        String           fbControllerState  = "";
     public        Direction        direction;
     public        int              posTol;
     public        double           velTol;
@@ -220,7 +222,8 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
     }
     public void    writeMetrics(Formatter formatter) {
         formatter.format(format,
-                motorProfileState,    motionProfileState, fbControllerState,
+                motorProfileState,    motionProfileState,
+                powerStrategyState,   fbControllerState,
                 direction,            posTol,             velTol,
                 isBusy,               isTargetReached,    isStrategyStopped,
                 mpVmax,               mpAmax,             mpDmax,
@@ -243,6 +246,7 @@ public class MotorProfileDataPoint extends MetricsDataPoint {
 
         sb.append("  motorProfileState=")   .append(motorProfileState)   .append("\n");
         sb.append("  motionProfileState=")  .append(motionProfileState)  .append("\n");
+        sb.append("  powerStrategyState=")  .append(powerStrategyState)  .append("\n");
         sb.append("  fbControllerState=")   .append(fbControllerState)   .append("\n");
         sb.append("  direction=")           .append(direction)           .append("\n");
         sb.append("  posTol=")              .append(posTol)              .append("\n");

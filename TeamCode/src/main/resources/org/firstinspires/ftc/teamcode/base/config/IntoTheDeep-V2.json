@@ -38,11 +38,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -67,8 +69,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -93,11 +93,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.1,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -122,8 +124,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -148,11 +148,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -177,8 +179,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -203,11 +203,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -232,8 +234,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -258,11 +258,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -287,8 +289,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -313,11 +313,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -342,8 +344,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     },
@@ -368,11 +368,13 @@
           "velTol": 0.04
         },
         "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "feedback": {
           "PID": {
             "Kp": 0.005,
-            "Ki": 0.0,
-            "Kd": 0.0003,
+            "Ki": 0.001,
+            "Kd": 0.2,
             "ErrLookback": 10,
             "DerLookback": 5,
             "maxErrorI": 10
@@ -397,8 +399,6 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
-        "maxBrakePower": 0.6,
-        "brakePowerFactor": 0.2,
         "maxProfileTime": 10000
       }
     }

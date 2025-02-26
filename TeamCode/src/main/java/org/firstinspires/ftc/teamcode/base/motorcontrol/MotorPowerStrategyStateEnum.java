@@ -29,9 +29,10 @@
  */
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-public enum FBControllerStateEnum {
+public enum MotorPowerStrategyStateEnum {
     STARTING,
-    CRUISING,
-    BRAKING,
-    REVERSING,
+    FULL_POWER,
+    REDUCE_POWER,
+    BRAKE_POWER,
+    STOPPED
 }

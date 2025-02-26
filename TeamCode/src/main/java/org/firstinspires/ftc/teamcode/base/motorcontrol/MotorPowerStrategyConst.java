@@ -75,36 +75,40 @@ public class MotorPowerStrategyConst extends MotorPowerStrategy {
         if(isStopped) {
             // return exactly 0.0 power
             motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-            curPower = 0.0;
-            motor.setPower(curPower);
+            curPower              = 0.0;
         } else {
             // isTargetReached is set to true once the motor goes past the target.
             // It is not revised once true
             if (direction == Direction.FORWARD ? curPosition >= target : curPosition <= target)
-                isTargetReached = true;
+                isTargetReached   = true;
 
             if(isTargetReached) {
                 if(brakeModeEnum == MotorBrakeModeEnum.REDUCE_POWER) {
                     // start reducing power. This will not reverse the direction of the motor.
                     // We just passed the target, we'll never go back and the stopping
                     // criteria can't require that
-                    curPower = signPower * max(abs(curPower) - abs(brakeInc), 0.0);
+                    state         = MotorPowerStrategyStateEnum.REDUCE_POWER;
+                    curPower      = signPower * max(abs(curPower) - abs(brakeInc), 0.0);
                     if (approxEquals(curPower, 0.0) && abs(curVelocity) <= velTol) {
+                        state     = MotorPowerStrategyStateEnum.STOPPED;
                         isStopped = true;
                     }
                 } else if(brakeModeEnum == MotorBrakeModeEnum.BRAKE_POWER) {
                     // We just passed our target. If moving in the positive direction (positive
                     // velocity, we need apply negative power to slow down / reverse course
-                    curPower = - signum(curVelocity) * min(maxBrakePower, brakePowerFactor*abs(curVelocity));
+                    state         = MotorPowerStrategyStateEnum.BRAKE_POWER;
+                    curPower      = - signum(curVelocity) * min(maxBrakePower, brakePowerFactor*abs(curVelocity));
                     if (approxEquals(curPosition, target, 0.05) || abs(curVelocity) <= velTol) {
+                        state     = MotorPowerStrategyStateEnum.STOPPED;
                         isStopped = true;
                     }
                 }
             } else {
-                motor.setPower(curPower);
+                state             = MotorPowerStrategyStateEnum.FULL_POWER;
             }
         }
-            motor.setPower(curPower);
+
+        motor.setPower(curPower);
     }
     public void   setBreakInc(double brakeInc_in) {
         brakeInc = max(min(brakeInc_in, 1.0), 0.0);

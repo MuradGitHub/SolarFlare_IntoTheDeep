@@ -95,12 +95,27 @@ public class PIDController extends FBController {
                            int    ultimateTarget,
                            double velocity) {
         int    error         = immediateTarget - curPosition;
+        double time          = timer.milliseconds();
+
+        if(state == FBControllerStateEnum.STARTING) {
+            state            = FBControllerStateEnum.CRUISING;
+            powerP           = Kp * error;
+            powerD           = 0.0;
+            powerI           = 0.0;
+            prevError        = error;
+            prevTime         = time;
+            return powerP;
+        }
+
         ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
         DerIdx               = (DerIdx + 1) % DerHistory.length;
-        dError               = (error - prevError) / (timer.milliseconds() - prevTime);
+        dError               = (error - prevError) / (time - prevTime);
 
         ErrHistory[ErrIdx]   = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
         DerHistory[DerIdx]   = dError;
+
+        prevTime             = time;
+        prevError            = error;
 
         double Dsum          = 0;
         for(double d: DerHistory)
