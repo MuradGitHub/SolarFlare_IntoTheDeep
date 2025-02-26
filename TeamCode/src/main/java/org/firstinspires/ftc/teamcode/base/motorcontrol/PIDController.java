@@ -79,12 +79,16 @@ public class PIDController extends FBController {
     public void   reset() {
         Arrays.fill(ErrHistory, 0.0);
         Arrays.fill(DerHistory, 0.0);
-        prevError      = 0;
-        ErrIdx         = 0;
-        DerIdx         = 0;
-        powerP         = 0;
-        powerI         = 0;
-        powerD         = 0;
+        useDErrorAvg         = false;
+        timeToUltimateTarget = 0.0;
+        dError               = 0.0;
+        prevError            = 0;
+        prevTime             = 0;
+        ErrIdx               = 0;
+        DerIdx               = 0;
+        powerP               = 0;
+        powerI               = 0;
+        powerD               = 0;
     }
     public void   init(ElapsedTime timer_in) {
         reset();
@@ -114,16 +118,20 @@ public class PIDController extends FBController {
         ErrHistory[ErrIdx]   = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
         DerHistory[DerIdx]   = dError;
 
+        // Idx to be used in the following cycle
         ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
         DerIdx               = (DerIdx + 1) % DerHistory.length;
 
+        // Save time and error values for nest cycle differences
         prevTime             = time;
         prevError            = error;
 
         // This means we fully loaded the DerHistory array with historical dError measurements
-        if(DerIdx == 0)
+        // Change to true only once and don't revise
+        if(!useDErrorAvg && DerIdx == 0)
             useDErrorAvg     = true;
 
+        // Once useDErrorAvg is true, always true
         if(useDErrorAvg) {
             double Dsum      = 0;
             for (double d : DerHistory)
@@ -154,7 +162,7 @@ public class PIDController extends FBController {
 
         return powerP + powerI + powerD;
     }
-    public void   updateProfileDataPoint(MotorProfileDataPoint p) {
+    public void   updateMotorProfileDataPoint(MotorProfileDataPoint p) {
         p.fbControllerState    = state.name();
         p.Kp                   = Kp;
         p.Ki                   = Ki;
