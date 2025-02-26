@@ -67,6 +67,8 @@
         },
         "velocityTolerance": 0.020,
         "steadyStateLookback": 5,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
         "maxProfileTime": 20000
       }
     }

@@ -46,8 +46,12 @@ public class MotorProfileConstP extends MotorProfile {
     public             MotorProfileConstP(MotorConfig motorConfig, double nominalPower_in) {
         super(
                 motorConfig,
-                new MotorPowerStrategyRTP(  motorConfig,1.0),
-                new MotorPowerStrategyConst(motorConfig, nominalPower_in));
+                new MotorPowerStrategyRTP(
+                        motorConfig,
+                        1.0),
+                new MotorPowerStrategyConst(
+                        motorConfig,
+                        nominalPower_in));
 
         ((MotorPowerStrategyConst) profilePowerStrategy).setBreakInc(1.0);
 

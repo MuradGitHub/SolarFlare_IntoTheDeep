@@ -52,45 +52,50 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
-    public transient Logger      logger = RobotLogger.getInstance().getConfigLogger();
-    public transient MotorConfig motorConfig;
-    public transient DcMotorEx   motor;
-    public transient ElapsedTime timer;
-    public           int         Pi;
+    public transient Logger             logger          = RobotLogger.getInstance().getConfigLogger();
+    public transient MotorConfig        motorConfig;
+    public transient DcMotorEx          motor;
+    public transient ElapsedTime        timer;
+    public           int                Pi;
     /**
      * Current position. it has to be kept up to date, either by calling updateMotorProfileDataPoint
      * with an up to date MotorProfileDataPoint or by using other means for the power strategy to work
      */
-    public           int         curPosition;
+    public           int                curPosition;
     /**
      * Current velocity. It has to be kept up to date, either by calling updateMotorProfileDataPoint
      * with an up to date MotorProfileDataPoint or by using other means
      */
-    public           double      curVelocity;
+    public           double             curVelocity;
     /**
      * Final target
      */
-    public           int         ultimateTarget;
+    public           int                ultimateTarget;
     /**
      * Possibly intermediate target
      */
-    public           int         immediateTarget;
-    public           Direction   direction;
-    public           double      nominalPower;
-    public           double      signPower;
-    public           double      curPower;
-    public           int         posTol;
-    public           double      velTol;
-    public           boolean     isTargetReached   = false;
-    public           boolean     isStopped         = false;
+    public           int                immediateTarget;
+    public           Direction          direction;
+    public           double             nominalPower;
+    public           double             signPower;
+    public           double             curPower;
+    public           MotorBrakeModeEnum brakeModeEnum   = MotorBrakeModeEnum.BRAKE_POWER;
+    public           double             maxBrakePower;
+    public           double             brakePowerFactor;
+    public           int                posTol;
+    public           double             velTol;
+    public           boolean            isTargetReached = false;
+    public           boolean            isStopped       = false;
 
     public                  MotorPowerStrategy(MotorConfig motorConfig_in,
                                                double      nominalPower_in) {
-        motorConfig     = motorConfig_in;
-        motor           = motorConfig.motor;
-        posTol          = motorConfig.controlParams.tolerances.posTol;
-        velTol          = motorConfig.controlParams.tolerances.velTol;
-        nominalPower    = nominalPower_in;
+        motorConfig         = motorConfig_in;
+        nominalPower        = nominalPower_in;
+        motor               = motorConfig.motor;
+        posTol              = motorConfig.controlParams.tolerances.posTol;
+        velTol              = motorConfig.controlParams.tolerances.velTol;
+        brakePowerFactor    = motorConfig.controlParams.brakePowerFactor;
+        maxBrakePower       = min(motorConfig.controlParams.maxBrakePower,abs(nominalPower));
 
         /*
         logger.logp(

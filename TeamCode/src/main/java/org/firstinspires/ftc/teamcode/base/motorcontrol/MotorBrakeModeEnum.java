@@ -27,40 +27,9 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.base.config;
+package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
-import androidx.annotation.NonNull;
-
-import org.firstinspires.ftc.teamcode.base.motorcontrol.FBControllerEnum;
-import org.firstinspires.ftc.teamcode.base.motorcontrol.MotionProfileEnum;
-
-import java.util.Arrays;
-import java.util.HashMap;
-
-public class MotorControlConfig {
-    public static class Tolerances {
-        public int    posTol;
-        public double velTol;
-        public Tolerances(int posTol_in, double velTol_in) {
-            posTol  = posTol_in;
-            velTol  = velTol_in;
-        }
-    }
-    public HashMap<FBControllerEnum, HashMap<String,Double>> feedback;
-    public HashMap<MotionProfileEnum,HashMap<String,Double>> motionProfiles;
-    public Tolerances                                        tolerances;
-    public double                                            timeToBrake;
-    public double                                            brakePowerFactor;
-    public double                                            maxBrakePower;
-
-    @NonNull
-    @Override
-    public String toString() {
-        var sb = new StringBuilder();
-        sb.append("MotorControlConfig\n");
-        sb.append("  maxBrakePower=")    .append(maxBrakePower)   .append("\n");
-        sb.append("  brakePowerFactor=") .append(brakePowerFactor).append("\n");
-
-        return sb.toString();
-    }
+public enum MotorBrakeModeEnum {
+    REDUCE_POWER,
+    BRAKE_POWER
 }

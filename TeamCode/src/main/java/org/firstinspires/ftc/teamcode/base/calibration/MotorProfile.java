@@ -41,6 +41,7 @@ import androidx.annotation.NonNull;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -73,7 +74,6 @@ public class MotorProfile
      * Calibration Direction: FORWARD, REVERSE
      */
     public    transient       Direction                        calibDirection;
-
     /**
      * Encoder resolution of the motor itself at the shaft output (PPR)
      */
@@ -391,6 +391,7 @@ public class MotorProfile
         /// you get here either because you reached the target AND observed for endSamples
         /// after that. Or, because you simply ran out of space. I.e. you can not perform
         /// any more recordings
+        motor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         motor.setPower(0);
 
         data.trimToSize();
