@@ -49,5 +49,5 @@ public abstract class FBController {
                                     int    immediateTarget,
                                     int    ultimateTarget,
                                     double velocity);
-    public abstract void   updateProfileDataPoint(MotorProfileDataPoint p);
+    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
 }

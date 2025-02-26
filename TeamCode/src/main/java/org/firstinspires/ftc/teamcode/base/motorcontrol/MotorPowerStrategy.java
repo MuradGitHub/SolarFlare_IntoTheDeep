@@ -46,8 +46,6 @@ import org.firstinspires.ftc.teamcode.base.config.MotorConfig;
 import org.firstinspires.ftc.teamcode.base.logging.DescriptiveIdProvider;
 import org.firstinspires.ftc.teamcode.base.logging.RobotLogger;
 
-import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
@@ -157,7 +155,7 @@ public abstract class MotorPowerStrategy implements DescriptiveIdProvider {
         signPower           = direction == Direction.FORWARD ? 1.0 : -1.0;
     }
     public abstract void    applyPower(int target);
-    public          void    updateProfileDataPoint(MotorProfileDataPoint p) {
+    public          void    updateMotorProfileDataPoint(MotorProfileDataPoint p) {
         // use MotorProfileDataPoint to update self
         curPosition          = p.P;
         curVelocity          = p.V;

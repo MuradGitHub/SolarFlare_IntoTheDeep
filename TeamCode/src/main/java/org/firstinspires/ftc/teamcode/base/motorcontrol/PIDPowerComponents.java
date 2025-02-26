@@ -39,7 +39,7 @@ public class PIDPowerComponents extends PowerComponents {
     public double getPower() {
         return powerP + powerI + powerD;
     }
-    public void   updateProfileDataPoint(MotorProfileDataPoint p) {
+    public void   updateMotorProfileDataPoint(MotorProfileDataPoint p) {
         p.powerP = powerP;
         p.powerI = powerI;
         p.powerD = powerD;

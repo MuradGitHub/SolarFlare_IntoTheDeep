@@ -34,7 +34,6 @@ import static java.lang.Math.max;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import androidx.annotation.NonNull;
@@ -222,7 +221,7 @@ public class MotorProfile
                     timer,
                     calibDirection == Direction.FORWARD ? minMovePowerF : minMovePowerR,
                     true);
-            startPowerStrategy.updateProfileDataPoint(pp);
+            startPowerStrategy.updateMotorProfileDataPoint(pp);
             startData.add(pp);
 
             if(startPowerStrategy.isStopped) {
@@ -359,7 +358,7 @@ public class MotorProfile
                     true);
             // This syncs the MotorPowerStrategy with the ProfileDataPoint, exchanging relevant
             // status data
-            profilePowerStrategy.updateProfileDataPoint(pp);
+            profilePowerStrategy.updateMotorProfileDataPoint(pp);
             data.add(pp);
 
             profilePowerStrategy.applyPower(Ptarget);
@@ -369,8 +368,9 @@ public class MotorProfile
 
             // Denote the point in time where the target has been reached
             if(tIdxTarget == null && profilePowerStrategy.isTargetReached) {
-                tIdxTarget       = tIdx;
+                tIdxTarget           = tIdx;
                 pp.appendMotorProfileState("Target");
+                pp.isTargetReached   = true;
             }
 
             // Initialize the attribute flag indicating whether the power strategy has stopped
@@ -379,6 +379,7 @@ public class MotorProfile
             isStrategyStopped        = profilePowerStrategy.isStopped;
             if (isStrategyStopped) {
                 pp.setMotorProfileState("Profile-EndSamples");
+                pp.isStrategyStopped = true;
                 endSamples--;
             }
 

@@ -33,5 +33,5 @@ import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 
 public abstract class PowerComponents {
     public abstract double getPower();
-    public abstract void   updateProfileDataPoint(MotorProfileDataPoint p);
+    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
 }
