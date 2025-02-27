@@ -30,6 +30,8 @@
 package org.firstinspires.ftc.teamcode.base.motorcontrol;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.signum;
 
 import androidx.annotation.NonNull;
@@ -37,6 +39,8 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
+import org.firstinspires.ftc.teamcode.base.math.Math;
+import org.firstinspires.ftc.teamcode.base.math.Range;
 
 import java.util.Arrays;
 
@@ -50,14 +54,15 @@ public class PIDController extends FBController {
     public           double      timeToUltimateTarget;
     public           double      dError;
     public           boolean     useDErrorAvg = false;
+    public           Range       powerRange;
     public           double[]    ErrHistory;
     public           double[]    DerHistory;
     public           int         maxErrorI;
-    public           int         ErrIdx   = 0;
-    public           int         DerIdx   = 0;
-    public           double      powerP   = 0.0;
-    public           double      powerI   = 0.0;
-    public           double      powerD   = 0.0;
+    public           int         ErrIdx       = 0;
+    public           int         DerIdx       = 0;
+    public           double      powerP       = 0.0;
+    public           double      powerI       = 0.0;
+    public           double      powerD       = 0.0;
 
     public        PIDController(double Kp_in,
                                 double Ki_in,
@@ -65,30 +70,37 @@ public class PIDController extends FBController {
                                 int    maxErrorI_in,
                                 int    ErrLookback,
                                 int    DerLookback,
-                                double timeToBrake) {
-        super(FBControllerEnum.PID, timeToBrake);
+                                double timeToBrake_in,
+                                int    posTol_in,
+                                double velTol_in) {
+        super(FBControllerEnum.PID, timeToBrake_in, posTol_in, velTol_in);
         Kp                  = Kp_in;
         Ki                  = Ki_in;
         Kd                  = Kd_in;
         maxErrorI           = maxErrorI_in;
         ErrHistory          = new double[ErrLookback];
         DerHistory          = new double[DerLookback];
+        powerRange          = new Range(-1,1);
 
         reset();
     }
+    @Override
     public void   reset() {
+        super.reset();
+
         Arrays.fill(ErrHistory, 0.0);
         Arrays.fill(DerHistory, 0.0);
-        useDErrorAvg         = false;
-        timeToUltimateTarget = 0.0;
-        dError               = 0.0;
-        prevError            = 0;
-        prevTime             = 0;
-        ErrIdx               = 0;
-        DerIdx               = 0;
-        powerP               = 0;
-        powerI               = 0;
-        powerD               = 0;
+        useDErrorAvg           = false;
+
+        timeToUltimateTarget   = 0.0;
+        dError                 = 0.0;
+        prevError              = 0;
+        prevTime               = 0;
+        ErrIdx                 = 0;
+        DerIdx                 = 0;
+        powerP                 = 0;
+        powerI                 = 0;
+        powerD                 = 0;
     }
     public void   init(ElapsedTime timer_in) {
         reset();
@@ -99,66 +111,62 @@ public class PIDController extends FBController {
                            int    immediateTarget,
                            int    ultimateTarget,
                            double velocity) {
-        int    error         = immediateTarget - curPosition;
-        double time          = timer.milliseconds();
+        int    error           = immediateTarget - curPosition;
+        double time            = timer.milliseconds();
 
         if(state == FBControllerStateEnum.STARTING) {
-            state            = FBControllerStateEnum.CRUISING;
-            powerP           = Kp * error;
-            powerD           = 0.0;
-            powerI           = 0.0;
-            dError           = 0.0;
-            prevError        = error;
-            prevTime         = time;
+            state              = FBControllerStateEnum.CRUISING;
+            powerP             = powerRange.constrain(Kp * error);
+            powerD             = 0.0;
+            powerI             = 0.0;
+            dError             = 0.0;
+            prevError          = error;
+            prevTime           = time;
             return powerP;
         }
 
-        dError               = (error - prevError) / (time - prevTime);
+        dError                 = (error - prevError) / (time - prevTime);
 
-        ErrHistory[ErrIdx]   = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
-        DerHistory[DerIdx]   = dError;
+        ErrHistory[ErrIdx]     = abs(error) < abs(maxErrorI) ? error : signum(error) * abs(maxErrorI);
+        DerHistory[DerIdx]     = dError;
 
         // Idx to be used in the following cycle
-        ErrIdx               = (ErrIdx + 1) % ErrHistory.length;
-        DerIdx               = (DerIdx + 1) % DerHistory.length;
+        ErrIdx                 = (ErrIdx + 1) % ErrHistory.length;
+        DerIdx                 = (DerIdx + 1) % DerHistory.length;
 
         // Save time and error values for nest cycle differences
-        prevTime             = time;
-        prevError            = error;
+        prevTime               = time;
+        prevError              = error;
 
         // This means we fully loaded the DerHistory array with historical dError measurements
         // Change to true only once and don't revise
         if(!useDErrorAvg && DerIdx == 0)
-            useDErrorAvg     = true;
+            useDErrorAvg       = true;
 
         // Once useDErrorAvg is true, always true
-        if(useDErrorAvg) {
-            double Dsum      = 0;
-            for (double d : DerHistory)
-                Dsum        += d;
-            dError           = Dsum / DerHistory.length;
-        }
+        if(useDErrorAvg)
+            dError             = Math.sum(DerHistory) / DerHistory.length;
 
-        timeToUltimateTarget = (ultimateTarget - curPosition) / dError;
-        if(abs(timeToUltimateTarget) < timeToBrake) {
+        timeToUltimateTarget   = (ultimateTarget - curPosition) / dError;
+        if(startParking || abs(timeToUltimateTarget) < timeToBrake) {
             if(timeToUltimateTarget <= 0) {
-                state        = FBControllerStateEnum.BRAKING;
-                powerD       = Kd * dError;
+                state          = FBControllerStateEnum.BRAKING;
+                powerD         = powerRange.constrain(Kd * dError);
             } else {
-                state        = FBControllerStateEnum.REVERSING;
-                powerD       = -Kd * dError;
+                state          = FBControllerStateEnum.REVERSING;
+                powerD         = powerRange.constrain(-Kd * dError);
             }
-            double Esum      = 0;
-            for(double e: ErrHistory)
-                Esum        += e;
-            powerI           = Ki * Esum;
+            powerI             = powerRange.constrain(Ki * Math.sum(ErrHistory));
         } else {
-            state            = FBControllerStateEnum.CRUISING;
-            powerD           = 0.0;
-            powerI           = 0.0;
+            state              = FBControllerStateEnum.CRUISING;
+            powerD             = 0.0;
+            powerI             = 0.0;
         }
 
-        powerP               = Kp * error;
+        powerP                 = powerRange.constrain(Kp * error);
+
+        if(abs(error) <= posTol && abs(dError) <= velTol && abs(velocity) <= velTol)
+            state              = FBControllerStateEnum.STOPPED;
 
         return powerP + powerI + powerD;
     }
@@ -173,7 +181,6 @@ public class PIDController extends FBController {
         p.powerI               = powerI;
         p.powerD               = powerD;
     }
-
     @NonNull
     @Override
     public String toString() {

@@ -73,7 +73,9 @@ public class FBControllers {
                         maxErrorI   != null ? (int) ((double) maxErrorI) : Integer.MAX_VALUE,
                         ErrLookback != null ? (int) ceil(ErrLookback)    : 1,
                         DerLookback != null ? (int) ceil(DerLookback)    : 1,
-                        controlParams.timeToBrake);
+                        controlParams.timeToBrake,
+                        controlParams.tolerances.posTol,
+                        controlParams.tolerances.velTol);
             default:
                 throw new BadInputException("FBControllerEnum: " + FBCEnum + " not supported");
             }

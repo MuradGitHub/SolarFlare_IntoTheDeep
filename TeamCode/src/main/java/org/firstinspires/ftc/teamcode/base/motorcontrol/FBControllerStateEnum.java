@@ -34,4 +34,5 @@ public enum FBControllerStateEnum {
     CRUISING,
     BRAKING,
     REVERSING,
+    STOPPED
 }

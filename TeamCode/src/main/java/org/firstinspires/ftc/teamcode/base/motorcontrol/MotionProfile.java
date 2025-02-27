@@ -46,15 +46,47 @@ public abstract class MotionProfile {
         motionProfileEnum = motionProfileEnum_in;
         tuningFactor      = tuningFactor_in;
     }
-    public abstract int  getPosition(double time);
-    public abstract void calcProfile(double dist_in,
-                              double Pi_in,
-                              double Vi_in,
-                              double Vmax_in,
-                              double Amax_in,
-                              double Dmax_in);
-    public abstract double getEndTime();
-    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
+    public enum MotionProfileStateEnum {
+        STARTING,
+        LEADING_PROFILE,
+        BRAKING,
+        ACCELERATION,
+        CRUISING,
+        DECELERATION,
+        END,
+    }
+    public          boolean inStarting() {
+        return state == MotionProfileStateEnum.STARTING;
+    }
+    public          boolean inBraking() {
+        return state == MotionProfileStateEnum.BRAKING;
+    }
+    public          boolean inAcceleration() {
+        return state == MotionProfileStateEnum.ACCELERATION;
+    }
+    public          boolean inCruising() {
+        return state == MotionProfileStateEnum.CRUISING;
+    }
+    public          boolean inDeceleration() {
+        return state == MotionProfileStateEnum.DECELERATION;
+    }
+    public          boolean inEnd() {
+        return state == MotionProfileStateEnum.END;
+    }
+    public          boolean isArriving() {
+        return state == MotionProfileStateEnum.BRAKING       ||
+                state == MotionProfileStateEnum.DECELERATION ||
+                state == MotionProfileStateEnum.END;
+    }
+    public abstract int     getPosition(double time);
+    public abstract void    calcProfile(double dist_in,
+                                        double Pi_in,
+                                        double Vi_in,
+                                        double Vmax_in,
+                                        double Amax_in,
+                                        double Dmax_in);
+    public abstract double  getEndTime();
+    public abstract void    updateMotorProfileDataPoint(MotorProfileDataPoint p);
 }
 
 

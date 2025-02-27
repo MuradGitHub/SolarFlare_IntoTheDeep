@@ -119,7 +119,6 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
     @Override
     public void   applyPower(int target_in) {
         double curTime         = timer.milliseconds();
-        double fbcPower        = 0;
 
         if(target_in!=ultimateTarget)
             init(timer, curPosition, target_in);
@@ -127,7 +126,8 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
         if(abs(curPosition - ultimateTarget) < posTol)
             isTargetReached    = true;
 
-        if(!isStopped && isTargetReached && abs(curVelocity) <= velTol)
+        // Once you decide the MotorPowerStrategy has stopped, do not revised that decision
+        if(!isStopped && fbc.isStopped())
             isStopped          = true;
 
         if(isStopped) {
@@ -135,16 +135,17 @@ public class MotorPowerStrategyMP extends MotorPowerStrategy {
             curPower           = 0.0;
         } else {
             immediateTarget    = motionProfile.getPosition(curTime);
-            fbcPower           = fbc.getPower(curPosition, immediateTarget, ultimateTarget, curVelocity);
-            curPower           = limitPower(fbcPower);
+            if(motionProfile.isArriving())
+                fbc.startParking();
+            curPower           = limitPower(fbc.getPower(curPosition, immediateTarget, ultimateTarget, curVelocity));
         }
 
         logger.logp(Level.INFO,
                 "MotorPowerStrategyMP",
                 "applyPower",
                 String.format(Locale.US,
-                        "t=%1$.3f P=%2$d uTarget=%3$d iTarget=%4$d fbcPower=%5$.3f power=%6$.3f isStopped=%7$b%nfbc=%8$s",
-                        curTime, curPosition, ultimateTarget, immediateTarget, fbcPower, curPower, isStopped, fbc.toString()));
+                        "t=%1$.3f P=%2$d uTarget=%3$d iTarget=%4$d power=%5$.3f isStopped=%6$b%nfbc=%7$s",
+                        curTime, curPosition, ultimateTarget, immediateTarget, curPower, isStopped, fbc.toString()));
 
         motor.setPower(curPower);
     }

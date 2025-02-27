@@ -34,20 +34,38 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.base.calibration.MotorProfileDataPoint;
 
 public abstract class FBController {
-    FBControllerEnum       FBCEnum;
-    FBControllerStateEnum  state  = FBControllerStateEnum.STARTING;
-    public          double timeToBrake;
+    public FBControllerEnum       FBCEnum;
+    public FBControllerStateEnum  state        = FBControllerStateEnum.STARTING;
+    public boolean                startParking = false;
+    public double                 timeToBrake;
+    public int                    posTol;
+    public double                 velTol;
 
     public FBController(
             FBControllerEnum FBCEnum_in,
-            double           timeToBrake_in) {
-        FBCEnum     = FBCEnum_in;
-        timeToBrake = timeToBrake_in;
+            double           timeToBrake_in,
+            int              posTol_in,
+            double           velTol_in) {
+        FBCEnum      = FBCEnum_in;
+        timeToBrake  = timeToBrake_in;
+        startParking = false;
+        posTol       = posTol_in;
+        velTol       = velTol_in;
     }
-    public abstract void   init(ElapsedTime timer);
-    public abstract double getPower(int    curPosition,
-                                    int    immediateTarget,
-                                    int    ultimateTarget,
-                                    double velocity);
-    public abstract void   updateMotorProfileDataPoint(MotorProfileDataPoint p);
+    public abstract void    init(ElapsedTime timer);
+    public          void    reset() {
+        state        = FBControllerStateEnum.STARTING;
+        startParking = false;
+    }
+    public          void    startParking() {
+        startParking = true;
+    }
+    public          boolean isStopped() {
+        return state == FBControllerStateEnum.STOPPED;
+    }
+    public abstract double  getPower(int    curPosition,
+                                     int    immediateTarget,
+                                     int    ultimateTarget,
+                                     double velocity);
+    public abstract void    updateMotorProfileDataPoint(MotorProfileDataPoint p);
 }
