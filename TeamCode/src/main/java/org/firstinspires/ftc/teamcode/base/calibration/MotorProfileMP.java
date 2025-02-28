@@ -39,7 +39,7 @@ import org.firstinspires.ftc.teamcode.base.motorcontrol.MotorPowerStrategyRTP;
 
 public class MotorProfileMP extends MotorProfile {
     MotionProfileEnum      MPEnum;
-    FBControllerEnum FBCEnum;
+    FBControllerEnum       FBCEnum;
 
     /**
      * Constructor requires information about the motor
@@ -55,7 +55,6 @@ public class MotorProfileMP extends MotorProfile {
         MPEnum  = MPEnum_in;
         FBCEnum = FBCEnum_in;
     }
-
     @NonNull
     @Override
     public String      toString() {
