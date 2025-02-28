@@ -44,7 +44,7 @@
             "Ki": 0.001,
             "Kd": 0.18,
             "ErrLookback": 8,
-            "DerLookback": 2,
+            "DerLookback": 1,
             "maxErrorI": 10
           }
         }
