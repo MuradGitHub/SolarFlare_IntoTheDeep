@@ -112,6 +112,7 @@ public class PIDController extends FBController {
                            int    ultimateTarget,
                            double velocity) {
         int    error           = immediateTarget - curPosition;
+        int    ultimateError   = ultimateTarget  - curPosition;
         double time            = timer.milliseconds();
 
         if(state == FBControllerStateEnum.STARTING) {
@@ -147,7 +148,8 @@ public class PIDController extends FBController {
         if(useDErrorAvg)
             dError             = Math.sum(DerHistory) / DerHistory.length;
 
-        timeToUltimateTarget   = (ultimateTarget - curPosition) / dError;
+
+        timeToUltimateTarget   = ultimateError == 0 || dError == 0 ? 0.0 : ultimateError / dError;
         if(startParking || abs(timeToUltimateTarget) < timeToBrake) {
             if(timeToUltimateTarget <= 0) {
                 state          = FBControllerStateEnum.BRAKING;

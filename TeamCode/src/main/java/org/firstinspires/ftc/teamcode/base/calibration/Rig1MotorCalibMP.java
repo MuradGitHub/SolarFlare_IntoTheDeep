@@ -141,33 +141,33 @@ public class Rig1MotorCalibMP extends LinearOpMode {
 
         telemetry.addData("F_isValid",             motorProfileF.isValid());
         telemetry.addData("F_steadyStateLookback", motorProfileF.steadyStateLookback);
-        telemetry.addData("F_Plast",               lastPointF.P);
+        telemetry.addData("F_Plast",               lastPointF != null ? lastPointF.P : "NA");
         telemetry.addData("F_isTargetReached",     motorProfileF.hasReachedTarget());
         telemetry.addData("F_timeToTarget",        motorProfileF.getTimeToTarget());
         telemetry.addData("F_noLoadVelocity",      motorConfig  .getNoLoadVelocity());
         telemetry.addData("F_hasSteadyStateV",     motorProfileF.hasSteadyStateV());
-        telemetry.addData("F_timeToSteadyStateV",  ssPointVF.t );
-        telemetry.addData("F_Vss",                 ssPointAF.Vavg);
+        telemetry.addData("F_timeToSteadyStateV",  ssPointVF != null ? ssPointVF.t    : "NA");
+        telemetry.addData("F_Vss",                 ssPointVF != null ? ssPointVF.Vavg : "NA");
         telemetry.addData("F_Vmax",                motorProfileF.Vmax);
         telemetry.addData("F_hasSteadyStateA",     motorProfileF.hasSteadyStateA());
-        telemetry.addData("F_timeToSteadyStateA",  ssPointAF.t);
-        telemetry.addData("F_Ass",                 ssPointAF.Aavg);
+        telemetry.addData("F_timeToSteadyStateA",  ssPointAF != null ? ssPointAF.t    : "NA");
+        telemetry.addData("F_Ass",                 ssPointAF != null ? ssPointAF.Aavg : "NA");
         telemetry.addData("F_Amax",                motorProfileF.Amax);
         telemetry.addData("F_Dmax",                motorProfileF.Dmax);
 
         telemetry.addData("R_isValid",             motorProfileR.isValid());
         telemetry.addData("R_steadyStateLookback", motorProfileR.steadyStateLookback);
-        telemetry.addData("R_Plast",               lastPointR.P);
+        telemetry.addData("R_Plast",               lastPointR != null ? lastPointR.P : "NA");
         telemetry.addData("R_isTargetReached",     motorProfileR.hasReachedTarget());
         telemetry.addData("R_timeToTarget",        motorProfileR.getTimeToTarget());
         telemetry.addData("R_noLoadVelocity",      motorConfig  .getNoLoadVelocity());
         telemetry.addData("R_hasSteadyStateV",     motorProfileR.hasSteadyStateV());
-        telemetry.addData("R_timeToSteadyStateV",  ssPointVR.t);
-        telemetry.addData("R_Vss",                 ssPointVR.Vavg);
+        telemetry.addData("R_timeToSteadyStateV",  ssPointVR != null ? ssPointVR.t    : "NA");
+        telemetry.addData("R_Vss",                 ssPointVR != null ? ssPointVR.Vavg : "NA");
         telemetry.addData("R_Vmax",                motorProfileR.Vmax);
         telemetry.addData("R_hasSteadyStateA",     motorProfileR.hasSteadyStateA());
-        telemetry.addData("R_timeToSteadyStateA",  ssPointAR.t);
-        telemetry.addData("R_Ass",                 ssPointAR.Aavg);
+        telemetry.addData("R_timeToSteadyStateA",  ssPointAR != null ? ssPointAR.t    : "NA");
+        telemetry.addData("R_Ass",                 ssPointAR != null ? ssPointAR.Aavg : "NA");
         telemetry.addData("R_Amax",                motorProfileR.Amax);
         telemetry.addData("R_Dmax",                motorProfileR.Dmax);
 

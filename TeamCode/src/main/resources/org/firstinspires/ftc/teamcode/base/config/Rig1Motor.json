@@ -42,9 +42,9 @@
           "PID": {
             "Kp": 0.005,
             "Ki": 0.001,
-            "Kd": 0.2,
-            "ErrLookback": 10,
-            "DerLookback": 5,
+            "Kd": 0.18,
+            "ErrLookback": 8,
+            "DerLookback": 2,
             "maxErrorI": 10
           }
         }
