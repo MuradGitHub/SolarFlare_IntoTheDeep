@@ -1,0 +1,252 @@
+{
+  "robotName": "BearOne",
+  "robotDimensions": {
+    "length": 430,
+    "width": 450
+  },
+  "calibration": {
+    "motors": [
+    ]
+  },
+  "motionProfiles": {
+    "TRAPEZOIDAL": {
+      "tuningFactor": 1.0
+    }
+  },
+  "motors": {
+    "LEFT_BACK": {
+      "motorEnum": "LEFT_BACK",
+      "partName": "Gobilda - 5203 Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 312 RPM)",
+      "deviceName": "leftBack",
+      "kP": 0.0,
+      "kI": 0.0,
+      "kD": 0.0,
+      "runMode": "RUN_WITHOUT_ENCODER",
+      "direction": "FORWARD",
+      "zeroPowerBehavior": "BRAKE",
+      "maxPower": 1.0,
+      "minTarget": 0,
+      "maxTarget": 1000000,
+      "maxAcceleration": 0,
+      "maxVelocity": 0,
+      "controlParams": {
+        "tolerances": {
+          "posTol": 2,
+          "velTol": 0.04
+        },
+        "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
+        "feedback": {
+          "PID": {
+            "Kp": 0.005,
+            "Ki": 0.001,
+            "Kd": 0.2,
+            "ErrLookback": 10,
+            "DerLookback": 5,
+            "maxErrorI": 10
+          }
+        }
+      },
+      "calibParams": {
+        "minTimeInc": 0,
+        "timeResolution": 100,
+        "powerLevels": [0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        "averagingTime": 40.0,
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100,
+        "minDistance": 200,
+        "positionTolerance": 2,
+        "velocityResolution": 30,
+        "velocityRange": {
+          "min":  0.0,
+          "max":  3.0
+        },
+        "velocityTolerance": 0.020,
+        "steadyStateLookback": 5,
+        "maxProfileTime": 10000
+      }
+    },
+    "RIGHT_BACK": {
+      "motorEnum": "RIGHT_BACK",
+      "partName": "Gobilda - 5203 Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 312 RPM)",
+      "deviceName": "rightBack",
+      "kP": 0.0,
+      "kI": 0.0,
+      "kD": 0.0,
+      "runMode": "RUN_WITHOUT_ENCODER",
+      "direction": "FORWARD",
+      "zeroPowerBehavior": "BRAKE",
+      "maxPower": 1.0,
+      "minTarget": 0,
+      "maxTarget": 1000000,
+      "maxAcceleration": 0,
+      "maxVelocity": 0,
+      "controlParams": {
+        "tolerances": {
+          "posTol": 2,
+          "velTol": 0.04
+        },
+        "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
+        "feedback": {
+          "PID": {
+            "Kp": 0.005,
+            "Ki": 0.001,
+            "Kd": 0.1,
+            "ErrLookback": 10,
+            "DerLookback": 5,
+            "maxErrorI": 10
+          }
+        }
+      },
+      "calibParams": {
+        "minTimeInc": 0,
+        "timeResolution": 100,
+        "powerLevels": [0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        "averagingTime": 40.0,
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100,
+        "minDistance": 200,
+        "positionTolerance": 2,
+        "velocityResolution": 30,
+        "velocityRange": {
+          "min":  0.0,
+          "max":  3.0
+        },
+        "velocityTolerance": 0.020,
+        "steadyStateLookback": 5,
+        "maxProfileTime": 10000
+      }
+    },
+    "LEFT_FRONT": {
+      "motorEnum": "LEFT_FRONT",
+      "partName": "Gobilda - 5203 Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 312 RPM)",
+      "deviceName": "leftFront",
+      "kP": 0.0,
+      "kI": 0.0,
+      "kD": 0.0,
+      "runMode": "RUN_WITHOUT_ENCODER",
+      "direction": "REVERSE",
+      "zeroPowerBehavior": "BRAKE",
+      "maxPower": 1.0,
+      "minTarget": 0,
+      "maxTarget": 1000000,
+      "maxAcceleration": 0,
+      "maxVelocity": 0,
+      "controlParams": {
+        "tolerances": {
+          "posTol": 2,
+          "velTol": 0.04
+        },
+        "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
+        "feedback": {
+          "PID": {
+            "Kp": 0.005,
+            "Ki": 0.001,
+            "Kd": 0.2,
+            "ErrLookback": 10,
+            "DerLookback": 5,
+            "maxErrorI": 10
+          }
+        }
+      },
+      "calibParams": {
+        "minTimeInc": 0,
+        "timeResolution": 100,
+        "powerLevels": [0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        "averagingTime": 40.0,
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100,
+        "minDistance": 200,
+        "positionTolerance": 2,
+        "velocityResolution": 30,
+        "velocityRange": {
+          "min":  0.0,
+          "max":  3.0
+        },
+        "velocityTolerance": 0.020,
+        "steadyStateLookback": 5,
+        "maxProfileTime": 10000
+      }
+    },
+    "RIGHT_FRONT": {
+      "motorEnum": "RIGHT_FRONT",
+      "partName": "Gobilda - 5203 Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 312 RPM)",
+      "deviceName": "rightFront",
+      "kP": 0.0,
+      "kI": 0.0,
+      "kD": 0.0,
+      "runMode": "RUN_WITHOUT_ENCODER",
+      "direction": "FORWARD",
+      "zeroPowerBehavior": "BRAKE",
+      "maxPower": 1.0,
+      "minTarget": 0,
+      "maxTarget": 1000000,
+      "maxAcceleration": 0,
+      "maxVelocity": 0,
+      "controlParams": {
+        "tolerances": {
+          "posTol": 2,
+          "velTol": 0.04
+        },
+        "timeToBrake": 50,
+        "maxBrakePower": 0.6,
+        "brakePowerFactor": 0.2,
+        "feedback": {
+          "PID": {
+            "Kp": 0.005,
+            "Ki": 0.001,
+            "Kd": 0.2,
+            "ErrLookback": 10,
+            "DerLookback": 5,
+            "maxErrorI": 10
+          }
+        }
+      },
+      "calibParams": {
+        "minTimeInc": 0,
+        "timeResolution": 100,
+        "powerLevels": [0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        "averagingTime": 40.0,
+        "endSamples": 20,
+        "minPower": 0.1,
+        "maxPower": 1.0,
+        "targetBuffer": 100,
+        "minDistance": 200,
+        "positionTolerance": 2,
+        "velocityResolution": 30,
+        "velocityRange": {
+          "min":  0.0,
+          "max":  3.0
+        },
+        "velocityTolerance": 0.020,
+        "steadyStateLookback": 5,
+        "maxProfileTime": 10000
+      }
+    }
+  },
+  "servos": {
+  },
+  "pinpoint": {
+    "deviceName": "pinpoint"
+  },
+  "limelight": {
+    "deviceName": "limelight",
+    "pollingRate": 11
+  },
+  "imu": {
+    "deviceName": "imu",
+    "logoFacingDirection": "UP",
+    "usbFacingDirection": "BACK"
+  }
+}
